@@ -1,30 +1,47 @@
 ---
-title: "Free Lunch in Multivariate Forecast: Reducing Variance Using Synthetic Linear Combination Forecast Projection"
+title: "Free Lunch in Multivariate Forecasting: Reducing Variance Using Synthetic Linear Combination Forecast Projection"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author:
+ - familyname: Yang
+   othernames: Yangzhuoran Fin
+   address: Monash University\newline Melbourne, Australia
+   email: Fin.Yang@monash.edu
+ - familyname: Hyndman
+   othernames: Rob J. 
+   address: Monash University\newline Melbourne, Australia
+ - familyname: Athanasopoulos
+   othernames: George
+   address: Monash University\newline Melbourne, Australia
+ - familyname: Panagiotelis
+   othernames: Anastasios
+   address: University of Sydney\newline Sydney, Australia
+abstract: "Abstact to be written."
 pdf-engine: pdflatex
-bibliography: 
+cite-method: biblatex
+biblio-style: authoryear-comp
+bibliography:
   - references-key.bib
   - references-pkg.bib
-number-sections: true
-format: 
-  pdf:
-    keep-tex: true
-    include-in-header: 
-        - text: |
-            \usepackage{bm}
-            \usepackage{apxproof}
+blind: false
+cover: true
+toc: false
+keep-tex: true
 fig-height: 5
 fig-width: 8
+number-sections: true
 execute:
   echo: false
   warning: false
   message: false
-  cache: true
+  cache: false
 editor_options: 
   chunk_output_type: console
 filters:
-   - latex-environment
-# environments: nottoappendix
+  - latex-environment
 environments: toappendix
+header-includes:
+  - \usepackage[bibliography=common]{apxproof}
+format: wp-pdf
 ---
 ```{r setup}
 #| cache: false
@@ -1164,7 +1181,4 @@ We illustrate the proposed forecast projection outperforms base forecasts signif
 
 
 \pagebreak
-# References {-}
-
-::: {#refs}
-:::
+# References {.unnumbered}
