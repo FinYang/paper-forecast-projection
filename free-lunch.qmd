@@ -768,7 +768,7 @@ $$
 \bm{M}^{+\prime}_i
 \bm{\psi}_i'.
 $$
-Similar to before, we would want $\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i' \neq \bm{0}$. Note that $\bm{\psi}_i$ conserns the first $m$ rows and the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, and $\bm{J}_i'$ concerns the first $m$ columns. Combined with the implication from @eq-acnc that the $m\times m$ leading principal submatrix in equation $\bm{J}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i'=\bm{J}_{i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{i-1}'$ is the same, we suppress the straightforward yet tiresome details, and obtain 
+Similar to before, we would want $\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i' \neq \bm{0}$. Note that $\bm{\psi}_i$ concerns the first $m$ rows and the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, and $\bm{J}_i'$ concerns the first $m$ columns. Combined with the implication from @eq-acnc that the $m\times m$ leading principal submatrix in equation $\bm{J}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i'=\bm{J}_{i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{i-1}'$ is the same, we suppress the straightforward yet tiresome details, and obtain 
 $$
 \bm{\phi}_i\bm{W}_{\tilde{z},h}^{(i-1)} \neq \begin{bmatrix}\bm{0}_{1\times m+i-1} & 1 \end{bmatrix}\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i',
 $$
@@ -952,7 +952,7 @@ $$
 $$ {#eq-obj}
 is @eq-G.
 
-Recognising $\bm{G}$ is of dimension $m\times (m+p)$, this problem can be effectively splitted into independent subproblems such that 
+Recognising $\bm{G}$ is of dimension $m\times (m+p)$, this problem can be effectively split into independent subproblems such that 
 $$
 \bm{G} = \begin{bmatrix}\bm{g}_1 & \bm{g}_2 &\dots &\bm{g}_n \end{bmatrix}',
 $$
@@ -996,7 +996,7 @@ $$
 \bm{\Lambda}' &= 2 (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}
 \end{aligned}
 $$
-becasue $\bm{G}\bm{S} = \bm{I}$. Putting it back in, we have
+because $\bm{G}\bm{S} = \bm{I}$. Putting it back in, we have
 $$
 \begin{aligned}
 \bm{G}' &= \bm{W}_h^{-1}\bm{S}(\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1} \\
@@ -1091,7 +1091,7 @@ We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tes
 ```
 
 ```{r fig-simulation-line}
-#| fig-cap: 'MSE of different forecast models and component construction methods by the number of components $p$ used in forecast projection in the simulation, for forecast horizons $1$, $6$ and $12$. "VAR - DGP" indicates the performance of the true data generating VAR model. "VAR - Est." indicates the performance of the VAR model with the same sturcture as the true model and estimated parametor values. The vertical black line indicates the location of $p=m$ the number of series.'
+#| fig-cap: 'MSE of different forecast models and component construction methods by the number of components $p$ used in forecast projection in the simulation, for forecast horizons $1$, $6$ and $12$. "VAR - DGP" indicates the performance of the true data generating VAR model. "VAR - Est." indicates the performance of the VAR model with the same structure as the true model and estimated parameter values. The vertical black line indicates the location of $p=m$ the number of series.'
 ```
 
 ## Projection over base forecast
@@ -1139,11 +1139,11 @@ The Australian Tourism Data Set compiled from the National Visitor Survey by Tou
 The base forecasts of both the series and the components are produced by univariate ETS models selected and fitted using the `ets()` function in the `forecast` package [@forecast; @HynKha2008]. In an ETS model, different term treats different patterns of a time series: the trend term treats the direction of the long-term tendency, the seasonality term treats the periodically recurring pattern with a fixed periodicity, and the error term measures the uncertainty. There does not need to be a trend term or seasonality term. If a trend term exists, we allow it to be additive or addictive damped. If a seasonality term exists, it can be addictive or multiplicative. The error can be additive or multiplicative. Excluding models with numerical instabilities, we choose the model with the smallest AICc among the $15$ models.
 
 ```{r fig-visnights-mcb-series}
-#| fig-cap: 'Average ranks of $1$-, $6$- and $12$-step-ahead cross-validation MSE of different model and component specifications on the visnights data. The methods using forecast projection are named as "{Model}-{Comp. Weights}-{No. Comp.}". The base models are named as "{Model}-Base" and these points are marked with triangles. The shaded region is the interval of the best performing model. Methods outside the shaded region are significantly worse than the best model.'
+#| fig-cap: 'Average ranks of $1$-, $6$- and $12$-step-ahead cross-validation MSE of different model and component specifications on the visitor nights data. The methods using forecast projection are named as "{Model}-{Comp. Weights}-{No. Comp.}". The base models are named as "{Model}-Base" and these points are marked with triangles. The shaded region is the interval of the best performing model. Methods outside the shaded region are significantly worse than the best model.'
 ```
 
 ```{r fig-visnights-line}
-#| fig-cap: "MSE of different component construction methods by the number of components $p$ used in forecast projection with ETS models on the visnights data, for forecast horizons $1$, $6$ and $12$. The vertical black line indicates the location of $p=m$ the number of series."
+#| fig-cap: "MSE of different component construction methods by the number of components $p$ used in forecast projection with ETS models on the visitor nights data, for forecast horizons $1$, $6$ and $12$. The vertical black line indicates the location of $p=m$ the number of series."
 ```
 
 The MCB plot and the MSE plot can be found in @fig-visnights-mcb-series and @fig-visnights-line. Most of the findings are consistent with @sec-simulation. From @fig-visnights-mcb-series, the base forecast is always ranked last. Even projections with only one component are significantly better than the base forecast for $h=6$ and $12$. 
