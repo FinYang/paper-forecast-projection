@@ -15,7 +15,6 @@ author:
  - familyname: Panagiotelis
    othernames: Anastasios
    address: University of Sydney\newline Sydney, Australia
-abstract: "Abstact to be written."
 pdf-engine: pdflatex
 cite-method: biblatex
 biblio-style: authoryear-comp
@@ -38,11 +37,17 @@ editor_options:
   chunk_output_type: console
 filters:
   - latex-environment
+  - abstract-section
 environments: toappendix
 header-includes:
   - \usepackage[bibliography=common]{apxproof}
 format: wp-pdf
 ---
+
+# Abstract
+
+Abstact to be written.
+
 ```{r setup}
 #| cache: false
 knitr::read_chunk("free-lunch.R")
