@@ -149,19 +149,19 @@ since $\bm{C}\bm{y}_{t+h} = \bm{0}$.
 ::: {#lem-unbiased}
 If the base forecasts are unbiased such that
 $$
-E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = E(\bm{y}_{t+h}|\mathcal{I}_t),
+\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t),
 $$
 then the projected forecasts are also unbiased:
 $$
-E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) = E(\bm{y}_{t+h}|\mathcal{I}_t).
+\operatorname{E}(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t).
 $$
 :::
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @lem-unbiased
 $$
-E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) =
-E(\bm{M}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}E(\bm{y}_{t+h}|\mathcal{I}_t) = E(\bm{M}\bm{y}_{t+h}|\mathcal{I}_t) = E(\bm{y}_{t+h}|\mathcal{I}_t)
+\operatorname{E}(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) =
+\operatorname{E}(\bm{M}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{M}\bm{y}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t)
 $$
 :::
 :::
@@ -868,11 +868,11 @@ $$
 
 If the base forecasts are unbiased such that
 $$
-E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = E(\bm{y}_{t+h}|\mathcal{I}_t),
+\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t),
 $$
 then the mapping in @eq-stmap are also unbiased:
 $$
-E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = E(\bm{z}_{t+h}|\mathcal{I}_t),
+\operatorname{E}(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{z}_{t+h}|\mathcal{I}_t),
 $$
 provided
 $$
@@ -885,8 +885,8 @@ $$
 #### Proof of @lem-st-unb-const
 We have
 $$
-E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) =
-E(\bm{G}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}E(\bm{y}_{t+h}|\mathcal{I}_t) = E(\bm{G}\bm{S}\bm{z}_{t+h}|\mathcal{I}_t) = E(\bm{z}_{t+h}|\mathcal{I}_t)
+\operatorname{E}(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) =
+\operatorname{E}(\bm{G}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{G}\bm{S}\bm{z}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{z}_{t+h}|\mathcal{I}_t)
 $$
 if $\bm{G}\bm{S} = \bm{I}$.
 :::
