@@ -80,7 +80,9 @@ Finally, the use of components bears a resemblance to Dynamic Factor Models (DFM
 
 The rest of the paper is structured as follows. In @sec-method, we propose the free lunch forecast projection method, and highlight its theoretical properties and associated estimation methods. In @sec-simulation, we present a simulation example demonstrating its performance and discuss the implications for sources of uncertainty. @sec-empirical-applications examines the performance of free-lunch forecast projection in two empirical applications: forecasting Australian domestic tourism and forecasting macroeconomic variables in the FRED-MD data set. @sec-conclusion concludes with some thoughts on future research directions.
 
-# Method {#sec-method}
+# Free-Lunch Forecast Projection {#sec-method}
+
+## Definitions and properties
 
 Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ series at time $t$. Let $\bm{y}_{t} = \begin{bmatrix}\bm{z}_t\\ \bm{c}_{t}\end{bmatrix}$ be the collection of series $\bm{z}_t$ and components $\bm{c}_{t}$ where $\bm{c}_{t} = \bm{\Phi}\bm{z}_t\in \mathbf{R}^p$. Let $\hat{\bm{y}}_{t+h}$ be the $h$-step-ahead base forecast of $\bm{y}_{t}$. The forecast variance covariance matrix is
 $$
@@ -1057,6 +1059,8 @@ Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the pro
 
 
 # Simulation {#sec-simulation}
+
+## Benchmarks
 
 ```{r simulation}
 ```
