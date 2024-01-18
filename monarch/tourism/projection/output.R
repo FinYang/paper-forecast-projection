@@ -14,7 +14,7 @@ gs <- function(p = last_plot(), ...)
     scale = 2,
     limitsize = FALSE)
 
-qs::qsave(tar_meta(), "output/tar_meta.qs")
+# qs::qsave(tar_meta(), "output/tar_meta.qs")
 qs::qsave(tar_read(mse), "output/mse.qs")
 gs(tar_read(plot_mse), "plot_mse.png")
 
