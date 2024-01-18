@@ -88,11 +88,11 @@ Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ series at time $t$. Let $\bm{y}
 $$
 \operatorname{Var}(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h.
 $$
-We project the base forecast into the space where the constraints are imposed:
+We project the base forecasts onto the space where the constraints are imposed:
 $$
 \tilde{\bm{y}}_{t+h} = \bm{M} \hat{\bm{y}}_{t+h}
 $$ {#eq-y_tilde}
-with mapping matrix
+with projection matrix
 $$
 \bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
 $$ {#eq-M}
@@ -101,8 +101,8 @@ $$
 \bm{C} = \begin{bmatrix} -\underset{p \times m}{\bm{\Phi}}& \underset{p \times p}{\bm{I}_{p}} \end{bmatrix},
 $$
 such that $\bm{C}\bm{y}_t= \bm{c}_{t} - \bm{\Phi}\bm{z}_t = \bm{0}$ for any $t$, and $\bm{I}_p$ is the identity matrix of dimension $p$.
-Note $\bm{M}$ is a projection matrix such that $\bm{M}\bm{M} = \bm{M}$.
-Denote $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ as the first $m$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, respectively the base and projected forecasts of $\bm{z}_t$, and $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ similarly. Denote $\bm{J}_{i} = \begin{bmatrix}\bm{I}_m& \bm{0}_{m\times i}\end{bmatrix}$ as a selection matrix that can pick out the first $m$ element of a vector or the first $m$ rows of a matrix, and denote $\bm{J}=\bm{J}_p$ for simplicity, then the constrained projected forecast of $\bm{z}_t$ can be found by
+Note that $\bm{M}\bm{M} = \bm{M}$, so that $\bm{M}$ is a projection matrix.
+Denote $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ as the first $m$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, respectively the base and projected forecasts of $\bm{z}_t$, and $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ similarly. Denote $\bm{J}_{i} = \big[\bm{I}_m ~~ \bm{0}_{m\times i}\big]$ as a selection matrix that can pick out the first $m$ elements of a vector or the first $m$ rows of a matrix, and denote $\bm{J}=\bm{J}_p$ for simplicity. Then the constrained projected forecast of $\bm{z}_t$ can be found by
 $$
 \tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h}.
 $$ {#eq-lcmap}
