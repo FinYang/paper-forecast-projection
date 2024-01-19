@@ -49,7 +49,7 @@ format: wp-pdf
 
 # Abstract
 
-Abstact to be written.
+Abstract to be written.
 
 ```{r setup}
 #| cache: false
@@ -97,7 +97,7 @@ with projection matrix
 $$
 \bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
 $$ {#eq-M}
-where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ defines the $p\times(m+p)$ constraint matrix such that $\bm{C}\bm{y}_t= \bm{c}_{t} - \bm{\Phi}\bm{z}_t = \bm{0}$ for any $t$.  Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ denote the first $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{z}_t$ respectively. Similarly, let $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ denote the last $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{c}_t$ respectively. Then the projected forecast of $\bm{z}_t$ can be found by
+where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ defines the $p\times(m+p)$ constraint matrix such that $\bm{C}\bm{y}_t= \bm{c}_{t} - \bm{\Phi}\bm{z}_t = \bm{0}$ for any $t$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ denote the first $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{z}_t$ respectively. Similarly, let $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ denote the last $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{c}_t$ respectively. Then the projected forecast of $\bm{z}_t$ can be found by
 $$
 \tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h},
 $$ {#eq-lcmap}
@@ -161,7 +161,7 @@ $$
 :::
 :::
 
-The only requirement for the current theory of forecast projection to work is the given base forecasts need to be unbiased. This is not a very strict requirement as unbiasedness can be achieved by most of the common forecasting models with an intercept. Even if there are transformations applied to the data set before the models are fitted, bias correction can be applied as suggested by @PanEtAl2021. Note this is not a requirement on model specification: we do not assume the model producing the base forecast is correctly specified like in the DFM literature (e.g. @StoWat2002). In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
+The only requirement for the current theory of forecast projection to work is the given base forecasts need to be unbiased. This is not a strict requirement as unbiasedness can be achieved by most of the common forecasting models with an intercept. Even if there are transformations applied to the data set before the models are fitted, bias correction can be applied as suggested by @PanEtAl2021. Note this is not a requirement on model specification: we do not assume the model producing the base forecast is correctly specified like in the DFM literature (e.g. @StoWat2002). In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
 
 ::: {#lem-var}
 The forecast variance covariance matrix of the component-constrained projected $h$-step-ahead  forecasts $\tilde{\bm{y}}_{t+h}$ is $\bm{M}\bm{W}_h$, i.e.
@@ -1026,13 +1026,13 @@ We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tes
 
 ## Projection over base forecast
 
-The first thing we note is the overall performance difference between the projected forecasts and the base forecast. In @fig-simulation-mcb-series, the average ranks of the projected forecasts are better than the corresponding base forecast at all forecast horizons, and the differences are all significant except the PCA-related ones with only $m=70$ components for forecast horizon $6$ and $12$. Note here we need to compare forecasts with the same model: the projected forecast of ARIMA to base ARIMA and the projected forecast of DFM to base DFM. The number of components seems very important: the best-performing models are all with $300$ components. Between the one-step-ahead forecasts, the methods with $300$ components are not significantly different from each other, regardless of the forecast model or how we construct the components.
+The first thing we note is the overall performance difference between the projected forecasts and the base forecast. In @fig-simulation-mcb-series, the average ranks of the projected forecasts are better than the corresponding base forecast at all forecast horizons, and the differences are all significant except the PCA-related ones with only $m=70$ components for forecast horizon $6$ and $12$. Note here we need to compare forecasts with the same model: the projected forecast of ARIMA to base ARIMA and the projected forecast of DFM to base DFM. The number of components seems important: the best-performing models are all with $300$ components. Between the one-step-ahead forecasts, the methods with $300$ components are not significantly different from each other, regardless of the forecast model or how we construct the components.
 
 Indeed, from @fig-simulation-line we can see the MSEs for model ARIMA and DFM keep decreasing from the base forecast, as the number of components increases. This confirms @thm-monotone that the more components we include, the more variance reduction we can achieve. This is only obvious in this ideal setting where we have $400$ observations in each group while we only use at most $300$ components in the projection. This ample number of observations and the simple DGP can ease the challenge of estimation. This continued reduction in variance is not always achievable with real data, as we can see in @sec-empirical-applications, especially with FRED-MD in @sec-fred-md.
 
 ## Base forecast model
 
-If we compare ARIMA and DFM, under a VAR DGP, we expect DFM to pick up the correlation between series and not univariate ARIMA, so DFM should have better performance over ARIMA. This is indeed the case. Looking at the base forecasts in @fig-simulation-mcb-series, base DFM is significantly better than base ARIMA, except for $h=1$ where it is close to significant. This is also very obvious in @fig-simulation-line. The horizontal line representing the MSE of base DFM is always far below the horizontal line for base ARIMA.
+If we compare ARIMA and DFM, under a VAR DGP, we expect DFM to pick up the correlation between series and not univariate ARIMA, so DFM should have better performance over ARIMA. This is indeed the case. Looking at the base forecasts in @fig-simulation-mcb-series, base DFM is significantly better than base ARIMA, except for $h=1$ where it is close to significant. This is also obvious in @fig-simulation-line. The horizontal line representing the MSE of base DFM is always far below the horizontal line for base ARIMA.
 
 With the help of forecast projection, a simple model like ARIMA can achieve comparable performance to more sophisticated models like DFM. In @fig-simulation-mcb-series, all projected ARIMA forecasts except the ones having $m$ PCs are significantly better than base DFM at $h=1$, and all projected ARIMA with $300$ components are significantly better than base DFM at $h=6$. In @fig-simulation-line, The valid and long-dashed lines of projected ARIMA with corresponding component construction go down monotonically as the number of components $p$ increases and reaches the MSE of base DFM at some point: at or below $m$ for $h=1$, at or above $m$ for $h=6$, and around $p=300$ for $h=12$. This is because forecast projection utilises shared information between series by capturing them in the components, making up for the overlooked correlation in univariate ARIMA models.
 
@@ -1040,7 +1040,7 @@ Interestingly enough, at $h=1$, while the MSE of projected DFM also goes down as
 
 This observation is not as obvious as the forecast horizon increases. This is because while ARIMA produces forecasts iteratively, DFM is a direct forecast model. With this simple DGP, the performance of DFM can be well maintained with larger $h$ since a different model is fitted for each $h$. This can be seen as the MSE of the base DFM does not change much with different $h$, but the MSE of base ARIMA keeps increasing as $h$ increases.
 
-## Component constuction {#sec-component-construction}
+## Component construction {#sec-component-construction}
 
 The construction of components is obviously important in forecast projection, but might not be as important as expected in this simulation example. In @fig-simulation-mcb-series, the main difference that can be observed exists between using a combination of PCA and random weights, and purely using random weights. The distribution that generates the random weights is less relevant: in @fig-simulation-mcb-series, with the same number of components and the same base ARIMA model, the MSEs are not significantly different, regardless of whether the weights are simulated from a normal distribution (Norm) or a uniform distribution (Unif), or a combination of random orthonormal weights and random normal weights (Ortho+Norm). The same conclusion can be found when PCA is used. As long as PCA is used, the performance is not different whether the additional components are simulated from a normal distribution (PCA+Norm) or a uniform distribution (PCA+Unif).
 
