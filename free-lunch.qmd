@@ -41,6 +41,9 @@ filters:
 environments: toappendix
 header-includes:
   - \usepackage[bibliography=common]{apxproof}
+  - \def\Var{\operatorname{Var}}
+  - \def\E{\operatorname{E}}
+  - \def\tr{\operatorname{tr}}
 format: wp-pdf
 ---
 
@@ -84,11 +87,9 @@ The rest of the paper is structured as follows. In @sec-method, we propose the f
 
 ## Definitions and properties
 
-Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ series at time $t$. Let $\bm{y}_{t} = \begin{bmatrix}\bm{z}_t\\ \bm{c}_{t}\end{bmatrix}$ be the collection of series $\bm{z}_t$ and components $\bm{c}_{t}$ where $\bm{c}_{t} = \bm{\Phi}\bm{z}_t\in \mathbf{R}^p$. Let $\hat{\bm{y}}_{t+h}$ be the $h$-step-ahead base forecast of $\bm{y}_{t}$. The forecast variance covariance matrix is
-$$
-\operatorname{Var}(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h.
-$$
-We project the base forecasts onto the space where the constraints are imposed:
+We use $\bm{I}_n$ to denote the $n\times n$ identity matrix, and $\bm{O}_{n\times k}$ to denote the $n\times k$ zero matrix. Define the selection matrix $\bm{J}_{n,k} = \big[\bm{I}_n ~~~ \bm{O}_{n\times k}\big]$, so that $\bm{J}_{n,k}\bm{A}$ picks out the first $n$ rows of a matrix $\bm{A}$.
+
+Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ observed time series at time $t$. Let $\bm{y}_{t} = \big[\bm{z}_t', \bm{c}'_{t}\big]'$ be the collection of series $\bm{z}_t$ and components $\bm{c}_{t}$, where $\bm{c}_{t} = \bm{\Phi}\bm{z}_t\in \mathbf{R}^p$, and let $\hat{\bm{y}}_{t+h}$ denote the $h$-step-ahead base forecast of $\bm{y}_{t}$. The forecast variance covariance matrix is $\Var(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h$. We project the base forecasts onto the space where the constraints are imposed:
 $$
 \tilde{\bm{y}}_{t+h} = \bm{M} \hat{\bm{y}}_{t+h}
 $$ {#eq-y_tilde}
@@ -96,21 +97,17 @@ with projection matrix
 $$
 \bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
 $$ {#eq-M}
-where $\tilde{\bm{y}}_{t+h}$ is the projected (constrained) forecast applying the component constraints
+where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ defines the $p\times(m+p)$ constraint matrix such that $\bm{C}\bm{y}_t= \bm{c}_{t} - \bm{\Phi}\bm{z}_t = \bm{0}$ for any $t$.  Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ denote the first $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{z}_t$ respectively. Similarly, let $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ denote the last $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{c}_t$ respectively. Then the projected forecast of $\bm{z}_t$ can be found by
 $$
-\bm{C} = \begin{bmatrix} -\underset{p \times m}{\bm{\Phi}}& \underset{p \times p}{\bm{I}_{p}} \end{bmatrix},
-$$
-such that $\bm{C}\bm{y}_t= \bm{c}_{t} - \bm{\Phi}\bm{z}_t = \bm{0}$ for any $t$, and $\bm{I}_p$ is the identity matrix of dimension $p$.
-Note that $\bm{M}\bm{M} = \bm{M}$, so that $\bm{M}$ is a projection matrix.
-Denote $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ as the first $m$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, respectively the base and projected forecasts of $\bm{z}_t$, and $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ similarly. Denote $\bm{J}_{i} = \big[\bm{I}_m ~~ \bm{0}_{m\times i}\big]$ as a selection matrix that can pick out the first $m$ elements of a vector or the first $m$ rows of a matrix, and denote $\bm{J}=\bm{J}_p$ for simplicity. Then the constrained projected forecast of $\bm{z}_t$ can be found by
-$$
-\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h}.
+\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h},
 $$ {#eq-lcmap}
-We are ready to present a few immediate results. The proofs are all given in the Appendix.
+where $\bm{J} = \bm{J}_{m,p}$.
+
+We are ready to present a few immediate results, with proofs provided in the Appendix.
 
 ::: {#lem-coherent}
 
-The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint such that
+The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint
 $$
 \bm{C}\tilde{\bm{y}}_{t+h}= \tilde{\bm{c}}_{t+h} - \bm{\Phi}\tilde{\bm{z}}_{t+h} = \bm{0}.
 $$
@@ -118,15 +115,13 @@ $$
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @lem-coherent
-$$
-\begin{aligned}
+\begin{align*}
 \bm{C}\tilde{\bm{y}}_{t+h} &=
 \bm{C}\bm{M}\hat{\bm{y}}_{t+h} \\
 &= \bm{C}(\bm{I}_{n+q} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\hat{\bm{y}}_{t+h}\\
 &= \bm{C}\hat{\bm{y}}_{t+h} - \bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}\\
 &= \bm{0}
-\end{aligned}
-$$
+\end{align*}
 :::
 :::
 
@@ -149,19 +144,19 @@ since $\bm{C}\bm{y}_{t+h} = \bm{0}$.
 ::: {#lem-unbiased}
 If the base forecasts are unbiased such that
 $$
-\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t),
+\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t),
 $$
 then the projected forecasts are also unbiased:
 $$
-\operatorname{E}(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t).
+\E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t).
 $$
 :::
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @lem-unbiased
 $$
-\operatorname{E}(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) =
-\operatorname{E}(\bm{M}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{M}\bm{y}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t)
+\E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) =
+\E(\bm{M}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{M}\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)
 $$
 :::
 :::
@@ -171,11 +166,11 @@ The only requirement for the current theory of forecast projection to work is th
 ::: {#lem-var}
 The forecast variance covariance matrix of the component-constrained projected $h$-step-ahead  forecasts $\tilde{\bm{y}}_{t+h}$ is $\bm{M}\bm{W}_h$, i.e.
 $$
-\operatorname{Var}(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{M}\bm{W}_h\bm{M}' = \bm{M}\bm{W}_h,
+\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{M}\bm{W}_h\bm{M}' = \bm{M}\bm{W}_h,
 $$
 and the forecast variance covariance matrix of the projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is
 $$
-\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
+\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
 $$
 :::
 
@@ -183,27 +178,23 @@ $$
 ::: {.proof}
 #### Proof of @lem-var
 $$
-\begin{aligned}
-\operatorname{Var}(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
-&= \operatorname{Var}(\bm{M}\hat{\bm{y}}_{t+h} - \bm{M}\bm{y}_{t+h}) \\
-&= \bm{M}\operatorname{Var}(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h})\bm{M}' \\
-&= \bm{M}\bm{W}_h\bm{M}'.
-\end{aligned}
+\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
+= \Var(\bm{M}\hat{\bm{y}}_{t+h} - \bm{M}\bm{y}_{t+h}) \\
+= \bm{M}\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h})\bm{M}' \\
+= \bm{M}\bm{W}_h\bm{M}'.
 $$
 If we simplify it further, we have
-$$
-\begin{aligned}
+\begin{align*}
 \bm{M}\bm{W}_h\bm{M}'
-=& (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h(\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})'\\
-=& (\bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h)(\bm{I} - \bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h) \\
-=& \bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h \\
-&+  \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h \\
-=& \bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h \\
-=& (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h \\
-=& \bm{M}\bm{W}_h.
-\end{aligned}
-$$
-To get $\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$, we just need to recognise it is the first $m\times m$ leading principal submatrix of $\operatorname{Var}(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$.
+&= (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h(\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})'\\
+%&= (\bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h)(\bm{I} - \bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h) \\
+&= \bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h \\
+&\mbox{}\hspace*{1cm} +  \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h \\
+&= \bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h \\
+%&= (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h \\
+&= \bm{M}\bm{W}_h.
+\end{align*}
+To get $\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$, we just need to recognise that it is the first $m\times m$ leading principal submatrix of $\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$.
 
 :::
 :::
@@ -215,17 +206,15 @@ To get $\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$, we just need t
 #### Positive Semi-Definiteness of Variance Reduction
 
 The difference between the forecast variance covariance matrix of the base forecast and the projected forecast
-$$
-\begin{aligned}
-\operatorname{Var}(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\operatorname{Var}(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) &=\bm{W}_h-\bm{M}\bm{W}_h\\
+\begin{align*}
+\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) &=\bm{W}_h-\bm{M}\bm{W}_h\\
 &= \bm{W}_h - (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h\\
 &=\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h
-\end{aligned}
-$$
+\end{align*}
 is positive semi-definite.
 The difference between the forecast variance of $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$
 $$
-\operatorname{Var}(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 $$
 is therefore positive semi-definite.
 
@@ -234,11 +223,11 @@ is therefore positive semi-definite.
 ::: {.proof}
 #### Proof of @thm-psdvar
 Trivially,
-$\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ are positive semi-definite. Note that $\operatorname{Var}(\hat{\bm{z}}_{t+h} - \bm{y}_{t+h}) -\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{y}_{t+h})$ is the leading principal submatrix of $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$, and the leading principal submatrix of a positive semi-definite matrix is positive semi-definite.
+$\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ are positive semi-definite. Note that $\Var(\hat{\bm{z}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{y}_{t+h})$ is the leading principal submatrix of $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$, and the leading principal submatrix of a positive semi-definite matrix is positive semi-definite.
 :::
 :::
 
-@thm-psdvar is why forecast projection works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of forecast variances that can be reduced by forecast projection. Because the matrix is positive semi-definite, such trace is nonnegative. It means we can reduce the forecast variance by simply forecasting the components - the artificially constructed linear combination of the original data, and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace needs to be zero, and because the matrix is positive semi-definite, this implies the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is a zero matrix, which rarely happens in practice. See @thm-pos-condition for more discussions.
+@thm-psdvar is why forecast projection works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of forecast variances that can be reduced by forecast projection. Because the matrix is positive semi-definite, such trace is nonnegative. It means we can reduce the forecast variance by simply forecasting the components - the artificially constructed linear combination of the original data, and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace needs to be zero, and because the matrix is positive semi-definite, this implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is a zero matrix, which rarely happens in practice. See @thm-pos-condition for more discussions.
 
 We give a simple example to show how the variance reduction works.
 
@@ -251,20 +240,15 @@ $$
 \bm{W}_h = \bm{I}_{m+p},
 $$
 that is, let $\bm{y}_t$ consist of $m$ original series and $p$ components whose forecasts are all uncorrelated with each other with variance $1$, then
-$$
-\begin{aligned}
-\operatorname{Var}(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\operatorname{Var}(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
-= &
+\begin{align*}
+\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
+&=
 \bm{C}'(\bm{C}\bm{C}')^{-1}\bm{C}\\
-= &
+& =
 \begin{bmatrix} -\bm{\Phi}'\\ \bm{I}_{p} \end{bmatrix}
-(
-\bm{\Phi}\bm{\Phi}' + \bm{I}
-)^{-1}
-\begin{bmatrix} -\bm{\Phi}& \bm{I}_{p} \end{bmatrix}
-,
-\end{aligned}
-$$
+(\bm{\Phi}\bm{\Phi}' + \bm{I})^{-1}
+\begin{bmatrix} -\bm{\Phi}& \bm{I}_{p} \end{bmatrix} ,
+\end{align*}
 where
 $$
 \bm{C} = \begin{bmatrix} -\underset{p \times m}{\bm{\Phi}}& \underset{p \times p}{\bm{I}_{p}} \end{bmatrix}.
@@ -278,26 +262,24 @@ $$
 \bm{\Phi}'\bm{\Phi} = \bm{I}_m\text{ when } p= m,
 $$
 then
-$$
-\begin{aligned}
-\operatorname{Var}(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\operatorname{Var}(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
-= &
+\begin{align*}
+\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
+& =
 \frac{1}{2}
 \begin{bmatrix}
 \bm{\Phi}'\bm{\Phi} & -\bm{\Phi}'\\
 -\bm{\Phi} & \bm{I}_p
 \end{bmatrix}\text{ when } p\le m. \\
-= &
+& =
 \frac{1}{2}
 \begin{bmatrix}
 \bm{I}_m  &-\bm{\Phi}'\\
 -\bm{\Phi} & \bm{I}_p
 \end{bmatrix}\text{ when } p=m.
-\end{aligned}
-$$
-We only focus on the forecast variance of the original series, which is $\operatorname{tr}(\operatorname{Var}(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \frac{1}{2}\operatorname{tr}(\bm{\Phi}'\bm{\Phi})$.
-When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent (i.e. $(\bm{\Phi}'\bm{\Phi})(\bm{\Phi}'\bm{\Phi})= \bm{\Phi}'\bm{\Phi}\bm{\Phi}'\bm{\Phi} = \bm{\Phi}'\bm{\Phi}$), we have $\operatorname{tr}(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. The reduction on the forecast variance of the original series is $p/2$.
-When $p=m$, we have $\operatorname{tr}(\bm{\Phi}'\bm{\Phi}) = \operatorname{tr}(\bm{I}_m) = m$, and the reduction is $m/2$.
+\end{align*}
+We only focus on the forecast variance of the original series, which is $\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
+When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent (i.e. $(\bm{\Phi}'\bm{\Phi})(\bm{\Phi}'\bm{\Phi})= \bm{\Phi}'\bm{\Phi}\bm{\Phi}'\bm{\Phi} = \bm{\Phi}'\bm{\Phi}$), we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. The reduction on the forecast variance of the original series is $p/2$.
+When $p=m$, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$, and the reduction is $m/2$.
 If we have two series ($m=2$) to begin with, using $1$ component ($p=1$) in the mapping will reduce the sum of forecast variance by $0.5$, and using $2$ components ($p=m=2$) will reduce the sum of forecast variance by $1$, that is a $50\%$ reduction when the original sum of forecast variance is only $2$.
 
 If we keep increasing the number of components, the result in @thm-psdvar still holds, but $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example in the sense that the forecast variance $\bm{W}_h$ can hardly be identity in practice, as the forecasts of a linear combination of two series are likely to be correlated with the forecasts of these series. Nonetheless, we can see how the forecast variance can be reduced as a result of uncorrelatedness between the forecast of components and the series, representing the new information brought by the components.
@@ -323,14 +305,14 @@ and $\bm{W}_{zc, h}$ ($\bm{W}_{cz, h}$) consists of covariance between elements 
 #### Monotonicity
 The sum of reduced forecast variance
 $$
-\operatorname{tr}(\operatorname{Var}(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \operatorname{tr}(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
+\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
 $$ {#eq-trdvar}
 is non-decreasing as $p$ increases.^[We thank Daniele Girolimetto for contributing to the initial proof (of the second statement in the proof) in his unpublished work.]
 :::
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @thm-monotone
-Suppose now we want to include $q$ more components $\bm{c}_{t}^*=\bm{\Phi}^*\bm{z}_t$ in the reconciliation. We define $\bm{y}_{t}^* = \begin{bmatrix}\bm{y}_{t}\\ \bm{c}_{t}^*\end{bmatrix}$, the constraint matrix
+Suppose now that we want to include $q$ more components $\bm{c}_{t}^*=\bm{\Phi}^*\bm{z}_t$ in the reconciliation. We define $\bm{y}_{t}^* = \begin{bmatrix}\bm{y}_{t}\\ \bm{c}_{t}^*\end{bmatrix}$, the constraint matrix
 $$
 \bm{C}^* =
 \begin{bmatrix}
@@ -347,10 +329,10 @@ $$
 \overline{\bm{C}} \\ \underline{\bm{C}}
 \end{bmatrix}
 $$ {#eq-Cstar}
-where $\overline{\bm{C}}$ is the first $p$ rows of $\bm{C}^*$ and $\underline{\bm{C}}$ is the rest $q$ rows of $\bm{C}^*$,
+where $\overline{\bm{C}}$ contains the first $p$ rows of $\bm{C}^*$ and $\underline{\bm{C}}$ contains the remaining $q$ rows of $\bm{C}^*$,
 the forecast variance covariance matrix
 $$
-\operatorname{Var}(\hat{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) = \bm{W}_h^* = \begin{bmatrix}\bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c,h}^*\end{bmatrix}.
+\Var(\hat{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) = \bm{W}_h^* = \begin{bmatrix}\bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c,h}^*\end{bmatrix}.
 $$
 where $\hat{\bm{y}}_{t+h}^*$ is the $h$-step-ahead base forecasts of $\bm{y}_{t}^*$:
 $$
@@ -372,208 +354,170 @@ $$
 $$ {#eq-Mplus}
 we have $\tilde{\bm{y}}_{t+h}^+ = \bm{M}^{+}\hat{\bm{y}}_{t+h}^*$. Furthermore, we have
 $$
-\begin{aligned}
-\bm{W}_h^*\overline{\bm{C}}' = & \begin{bmatrix}\bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c}^*\end{bmatrix}
-\begin{bmatrix}
-\bm{C}'\\ \underset{q\times p}{\bm{0}} \\
-\end{bmatrix} \\
-=&\begin{bmatrix}
-\bm{W}_h\bm{C}' \\
-\bm{W}_{cy, h}^*\bm{C}'
-\end{bmatrix}
-\end{aligned}
+\bm{W}_h^*\overline{\bm{C}}'
+ = \begin{bmatrix}
+      \bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c}^*
+    \end{bmatrix}
+    \begin{bmatrix}
+      \bm{C}'\\ \underset{q\times p}{\bm{0}} \\
+    \end{bmatrix} \\
+ = \begin{bmatrix}
+      \bm{W}_h\bm{C}' \\
+      \bm{W}_{cy, h}^*\bm{C}'
+    \end{bmatrix}
 $$
 and
 $$
-\begin{aligned}
-\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'=&
-\begin{bmatrix}
-\bm{C} & \underset{p\times q}{\bm{0}} \\
-\end{bmatrix}
-\begin{bmatrix}
-\bm{W}_h\bm{C}' \\
-\bm{W}_{cy, h}^*\bm{C}'
-\end{bmatrix}
-\\
-=& \bm{C}\bm{W}_h\bm{C}',
-\end{aligned}
+  \overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
+ = \begin{bmatrix}
+      \bm{C} & \underset{p\times q}{\bm{0}} \\
+    \end{bmatrix}
+    \begin{bmatrix}
+      \bm{W}_h\bm{C}' \\
+      \bm{W}_{cy, h}^*\bm{C}'
+    \end{bmatrix} \\
+ =\bm{C}\bm{W}_h\bm{C}',
 $$
 which gives
-$$
-\begin{aligned}
-\bm{M}^{+} =& \bm{I}_{m+p+q} -
-\begin{bmatrix}
-\bm{W}_h\bm{C}' \\
-\bm{W}_{cy, h}^*\bm{C}'
-\end{bmatrix}
-(\bm{C}\bm{W}_h\bm{C}')^{-1}
-\begin{bmatrix}
-\bm{C} & \underset{p\times q}{\bm{0}} \\
-\end{bmatrix}\\
-=&
-\bm{I}_{m+p+q} -
-\begin{bmatrix}
-\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1} \\
-\bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}
-\end{bmatrix}
-\begin{bmatrix}
-\bm{C} & \underset{p\times q}{\bm{0}} \\
-\end{bmatrix} \\
-=&
-\bm{I}_{m+p+q} -
-\begin{bmatrix}
-\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0} \\
-\bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0}
-\end{bmatrix},
-\end{aligned}
-$$
+\begin{align*}
+\bm{M}^{+}
+& = \bm{I}_{m+p+q} -
+    \begin{bmatrix}
+      \bm{W}_h\bm{C}' \\
+      \bm{W}_{cy, h}^*\bm{C}'
+    \end{bmatrix}
+    (\bm{C}\bm{W}_h\bm{C}')^{-1}
+    \begin{bmatrix}
+      \bm{C} & \underset{p\times q}{\bm{0}} \\
+    \end{bmatrix}\\
+%& = \bm{I}_{m+p+q} -
+%    \begin{bmatrix}
+%      \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1} \\
+%      \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}
+%    \end{bmatrix}
+%    \begin{bmatrix}
+%      \bm{C} & \underset{p\times q}{\bm{0}} \\
+%    \end{bmatrix} \\
+& = \bm{I}_{m+p+q} -
+    \begin{bmatrix}
+      \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0} \\
+      \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0}
+    \end{bmatrix},
+\end{align*}
 and
-$$
-\begin{aligned}
+\begin{align*}
 \tilde{\bm{y}}_{t+h}^+
-=& \bm{M}^{+}\hat{\bm{y}}_{t+h}^* \\
-=&
-\left(
-\bm{I}_{m+p+q} -
-\begin{bmatrix}
-\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0} \\
-\bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0}
-\end{bmatrix}
-\right)
-\begin{bmatrix} \hat{\bm{y}}_{t+h} \\ \hat{\bm{c}}_{t+h}^* \end{bmatrix}\\
-=&
-\begin{bmatrix}
-\hat{\bm{y}}_{t+h} -  \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}\\
-\hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
-\end{bmatrix} \\
-=&
-\begin{bmatrix}
-(\bm{I}_{n+p} -  \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\hat{\bm{y}}_{t+h}\\
-\hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
-\end{bmatrix} \\
-=&
-\begin{bmatrix}
-\bm{M} \hat{\bm{y}}_{t+h}\\
-\hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
-\end{bmatrix} \\
-=&
-\begin{bmatrix}
-\tilde{\bm{y}}_{t+h}\\
-\hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
-\end{bmatrix}.
-\end{aligned}
-$$
-If we only consider the forecast performance relevant to $\bm{z}_{t+h}$, and define $\bm{J}^* = \bm{J}_{p+q}= \begin{bmatrix}\bm{I}_{m} & \bm{0}_{m\times(p+q)} \end{bmatrix}$, we have
+& = \bm{M}^{+}\hat{\bm{y}}_{t+h}^* \\
+& = \left(
+      \bm{I}_{m+p+q} -
+      \begin{bmatrix}
+        \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0} \\
+        \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0}
+      \end{bmatrix}
+    \right)
+    \begin{bmatrix} \hat{\bm{y}}_{t+h} \\ \hat{\bm{c}}_{t+h}^* \end{bmatrix}\\
+%& = \begin{bmatrix}
+%      \hat{\bm{y}}_{t+h} -  \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}\\
+%      \hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
+%    \end{bmatrix} \\
+& = \begin{bmatrix}
+      (\bm{I}_{n+p} -  \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\hat{\bm{y}}_{t+h}\\
+      \hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
+    \end{bmatrix} \\
+& = \begin{bmatrix}
+      \bm{M} \hat{\bm{y}}_{t+h}\\
+      \hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
+    \end{bmatrix} \\
+& = \begin{bmatrix}
+      \tilde{\bm{y}}_{t+h}\\
+      \hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
+    \end{bmatrix}.
+\end{align*}
+If we only consider the forecast performance relevant to $\bm{z}_{t+h}$, and define $\bm{J}^* = \bm{J}_{m,p+q}= \begin{bmatrix}\bm{I}_{m} & \bm{0}_{m\times(p+q)} \end{bmatrix}$, we have
 $$
 \tilde{\bm{z}}_{t+h}^+ = \bm{J}^*\tilde{\bm{y}}_{t+h}^+ = \bm{J}\tilde{\bm{y}}_{t+h} = \tilde{\bm{z}}_{t+h}.
 $$
-This means adding additional components without imposing the corresponding constraints will yield the same projected forecasts as if these additional components are not added, which implies the forecast variance stays the same:
+This means adding additional components without imposing the corresponding constraints will yield the same projected forecasts as if these additional components are not added, which implies that the forecast variance stays the same:
 $$
-\operatorname{Var}(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}) = \operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
+\Var(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}) = \Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
 $$ {#eq-acnc}
 <!-- additional components no constraints -->
 This finishes the proof of the first statement. Now we move on to proving the second statement. We have the forecast variance matrices
-$$
-\operatorname{Var}(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) = \bm{M}^{+}\bm{W}_h^* = (\bm{I}_{m+p+q} -\bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^*
-$$
-and
-$$
-\operatorname{Var}(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) = \bm{M}^*\bm{W}_h^* = (\bm{I}_{m+p+q} - \bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*)\bm{W}_h^*.
-$$
+\begin{align*}
+\Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) & = \bm{M}^{+}\bm{W}_h^*
+    = (\bm{I}_{m+p+q} -\bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^* \\
+\text{and}\qquad\qquad
+\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) & = \bm{M}^*\bm{W}_h^*
+    = (\bm{I}_{m+p+q} - \bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*)\bm{W}_h^*.
+\end{align*}
 Taking the difference, we have
-$$
-\begin{aligned}
-\operatorname{Var}&(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) - \operatorname{Var}(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) \\
-=& (\bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -\bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^* \\
-=& \bm{W}_h^*(\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^*.
-\end{aligned}
-$$
+\begin{align*}
+\Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) - \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*)
+& = (\bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -
+      \bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^* \\
+& = \bm{W}_h^*(\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -
+      \overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^*.
+\end{align*}
 Using block matrix inversion, we have
-$$
-\begin{aligned}
+\begin{align*}
 \bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*
-=&
-\begin{bmatrix}
-\overline{\bm{C}}' & \underline{\bm{C}}'
-\end{bmatrix}
-\begin{bmatrix}
-\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}' & \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' \\
-\underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}' & \underline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
-\end{bmatrix}^{-1}
-\begin{bmatrix}
-\overline{\bm{C}}\\  \underline{\bm{C}}
-\end{bmatrix} \\
-=&
-\begin{bmatrix}
-\overline{\bm{C}}' & \underline{\bm{C}}'
-\end{bmatrix}
-\begin{bmatrix}
-a & b \\
-c & d
-\end{bmatrix}
-\begin{bmatrix}
-\overline{\bm{C}}\\  \underline{\bm{C}}
-\end{bmatrix} \\
-=&
-\overline{\bm{C}}'a\overline{\bm{C}}
-+ \overline{\bm{C}}'b\underline{\bm{C}}
-+ \underline{\bm{C}}'c\overline{\bm{C}}
-+ \underline{\bm{C}}'d\underline{\bm{C}},
-\end{aligned}
-$$
+& = \begin{bmatrix}
+      \overline{\bm{C}}' & \underline{\bm{C}}'
+    \end{bmatrix}
+    \begin{bmatrix}
+      \overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}' & \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' \\
+      \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}' & \underline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
+    \end{bmatrix}^{-1}
+    \begin{bmatrix}
+      \overline{\bm{C}}\\  \underline{\bm{C}}
+    \end{bmatrix} \\
+& = \begin{bmatrix}
+      \overline{\bm{C}}' & \underline{\bm{C}}'
+    \end{bmatrix}
+    \begin{bmatrix}
+      a & b \\
+      c & d
+    \end{bmatrix}
+    \begin{bmatrix}
+      \overline{\bm{C}}\\  \underline{\bm{C}}
+    \end{bmatrix} \\
+& =   \overline{\bm{C}}'a \overline{\bm{C}}
+    + \overline{\bm{C}}'b \underline{\bm{C}}
+    + \underline{\bm{C}}'c\overline{\bm{C}}
+    + \underline{\bm{C}}'d\underline{\bm{C}},
+\end{align*}
 where
-$$
-\begin{aligned}
-a
-=&
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} +
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
-\\
-&(
-\underline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' - \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
-)^{-1}
-\underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} \\
-=&
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} +
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'(
-\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}'
-)^{-1}
-\underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1},\\
-b
-=&
-- (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
-(
-\underline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' -
-\underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}' (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
-\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
-)^{-1}\\
-=&
-- (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
-(
-\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}'
-)^{-1},\\
-c
-=&
-- (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
-\underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
-(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1},\\
-d
-=&
-(\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}.
-\end{aligned}
-$$
-Thus, we have
-$$
-\begin{aligned}
-\bm{C}^{*\prime}&(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* \\
-=&
+\begin{align*}
+a &= (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} +
+     (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' \\
+  & \mbox{}\hspace*{1cm}
+    (\underline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' - \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
+    (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}')^{-1}
+    \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
+    (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} \\
+  & = (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} +
+      (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'(\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
+      \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
+      (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1},\\
+b & = - (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
+    (\underline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' -
+     \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}' (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
+     \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}')^{-1}\\
+  & = - (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
+    (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1},\\
+c & = - (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
+      \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
+      (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1},\\
+d & = (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}.
+\end{align*}
+Thus,
+\begin{align*}
+\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*
+& =
 \overline{\bm{C}}'
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}\\
-&+
+& \mbox{}\hspace*{1cm} +
 \overline{\bm{C}}'
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
@@ -581,37 +525,37 @@ $$
 \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}\\
-&-
+& \mbox{}\hspace*{1cm} -
 \overline{\bm{C}}
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\\
-&-
+& \mbox{}\hspace*{1cm} -
 \underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}'\bm{W}_h^*\overline{\bm{C}}'
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}\\
-&+
+& \mbox{}\hspace*{1cm} +
 \underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\\
-=&
+&=
 \overline{\bm{C}}'
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}\\
-&-
+& \mbox{}\hspace*{1cm} -
 \overline{\bm{C}}
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}\\
-&+
+& \mbox{}\hspace*{1cm} +
 \underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}\\
-=&
+& =
 \overline{\bm{C}}'
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
 \overline{\bm{C}}
@@ -620,13 +564,12 @@ $$
 \underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}.
-\end{aligned}
-$$
+\end{align*}
 Therefore,
-$$
-\begin{aligned}
-\operatorname{Var}&(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) - \operatorname{Var}(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) \\
-=&
+\begin{align*}
+\Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) - \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*)
+\hspace*{-4cm} \\
+& =
 \bm{W}_h^*(
 \overline{\bm{C}}'
 (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}
@@ -637,27 +580,26 @@ $$
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}
 -\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^*\\
-=&
+& =
 \bm{W}_h^*(
 \bm{M}^{+\prime}
 \underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}
 )\bm{W}_h^*
-\end{aligned}
-$$
+\end{align*}
 is positive semi-definite. This concludes the proof of the second statement.
 Combining the results above, we have
 $$
 \begin{aligned}
-&\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) -
-\operatorname{Var}(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}) \\
+\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) -
+\Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h})
+& =
+\Var(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}) -
+\Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}) \\
 &=
-\operatorname{Var}(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}) -
-\operatorname{Var}(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}) \\
-&=
-\bm{J}^*\operatorname{Var}(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*)\bm{J}^{*\prime} -
-\bm{J}^*\operatorname{Var}(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*)\bm{J}^{*\prime} \\
+\bm{J}^*\Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*)\bm{J}^{*\prime} -
+\bm{J}^*\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*)\bm{J}^{*\prime} \\
 &=
 \bm{J}^*
 \bm{W}_h^*
@@ -671,25 +613,22 @@ $$
 $$ {#eq-addcom}
 being positive semi-definite.
 Finally, we have
-$$
-\begin{aligned}
-&\operatorname{tr}(\operatorname{Var}(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\operatorname{Var}(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}))
+\begin{multline*}
+\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}))
 -
-\operatorname{tr}(\operatorname{Var}(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) \\
-&=
-\operatorname{tr}(
-\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) -
-\operatorname{Var}(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h})
+\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) \\
+= \tr(
+    \Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) -
+    \Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h})
 )
-\end{aligned}
-$$
+\end{multline*}
 being the trace of a positive semi-definite matrix, which is non-negative. This means using a larger number of components in the mapping achieves a lower sum of forecast variance, giving @thm-monotone.
 :::
 :::
 
 @thm-monotone is the key result that justifies the usefulness of forecast projection by providing a practical way to increase its power. It means we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the true base forecast variance covariance of all the series and components. It requires $\bm{C}$ to be $\begin{bmatrix} -\bm{\Phi}&\bm{I}_{p} \end{bmatrix}$ or $\begin{bmatrix} -\bm{\Phi}& {\bm{L}} \end{bmatrix}$ where $\bm{L}$ is a lower triangular matrix (the upper right corner needs to be all $0$s). This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components (which are linear combinations themselves) of the original series, is just a linear combination of the original series.
 
-Extending the proof of @thm-monotone, we can outline the condition for the reduced variance to be positive. That is, if the new component satisfies these relationships with the previous (projected) forecasts, the projected forecast variance with the new component is smaller than the base forecast variance or the projected variance with only the previous components. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$-component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \begin{bmatrix}\bm{\phi}_1' & \bm{\phi}_2' & \dots & \bm{\phi}_p'\end{bmatrix}'$.
+Extending the proof of @thm-monotone, we can outline the condition for the reduced variance to be positive. That is, if the new component satisfies these relationships with the previous (projected) forecasts, the projected forecast variance with the new component is smaller than the base forecast variance or the projected variance with only the previous components. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \begin{bmatrix}\bm{\phi}_1' & \bm{\phi}_2' & \dots & \bm{\phi}_p'\end{bmatrix}'$.
 
 ::: {#thm-pos-condition}
 
@@ -700,7 +639,7 @@ $$
 \bm{\phi}_1\bm{W}_{z,h}\neq\bm{W}_{c_1z,h},
 $$ {#eq-pcon}
 where $\bm{W}_{c_{1}z,h}$ denotes the base forecast covariance of the first components and the original series.
-For the $i$-th component to have a positive reduction on forecast variance of the original series, the following condition is satisfied:
+For the $i$th component to have a positive reduction on forecast variance of the original series, the following condition is satisfied:
 $$
 \bm{\phi}_i{\bm{W}}^{(i-1)}_{\tilde{z},h}\neq\bm{W}_{\tilde{c}_i\tilde{z},h}^{(i-1)},
 $$ {#eq-pconi}
@@ -713,13 +652,12 @@ where $\bm{W}^{(i-1)}_{\tilde{z},h}$ denotes the projected forecast variance of 
 
 Denote $\bm{\psi}_i=\begin{bmatrix}-\bm{\phi}_i & \bm{0}_{1\times(i-1)} & 1\end{bmatrix}$ and $\bm{W}_{h}^{(i)}$ to be the base forecast variance of the original series and the first $i$ components. Starting with the first component, @eq-trdvar becomes
 $$
-\operatorname{tr}(\bm{J}_1\bm{W}_h^{(1)}\bm{\psi}_1'(\bm{\psi}_1\bm{W}_h^{(1)}\bm{\psi}_1')^{-1}\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_1') =
-(\bm{\psi}_1\bm{W}_h^{(1)}\bm{\psi}_1')^{-1}\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_1'\bm{J}_1\bm{W}_h^{(1)}\bm{\psi}_1',
+\tr(\bm{J}_{m,1}\bm{W}_h^{(1)}\bm{\psi}_1'(\bm{\psi}_1\bm{W}_h^{(1)}\bm{\psi}_1')^{-1}\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}') =
+(\bm{\psi}_1\bm{W}_h^{(1)}\bm{\psi}_1')^{-1}\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}'\bm{J}_{m,1}\bm{W}_h^{(1)}\bm{\psi}_1',
 $$ {#eq-trdvar1}
-where
-$$
-\begin{aligned}
-\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_1' =&
+\begin{align*}
+\text{where}\qquad\qquad
+\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' =&
 \begin{bmatrix}
 -\bm{\phi}_1 & 1
 \end{bmatrix}
@@ -731,12 +669,10 @@ $$
 \bm{I}_m\\ 0
 \end{bmatrix} \\
 =& -\bm{\phi}_1\bm{W}_{z,h} + \bm{W}_{c_1z,h}.
-\end{aligned}
-$$
+\end{align*}
+@eq-trdvar1 is obviously non-negative. For it to be larger than $0$, we need $\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' \neq 0$, which gives $\bm{\phi}_1\bm{W}_{z,h} \neq \bm{W}_{c_1z,h}$.
 
-@eq-trdvar1 is obviously non-negative. For it to be larger than $0$, we need $\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_1' \neq 0$, which gives $\bm{\phi}_1\bm{W}_{z,h} \neq \bm{W}_{c_1z,h}$.
-
-When it comes to adding the $i$-th component on top of the first $i-1$ components, we define
+When it comes to adding the $i$th component on top of the first $i-1$ components, we define
 $$
 \overline{\bm{C}}_i =
 \begin{bmatrix}
@@ -753,36 +689,36 @@ $$
 \overline{\bm{C}}_{i-1}
 $$
 analogously to @eq-Cstar and @eq-Mplus.
-Following @eq-addcom, the additional reduction of forecast variance when adding the $i$-th component becomes
+Following @eq-addcom, the additional reduction of forecast variance when adding the $i$th component becomes
 $$
-\bm{J}_i
+\bm{J}_{m,i}
 \bm{W}_h^{(i)}
 \bm{M}^{+\prime}_i
 \bm{\psi}_i'
 (\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{\psi}_i')^{-1}
 \bm{\psi}_i\bm{M}^{+}_i
 \bm{W}_h^{(i)}
-\bm{J}_i'
+\bm{J}_{m,i}'
 =
 (\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{\psi}_i')^{-1}
 \bm{\psi}_i
 \bm{M}^{+}_i
 \bm{W}_h^{(i)}
-\bm{J}_i'
-\bm{J}_i
+\bm{J}_{m,i}'
+\bm{J}_{m,i}
 \bm{W}_h^{(i)}
 \bm{M}^{+\prime}_i
 \bm{\psi}_i'.
 $$
-Similar to before, we would want $\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i' \neq \bm{0}$. Note that $\bm{\psi}_i$ concerns the first $m$ rows and the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, and $\bm{J}_i'$ concerns the first $m$ columns. Combined with the implication from @eq-acnc that the $m\times m$ leading principal submatrix in equation $\bm{J}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i'=\bm{J}_{i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{i-1}'$ is the same, we suppress the straightforward yet tiresome details, and obtain
+Similar to before, we would want $\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}' \neq \bm{0}$. Note that $\bm{\psi}_i$ concerns the first $m$ rows and the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, and $\bm{J}_{m,i}'$ concerns the first $m$ columns. Combined with the implication from @eq-acnc that the $m\times m$ leading principal submatrix in equation $\bm{J}_{m,i}\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}'=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the same, we suppress the straightforward yet tiresome details, and obtain
 $$
-\bm{\phi}_i\bm{W}_{\tilde{z},h}^{(i-1)} \neq \begin{bmatrix}\bm{0}_{1\times m+i-1} & 1 \end{bmatrix}\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_i',
+\bm{\phi}_i\bm{W}_{\tilde{z},h}^{(i-1)} \neq \big[\bm{0}_{1\times m+i-1} ~~~ 1 \big]\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}',
 $$
-where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{i-1}'$ is the projected forecast variance of the original series using the first $i-1$ components, and the right hand side of the inequality is simply a one-row matrix consisting of the first $m$ elements in the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, which can be denoted as $\bm{W}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ and interpreted as the covariance between the projected forecast of the original series using the first $i-1$ components, and the projected forecast of the $i$th component using the first $i-1$ components.
+where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the projected forecast variance of the original series using the first $i-1$ components, and the right hand side of the inequality is simply a one-row matrix consisting of the first $m$ elements in the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, which can be denoted as $\bm{W}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ and interpreted as the covariance between the projected forecast of the original series using the first $i-1$ components, and the projected forecast of the $i$th component using the first $i-1$ components.
 :::
 :::
 
-If we look at each element of the terms in @eq-pcon, we can interpret the condition in the following way: for at least one series, the forecast covariance between the new component and this series is not exactly a linear combination, defined by $\bm{\phi}_1$, of the forecast variance of this series and the forecast covariance between this series and all other series. For the $i$-component in @eq-pconi, the interpretation is similar, where the linear combination is defined by $\bm{\phi}_i$ and the forecast variance is replaced by the projected forecast variance and covariance associated with the first $i-1$ components. This interpretation constitutes a measure of forecast information. For the new component to be beneficial, the information brought by this new component, measured as the covariance, cannot be a combination of already existing information.
+If we look at each element of the terms in @eq-pcon, we can interpret the condition in the following way: for at least one series, the forecast covariance between the new component and this series is not exactly a linear combination, defined by $\bm{\phi}_1$, of the forecast variance of this series and the forecast covariance between this series and all other series. For the $i$th component in @eq-pconi, the interpretation is similar, where the linear combination is defined by $\bm{\phi}_i$ and the forecast variance is replaced by the projected forecast variance and covariance associated with the first $i-1$ components. This interpretation constitutes a measure of forecast information. For the new component to be beneficial, the information brought by this new component, measured as the covariance, cannot be a combination of already existing information.
 
 @thm-pos-condition can potentially provide insights into the selection of component weights and forecast models to satisfy the conditions. We leave this issue in a later article, as practically the conditions in @thm-pos-condition are either almost always satisfied if the weights are simulated randomly on a continuous scale, or the loss associated with the rare occasions where the conditions are not satisfied is neglectable compared to the estimation error imposed by the limited sample size as the number of components increases, as discussed in @sec-simulation and @sec-empirical-applications.
 
@@ -790,21 +726,17 @@ If we look at each element of the terms in @eq-pcon, we can interpret the condit
 ## Alternative Interpretations
 
 @eq-y_tilde can be seen as a solution to the optimisation problem:
-$$
-\begin{aligned}
+\begin{align*}
 \underset{\check{\bm{y}}_{T+h}}{\arg\min} (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h}) &\\
 \text{s.t. } \bm{C}\check{\bm{y}}_{T+h}=0&.
-\end{aligned}
-$$
+\end{align*}
 In this case, the projection can be interpreted as finding the set of forecast that is closest (on the transformed space) to the base forecast that satisfies the linear constraints imposed by the components.
 
 Moreover, this is equivalent to the optimisation problem:
-$$
-\begin{aligned}
+\begin{align*}
 \underset{\check{\bm{y}}_{T+h}}{\arg\min} (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h}) &\\
 \text{s.t. } \bm{\Phi}\check{\bm{z}}_{T+h}=\check{\bm{c}}_{T+h}&,
-\end{aligned}
-$$
+\end{align*}
 where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{y}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast variance of all series (See @AndNar2022 for a corrected proof). The result is the MinT solution
 $$
 \tilde{\bm{y}}_{t+h} = \bm{S}\bm{G} \hat{\bm{y}}_{t+h},
@@ -868,11 +800,11 @@ $$
 
 If the base forecasts are unbiased such that
 $$
-\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t),
+\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t),
 $$
 then the mapping in @eq-stmap are also unbiased:
 $$
-\operatorname{E}(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{z}_{t+h}|\mathcal{I}_t),
+\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t),
 $$
 provided
 $$
@@ -883,12 +815,11 @@ $$
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @lem-st-unb-const
-We have
+If $\bm{G}\bm{S} = \bm{I}$, then
 $$
-\operatorname{E}(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) =
-\operatorname{E}(\bm{G}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\operatorname{E}(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\operatorname{E}(\bm{y}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{G}\bm{S}\bm{z}_{t+h}|\mathcal{I}_t) = \operatorname{E}(\bm{z}_{t+h}|\mathcal{I}_t)
+\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) =
+\E(\bm{G}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{G}\bm{S}\bm{z}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t).
 $$
-if $\bm{G}\bm{S} = \bm{I}$.
 :::
 :::
 <!-- Lemma: Var -->
@@ -896,7 +827,7 @@ if $\bm{G}\bm{S} = \bm{I}$.
 
 The forecast variance covariance matrix of the mapped forecasts from @eq-stmap is given by
 $$
-\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{G}\bm{W}_h\bm{G}'.
+\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{G}\bm{W}_h\bm{G}'.
 $$
 
 :::
@@ -905,38 +836,33 @@ $$
 ::: {.proof}
 #### Proof of @lem-st-var
 Let the base and projected forecast errors be given as
-$$
-\begin{aligned}
+\begin{align*}
 \hat{\bm{e}}_{z,t+h} &= \bm{z}_{t+h} - \hat{\bm{z}}_{t+h},\\
 \hat{\bm{e}}_{y,t+h} &= \bm{y}_{t+h} - \hat{\bm{y}}_{t+h},\\
 \tilde{\bm{e}}_{z,t+h} &= \bm{z}_{t+h} - \tilde{\bm{z}}_{t+h},\\
-\text{ and }\tilde{\bm{e}}_{y,t+h} &= \bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}
+\text{and}\qquad
+\tilde{\bm{e}}_{y,t+h} &= \bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}
 = \bm{S}\bm{z}_{t+h} - \bm{S}\tilde{\bm{z}}_{t+h}
-= \bm{S} \tilde{\bm{e}}_{z,t+h}.
-\end{aligned}
-$$
-We have
-$$
-\begin{aligned}
+= \bm{S} \tilde{\bm{e}}_{z,t+h}. \\
+\text{Then we have}\qquad
 \tilde{\bm{e}}_{y,t+h}
 &= \hat{\bm{e}}_{y,t+h} + \hat{\bm{y}}_{t+h} - \tilde{\bm{y}}_{t+h}\\
 &= \hat{\bm{e}}_{y,t+h} + \hat{\bm{y}}_{t+h} - \bm{S}\bm{G}\hat{\bm{y}}_{t+h}\\
 &= \hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})(\bm{y}_{t+h} - \hat{\bm{e}}_{y,t+h})\\
+\text{and}\qquad
 &= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})\bm{S}\bm{z}_{t+h}\\
-\bm{S} \tilde{\bm{e}}_{z,t+h}&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},\\
-\end{aligned}
-$$
+\bm{S} \tilde{\bm{e}}_{z,t+h}&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},
+\end{align*}
 where the last line comes from $\bm{G}\bm{S} = \bm{I}$.
-Left multiply $\bm{G}$ to both sides, we have
+Left multiply $\bm{G}$ to both sides, we have\pagebreak[3]
 $$
-\begin{aligned}
-\bm{G}\bm{S} \tilde{\bm{e}}_{z,t+h} &= \bm{G}\bm{S}\bm{G}\hat{\bm{e}}_{y,t+h}\\
-\tilde{\bm{e}}_{z,t+h} &= \bm{G}\hat{\bm{e}}_{y,t+h}.
-\end{aligned}
+\bm{G}\bm{S} \tilde{\bm{e}}_{z,t+h} = \bm{G}\bm{S}\bm{G}\hat{\bm{e}}_{y,t+h}
+\qquad\text{and}\qquad
+\tilde{\bm{e}}_{z,t+h} = \bm{G}\hat{\bm{e}}_{y,t+h},
 $$
-Thus, we have
+and therefore
 $$
-\operatorname{Var}(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) =\operatorname{Var}(\tilde{\bm{e}}_{z,t+h})=\operatorname{Var}(\bm{G}\hat{\bm{e}}_{y,t+h})= \bm{G}\operatorname{Var}(\hat{\bm{e}}_{y,t+h})\bm{G}'= \bm{G}\bm{W}_h\bm{G}'.
+\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) =\Var(\tilde{\bm{e}}_{z,t+h})=\Var(\bm{G}\hat{\bm{e}}_{y,t+h})= \bm{G}\Var(\hat{\bm{e}}_{y,t+h})\bm{G}'= \bm{G}\bm{W}_h\bm{G}'.
 $$
 
 :::
@@ -962,7 +888,7 @@ Recognising $\bm{G}$ is of dimension $m\times (m+p)$, this problem can be effect
 $$
 \bm{G} = \begin{bmatrix}\bm{g}_1 & \bm{g}_2 &\dots &\bm{g}_n \end{bmatrix}',
 $$
-where $\bm{g}_i$ is the solution to the subproblem of the $i$-th series
+where $\bm{g}_i$ is the solution to the subproblem of the $i$th series
 $$
 \begin{aligned}
 \underset{\bm{g}_i}{\arg\min}\ \bm{g}_i'\bm{W}_h\bm{g}_i&\\
@@ -977,37 +903,33 @@ where $\delta_{ij}=\left\{\begin{array}{ll} 1 & i=j\\0 &j\neq j \end{array}\righ
 ::: {.proof}
 #### Proof of @thm-minvar
 
-This can be proved in a few different ways. We adopt the approach by @AndNar2022 to obtain the solution to @eq-obj, but the procedure from @Lue1969 [p. 85] can also be used, where the problem is divided to @eq-subobj and reconstructed to find the solution to @eq-obj.
+This can be proved in a few different ways. We adopt the approach of @AndNar2022 to obtain the solution to @eq-obj, but the procedure from @Lue1969 [p. 85] can also be used, where the problem is divided to @eq-subobj and reconstructed to find the solution to @eq-obj.
 
 There exists a Lagrange multiplier $\bm{\Lambda}$ such that
 $$
-L(\bm{G}) = \operatorname{tr}(\bm{G}\bm{W}_h\bm{G}') + \operatorname{tr}(\bm{\Lambda}'(\bm{I} - \bm{G}\bm{S}))
+L(\bm{G}) = \tr(\bm{G}\bm{W}_h\bm{G}') + \tr(\bm{\Lambda}'(\bm{I} - \bm{G}\bm{S}))
 $$
 is stationary at an extremum $\bm{G}$ [@Lue1969, p. 243, Theorem 1]. We set the Gateaux differential [@Lue1969, p. 171] to zero for any matrix $\bm{H}$:
-$$
-\begin{aligned}
+\begin{align*}
 \lim_{\alpha \to 0} \frac{L(\bm{G} + \alpha\bm{H}) - L(\bm{G})}{\alpha} &= 0 \\
-\operatorname{tr}(\bm{G}\bm{W}_h\bm{H}') + \operatorname{tr}(\bm{H}\bm{W}_h\bm{G}') - \operatorname{tr}(\bm{\Lambda}'(\bm{H}\bm{S})) &=\\
-\operatorname{tr}(2\bm{H}\bm{W}_h\bm{G}'-\bm{\Lambda}'\bm{H}\bm{S}) &=\\
-\operatorname{tr}(\bm{H}(2\bm{W}_h\bm{G}'-\bm{S}\bm{\Lambda}')) &=0 \\
+\tr(\bm{G}\bm{W}_h\bm{H}') + \tr(\bm{H}\bm{W}_h\bm{G}') - \tr(\bm{\Lambda}'(\bm{H}\bm{S}))
+  &=\tr(2\bm{H}\bm{W}_h\bm{G}'-\bm{\Lambda}'\bm{H}\bm{S})\\
+  &= \tr(\bm{H}(2\bm{W}_h\bm{G}'-\bm{S}\bm{\Lambda}')) \\
+  &=0 \\
 2\bm{W}_h\bm{G} &= \bm{S}\bm{\Lambda}' \\
 \bm{G}' &= \frac{1}{2}\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'.
-\end{aligned}
-$$
-
+\end{align*}
 Multiplying $\bm{S}'$ to the left of both sides. we have
 $$
-\begin{aligned}
-\bm{S}'\bm{G}'=\bm{I} &= \frac{1}{2}\bm{S}'\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'\\
-\bm{\Lambda}' &= 2 (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}
-\end{aligned}
+\bm{S}'\bm{G}'=\bm{I} = \frac{1}{2}\bm{S}'\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'
+\qquad\text{and}\qquad
+\bm{\Lambda}' = 2 (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}
 $$
 because $\bm{G}\bm{S} = \bm{I}$. Putting it back in, we have
 $$
-\begin{aligned}
-\bm{G}' &= \bm{W}_h^{-1}\bm{S}(\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1} \\
-\bm{G} &= (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}. \\
-\end{aligned}
+\bm{G}' = \bm{W}_h^{-1}\bm{S}(\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}
+\qquad\text{and}\qquad
+\bm{G} = (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}.
 $$
 :::
 :::
@@ -1130,7 +1052,7 @@ Different constructions of components remain an important aspect of forecast pro
 
 At the bottom of each panel in @fig-simulation-line, the best forecasts come from the true DGP VAR model (the dashed green line that is partially covered by the solution green line). The forecast projection on the true model does not improve its forecast (the solid green line) as expected, as the uncertainty comes from the intrinsic error in the DGP that cannot be reduced. The second best forecast is from the estimated VAR model, as the uncertainty, apart from the intrinsic error, only comes from estimation error, not model misspecification error like ARIMA and DFM, which are both misspecified in this simulation example. The gap between the estimated VAR and the true VAR becomes bigger for a longer forecast horizon, because VAR produces iterative forecasts, and estimation error accumulates as $h$ becomes larger.
 
-Forecast projection shows little, if any, improvement over the estimated VAR. This means forecast projection cannot reduce estimation error or the parameter uncertainty described in @PetEtAl2018. On the other hand, it shows significant improvement over misspecified base models. This implies the uncertainty it can reduce is mainly the model misspecification error, or the model uncertainty in @PetEtAl2018, similar to how bagging reduces variance. The data uncertainty in @PetEtAl2018 is not examined and is less translatable to forecast projection, but it is partially the uncertainty associated with how the components are constructed as discussed in @sec-component-construction.
+Forecast projection shows little, if any, improvement over the estimated VAR. This means forecast projection cannot reduce estimation error or the parameter uncertainty described in @PetEtAl2018. On the other hand, it shows significant improvement over misspecified base models. This implies that the uncertainty it can reduce is mainly the model misspecification error, or the model uncertainty in @PetEtAl2018, similar to how bagging reduces variance. The data uncertainty in @PetEtAl2018 is not examined and is less translatable to forecast projection, but it is partially the uncertainty associated with how the components are constructed as discussed in @sec-component-construction.
 
 
 # Empirical applications {#sec-empirical-applications}
