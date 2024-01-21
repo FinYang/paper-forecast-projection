@@ -327,7 +327,7 @@ is non-decreasing as $p$ increases.^[We thank Daniele Girolimetto for contributi
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @thm-monotone
-Suppose now that we want to include $q$ more components $\bm{c}_{t}^*=\bm{\Phi}^*\bm{z}_t$ in the reconciliation. We define $\bm{y}_{t}^* = \begin{bmatrix}\bm{y}_{t}\\ \bm{c}_{t}^*\end{bmatrix}$, the constraint matrix
+Suppose now that we want to include $q$ more components $\bm{c}_{t}^*=\bm{\Phi}^*\bm{z}_t$ in the projection. We define $\bm{y}_{t}^* = \begin{bmatrix}\bm{y}_{t}\\ \bm{c}_{t}^*\end{bmatrix}$, the constraint matrix
 $$
 \bm{C}^* =
 \begin{bmatrix}
