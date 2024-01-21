@@ -89,7 +89,9 @@ The rest of the paper is structured as follows. In @sec-method, we propose the f
 
 We use $\bm{I}_n$ to denote the $n\times n$ identity matrix, and $\bm{O}_{n\times k}$ to denote the $n\times k$ zero matrix. Define the selection matrix $\bm{J}_{n,k} = \big[\bm{I}_n ~~~ \bm{O}_{n\times k}\big]$, so that $\bm{J}_{n,k}\bm{A}$ picks out the first $n$ rows of a matrix $\bm{A}$.
 
-Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ observed time series at time $t$. Let $\bm{y}_{t} = \big[\bm{z}_t', \bm{c}'_{t}\big]'$ be the collection of series $\bm{z}_t$ and components $\bm{c}_{t}$, where $\bm{c}_{t} = \bm{\Phi}\bm{z}_t\in \mathbf{R}^p$, and let $\hat{\bm{y}}_{t+h}$ denote the $h$-step-ahead base forecast of $\bm{y}_{t}$. The forecast variance covariance matrix is $\Var(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h$. We project the base forecasts onto the space where the constraints are imposed:
+Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ observed time series at time $t$, and let $\bm{c}_t = \bm{\Phi}\bm{z}_t\in\mathbf{R}^p$ be a vector of $p$ linear combinations of $\bm{z}_t$ at time $t$, where $\bm{\Phi}\in\mathbf{R}^{p\times m}$ is a matrix of coefficients. We call $\bm{c}_t$ the components of $\bm{z}_t$.  Let $\bm{y}_{t} = \big[\bm{z}_t', \bm{c}'_{t}\big]'$ be the collection of series $\bm{z}_t$ and components $\bm{c}_{t}$, and let $\hat{\bm{y}}_{t+h}$ denote the $h$-step-ahead base forecast of $\bm{y}_{t}$. The forecast variance covariance matrix is $\Var(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h$.
+
+We project the base forecasts onto the space where the constraints are imposed:
 $$
 \tilde{\bm{y}}_{t+h} = \bm{M} \hat{\bm{y}}_{t+h}
 $$ {#eq-y_tilde}
@@ -97,7 +99,9 @@ with projection matrix
 $$
 \bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
 $$ {#eq-M}
-where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ defines the $p\times(m+p)$ constraint matrix such that $\bm{C}\bm{y}_t= \bm{c}_{t} - \bm{\Phi}\bm{z}_t = \bm{0}$ for any $t$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ denote the first $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{z}_t$ respectively. Similarly, let $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ denote the last $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{c}_t$ respectively. Then the projected forecast of $\bm{z}_t$ can be found by
+where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ defines the $p\times(m+p)$ constraint matrix such that $\bm{C}\bm{y}_t= \bm{c}_{t} - \bm{\Phi}\bm{z}_t = \bm{0}$ for any $t$.
+
+Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ denote the first $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{z}_t$ respectively. Similarly, let $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ denote the last $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{c}_t$ respectively. Then the projected forecast of $\bm{z}_t$ can be found by
 $$
 \tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h},
 $$ {#eq-lcmap}
