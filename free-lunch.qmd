@@ -115,13 +115,15 @@ $$
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @lem-coherent
-\begin{align*}
+$$
+\begin{aligned}
 \bm{C}\tilde{\bm{y}}_{t+h} &=
 \bm{C}\bm{M}\hat{\bm{y}}_{t+h} \\
 &= \bm{C}(\bm{I}_{n+q} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\hat{\bm{y}}_{t+h}\\
 &= \bm{C}\hat{\bm{y}}_{t+h} - \bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}\\
 &= \bm{0}
-\end{align*}
+\end{aligned}
+$$
 :::
 :::
 
@@ -140,6 +142,7 @@ $$
 since $\bm{C}\bm{y}_{t+h} = \bm{0}$.
 :::
 :::
+
 
 ::: {#lem-unbiased}
 If the base forecasts are unbiased such that
@@ -184,7 +187,8 @@ $$
 = \bm{M}\bm{W}_h\bm{M}'.
 $$
 If we simplify it further, we have
-\begin{align*}
+$$
+\begin{aligned}
 \bm{M}\bm{W}_h\bm{M}'
 &= (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h(\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})'\\
 %&= (\bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h)(\bm{I} - \bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h) \\
@@ -193,7 +197,8 @@ If we simplify it further, we have
 &= \bm{W}_h - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h \\
 %&= (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h \\
 &= \bm{M}\bm{W}_h.
-\end{align*}
+\end{aligned}
+$$
 To get $\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$, we just need to recognise that it is the first $m\times m$ leading principal submatrix of $\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$.
 
 :::
@@ -206,11 +211,13 @@ To get $\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$, we just need to recognise th
 #### Positive Semi-Definiteness of Variance Reduction
 
 The difference between the forecast variance covariance matrix of the base forecast and the projected forecast
-\begin{align*}
+$$
+\begin{aligned}
 \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) &=\bm{W}_h-\bm{M}\bm{W}_h\\
 &= \bm{W}_h - (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h\\
 &=\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h
-\end{align*}
+\end{aligned}
+$$
 is positive semi-definite.
 The difference between the forecast variance of $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$
 $$
@@ -240,7 +247,8 @@ $$
 \bm{W}_h = \bm{I}_{m+p},
 $$
 that is, let $\bm{y}_t$ consist of $m$ original series and $p$ components whose forecasts are all uncorrelated with each other with variance $1$, then
-\begin{align*}
+$$
+\begin{aligned}
 \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
 &=
 \bm{C}'(\bm{C}\bm{C}')^{-1}\bm{C}\\
@@ -248,7 +256,8 @@ that is, let $\bm{y}_t$ consist of $m$ original series and $p$ components whose 
 \begin{bmatrix} -\bm{\Phi}'\\ \bm{I}_{p} \end{bmatrix}
 (\bm{\Phi}\bm{\Phi}' + \bm{I})^{-1}
 \begin{bmatrix} -\bm{\Phi}& \bm{I}_{p} \end{bmatrix} ,
-\end{align*}
+\end{aligned}
+$$
 where
 $$
 \bm{C} = \begin{bmatrix} -\underset{p \times m}{\bm{\Phi}}& \underset{p \times p}{\bm{I}_{p}} \end{bmatrix}.
@@ -262,7 +271,8 @@ $$
 \bm{\Phi}'\bm{\Phi} = \bm{I}_m\text{ when } p= m,
 $$
 then
-\begin{align*}
+$$
+\begin{aligned}
 \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
 & =
 \frac{1}{2}
@@ -276,7 +286,8 @@ then
 \bm{I}_m  &-\bm{\Phi}'\\
 -\bm{\Phi} & \bm{I}_p
 \end{bmatrix}\text{ when } p=m.
-\end{align*}
+\end{aligned}
+$$
 We only focus on the forecast variance of the original series, which is $\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
 When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent (i.e. $(\bm{\Phi}'\bm{\Phi})(\bm{\Phi}'\bm{\Phi})= \bm{\Phi}'\bm{\Phi}\bm{\Phi}'\bm{\Phi} = \bm{\Phi}'\bm{\Phi}$), we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. The reduction on the forecast variance of the original series is $p/2$.
 When $p=m$, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$, and the reduction is $m/2$.
@@ -379,7 +390,8 @@ $$
  =\bm{C}\bm{W}_h\bm{C}',
 $$
 which gives
-\begin{align*}
+$$
+\begin{aligned}
 \bm{M}^{+}
 & = \bm{I}_{m+p+q} -
     \begin{bmatrix}
@@ -403,9 +415,11 @@ which gives
       \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0} \\
       \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0}
     \end{bmatrix},
-\end{align*}
+\end{aligned}
+$$
 and
-\begin{align*}
+$$
+\begin{aligned}
 \tilde{\bm{y}}_{t+h}^+
 & = \bm{M}^{+}\hat{\bm{y}}_{t+h}^* \\
 & = \left(
@@ -432,7 +446,8 @@ and
       \tilde{\bm{y}}_{t+h}\\
       \hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}
     \end{bmatrix}.
-\end{align*}
+\end{aligned}
+$$
 If we only consider the forecast performance relevant to $\bm{z}_{t+h}$, and define $\bm{J}^* = \bm{J}_{m,p+q}= \begin{bmatrix}\bm{I}_{m} & \bm{0}_{m\times(p+q)} \end{bmatrix}$, we have
 $$
 \tilde{\bm{z}}_{t+h}^+ = \bm{J}^*\tilde{\bm{y}}_{t+h}^+ = \bm{J}\tilde{\bm{y}}_{t+h} = \tilde{\bm{z}}_{t+h}.
@@ -443,23 +458,28 @@ $$
 $$ {#eq-acnc}
 <!-- additional components no constraints -->
 This finishes the proof of the first statement. Now we move on to proving the second statement. We have the forecast variance matrices
-\begin{align*}
+$$
+\begin{aligned}
 \Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) & = \bm{M}^{+}\bm{W}_h^*
     = (\bm{I}_{m+p+q} -\bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^* \\
 \text{and}\qquad\qquad
 \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) & = \bm{M}^*\bm{W}_h^*
     = (\bm{I}_{m+p+q} - \bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*)\bm{W}_h^*.
-\end{align*}
+\end{aligned}
+$$
 Taking the difference, we have
-\begin{align*}
+$$
+\begin{aligned}
 \Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) - \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*)
 & = (\bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -
       \bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^* \\
 & = \bm{W}_h^*(\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -
       \overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^*.
-\end{align*}
+\end{aligned}
+$$
 Using block matrix inversion, we have
-\begin{align*}
+$$
+\begin{aligned}
 \bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*
 & = \begin{bmatrix}
       \overline{\bm{C}}' & \underline{\bm{C}}'
@@ -485,9 +505,11 @@ Using block matrix inversion, we have
     + \overline{\bm{C}}'b \underline{\bm{C}}
     + \underline{\bm{C}}'c\overline{\bm{C}}
     + \underline{\bm{C}}'d\underline{\bm{C}},
-\end{align*}
+\end{aligned}
+$$
 where
-\begin{align*}
+$$
+\begin{aligned}
 a &= (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1} +
      (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}}\bm{W}_h^*\underline{\bm{C}}' \\
   & \mbox{}\hspace*{1cm}
@@ -509,9 +531,11 @@ c & = - (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
       \underline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
       (\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1},\\
 d & = (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}.
-\end{align*}
+\end{aligned}
+$$
 Thus,
-\begin{align*}
+$$
+\begin{aligned}
 \bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*
 & =
 \overline{\bm{C}}'
@@ -564,9 +588,11 @@ Thus,
 \underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}.
-\end{align*}
+\end{aligned}
+$$
 Therefore,
-\begin{align*}
+$$
+\begin{aligned}
 \Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}^*) - \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*)
 \hspace*{-4cm} \\
 & =
@@ -587,7 +613,8 @@ Therefore,
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}
 )\bm{W}_h^*
-\end{align*}
+\end{aligned}
+$$
 is positive semi-definite. This concludes the proof of the second statement.
 Combining the results above, we have
 $$
@@ -655,7 +682,8 @@ $$
 \tr(\bm{J}_{m,1}\bm{W}_h^{(1)}\bm{\psi}_1'(\bm{\psi}_1\bm{W}_h^{(1)}\bm{\psi}_1')^{-1}\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}') =
 (\bm{\psi}_1\bm{W}_h^{(1)}\bm{\psi}_1')^{-1}\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}'\bm{J}_{m,1}\bm{W}_h^{(1)}\bm{\psi}_1',
 $$ {#eq-trdvar1}
-\begin{align*}
+$$
+\begin{aligned}
 \text{where}\qquad\qquad
 \bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' =&
 \begin{bmatrix}
@@ -669,7 +697,8 @@ $$ {#eq-trdvar1}
 \bm{I}_m\\ 0
 \end{bmatrix} \\
 =& -\bm{\phi}_1\bm{W}_{z,h} + \bm{W}_{c_1z,h}.
-\end{align*}
+\end{aligned}
+$$
 @eq-trdvar1 is obviously non-negative. For it to be larger than $0$, we need $\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' \neq 0$, which gives $\bm{\phi}_1\bm{W}_{z,h} \neq \bm{W}_{c_1z,h}$.
 
 When it comes to adding the $i$th component on top of the first $i-1$ components, we define
@@ -726,17 +755,21 @@ If we look at each element of the terms in @eq-pcon, we can interpret the condit
 ## Alternative Interpretations
 
 @eq-y_tilde can be seen as a solution to the optimisation problem:
-\begin{align*}
+$$
+\begin{aligned}
 \underset{\check{\bm{y}}_{T+h}}{\arg\min} (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h}) &\\
 \text{s.t. } \bm{C}\check{\bm{y}}_{T+h}=0&.
-\end{align*}
+\end{aligned}
+$$
 In this case, the projection can be interpreted as finding the set of forecast that is closest (on the transformed space) to the base forecast that satisfies the linear constraints imposed by the components.
 
 Moreover, this is equivalent to the optimisation problem:
-\begin{align*}
+$$
+\begin{aligned}
 \underset{\check{\bm{y}}_{T+h}}{\arg\min} (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h}) &\\
 \text{s.t. } \bm{\Phi}\check{\bm{z}}_{T+h}=\check{\bm{c}}_{T+h}&,
-\end{align*}
+\end{aligned}
+$$
 where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{y}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast variance of all series (See @AndNar2022 for a corrected proof). The result is the MinT solution
 $$
 \tilde{\bm{y}}_{t+h} = \bm{S}\bm{G} \hat{\bm{y}}_{t+h},
@@ -836,7 +869,8 @@ $$
 ::: {.proof}
 #### Proof of @lem-st-var
 Let the base and projected forecast errors be given as
-\begin{align*}
+$$
+\begin{aligned}
 \hat{\bm{e}}_{z,t+h} &= \bm{z}_{t+h} - \hat{\bm{z}}_{t+h},\\
 \hat{\bm{e}}_{y,t+h} &= \bm{y}_{t+h} - \hat{\bm{y}}_{t+h},\\
 \tilde{\bm{e}}_{z,t+h} &= \bm{z}_{t+h} - \tilde{\bm{z}}_{t+h},\\
@@ -852,7 +886,8 @@ Let the base and projected forecast errors be given as
 \text{and}\qquad
 &= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})\bm{S}\bm{z}_{t+h}\\
 \bm{S} \tilde{\bm{e}}_{z,t+h}&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},
-\end{align*}
+\end{aligned}
+$$
 where the last line comes from $\bm{G}\bm{S} = \bm{I}$.
 Left multiply $\bm{G}$ to both sides, we have\pagebreak[3]
 $$
@@ -910,7 +945,8 @@ $$
 L(\bm{G}) = \tr(\bm{G}\bm{W}_h\bm{G}') + \tr(\bm{\Lambda}'(\bm{I} - \bm{G}\bm{S}))
 $$
 is stationary at an extremum $\bm{G}$ [@Lue1969, p. 243, Theorem 1]. We set the Gateaux differential [@Lue1969, p. 171] to zero for any matrix $\bm{H}$:
-\begin{align*}
+$$
+\begin{aligned}
 \lim_{\alpha \to 0} \frac{L(\bm{G} + \alpha\bm{H}) - L(\bm{G})}{\alpha} &= 0 \\
 \tr(\bm{G}\bm{W}_h\bm{H}') + \tr(\bm{H}\bm{W}_h\bm{G}') - \tr(\bm{\Lambda}'(\bm{H}\bm{S}))
   &=\tr(2\bm{H}\bm{W}_h\bm{G}'-\bm{\Lambda}'\bm{H}\bm{S})\\
@@ -918,7 +954,8 @@ is stationary at an extremum $\bm{G}$ [@Lue1969, p. 243, Theorem 1]. We set the 
   &=0 \\
 2\bm{W}_h\bm{G} &= \bm{S}\bm{\Lambda}' \\
 \bm{G}' &= \frac{1}{2}\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'.
-\end{align*}
+\end{aligned}
+$$
 Multiplying $\bm{S}'$ to the left of both sides. we have
 $$
 \bm{S}'\bm{G}'=\bm{I} = \frac{1}{2}\bm{S}'\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'
