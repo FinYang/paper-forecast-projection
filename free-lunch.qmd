@@ -89,7 +89,7 @@ The rest of the paper is structured as follows. In @sec-method, we propose the f
 
 We use $\bm{I}_n$ to denote the $n\times n$ identity matrix, and $\bm{O}_{n\times k}$ to denote the $n\times k$ zero matrix. Define the selection matrix $\bm{J}_{n,k} = \big[\bm{I}_n ~~~ \bm{O}_{n\times k}\big]$, so that $\bm{J}_{n,k}\bm{A}$ picks out the first $n$ rows of a matrix $\bm{A}$.
 
-Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ observed time series at time $t$, and let $\bm{c}_t = \bm{\Phi}\bm{z}_t\in\mathbf{R}^p$ be a vector of $p$ linear combinations of $\bm{z}_t$ at time $t$, where $\bm{\Phi}\in\mathbf{R}^{p\times m}$ is a matrix of coefficients. We call $\bm{c}_t$ the components of $\bm{z}_t$.  Let $\bm{y}_{t} = \big[\bm{z}_t', \bm{c}'_{t}\big]'$ be the collection of series $\bm{z}_t$ and components $\bm{c}_{t}$, and let $\hat{\bm{y}}_{t+h}$ denote the $h$-step-ahead base forecast of $\bm{y}_{t}$. The forecast variance covariance matrix is $\Var(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h$.
+Let $\bm{z}_t\in\mathbf{R}^m$ be a vector of $m$ observed time series at time $t$, and let $\bm{c}_t = \bm{\Phi}\bm{z}_t\in\mathbf{R}^p$ be a vector of $p$ linear combinations of $\bm{z}_t$ at time $t$, where $\bm{\Phi}\in\mathbf{R}^{p\times m}$ is a matrix of coefficients. We call $\bm{c}_t$ the components of $\bm{z}_t$.  Let $\bm{y}_{t} = \big[\bm{z}_t', \bm{c}'_{t}\big]'$ be the collection of series $\bm{z}_t$ and components $\bm{c}_{t}$, and let $\hat{\bm{y}}_{t+h}$ denote the $h$-step-ahead base forecast of $\bm{y}_{t}$. The forecast covariance matrix is $\Var(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h$.
 
 We project the base forecasts onto the space where the constraints are imposed:
 $$
@@ -168,14 +168,14 @@ $$
 :::
 :::
 
-The only requirement for the current theory of forecast projection to work is the given base forecasts need to be unbiased. This is not a strict requirement as unbiasedness can be achieved by most of the common forecasting models with an intercept. Even if there are transformations applied to the data set before the models are fitted, bias correction can be applied as suggested by @PanEtAl2021. Note this is not a requirement on model specification: we do not assume the model producing the base forecast is correctly specified like in the DFM literature (e.g. @StoWat2002). In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
+Note that the unbiasedness of the base forecasts is true for most common forecasting models, and can otherwise be easily achieved with a simple bias correction as suggested by @PanEtAl2021. Note this is not a requirement on model specification: we do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
 
 ::: {#lem-var}
-The forecast variance covariance matrix of the component-constrained projected $h$-step-ahead  forecasts $\tilde{\bm{y}}_{t+h}$ is $\bm{M}\bm{W}_h$, i.e.
+The forecast covariance matrix of the component-constrained projected $h$-step-ahead  forecasts $\tilde{\bm{y}}_{t+h}$ is $\bm{M}\bm{W}_h$, i.e.
 $$
 \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{M}\bm{W}_h\bm{M}' = \bm{M}\bm{W}_h,
 $$
-and the forecast variance covariance matrix of the projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is
+and the forecast covariance matrix of the projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is
 $$
 \Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
 $$
@@ -208,24 +208,24 @@ To get $\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$, we just need to recognise th
 :::
 :::
 
-@lem-var is a well known results (e.g. @DiGir2023) but was rarely focused on.
+@lem-var is a well-known result in the forecast reconciliation literature [e.g., @DiGir2023].
 
 ::: {#thm-psdvar}
 
 #### Positive Semi-Definiteness of Variance Reduction
 
-The difference between the forecast variance covariance matrix of the base forecast and the projected forecast
+The difference between the forecast covariance matrices of the base and projected forecasts,
 $$
 \begin{aligned}
 \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) &=\bm{W}_h-\bm{M}\bm{W}_h\\
 &= \bm{W}_h - (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h\\
-&=\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h
+&=\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h,
 \end{aligned}
 $$
 is positive semi-definite.
-The difference between the forecast variance of $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$
+The difference between the forecast variance of $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$,
 $$
-\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}',
 $$
 is therefore positive semi-definite.
 
@@ -238,19 +238,15 @@ $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\
 :::
 :::
 
-@thm-psdvar is why forecast projection works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of forecast variances that can be reduced by forecast projection. Because the matrix is positive semi-definite, such trace is nonnegative. It means we can reduce the forecast variance by simply forecasting the components - the artificially constructed linear combination of the original data, and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace needs to be zero, and because the matrix is positive semi-definite, this implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is a zero matrix, which rarely happens in practice. See @thm-pos-condition for more discussions.
+@thm-psdvar is why forecast projection works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of the reduction in forecast variances, and is non-negative because the matrix is positive semi-definite. It means we can reduce the forecast variance by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace needs to be zero, and because the matrix is positive semi-definite, this implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is a zero matrix, which rarely happens in practice. See @thm-pos-condition for more discussions.
 
 We give a simple example to show how the variance reduction works.
 
 ::: {#exm-identityW}
 
-#### Identity $W_h$
+####
 
-Let
-$$
-\bm{W}_h = \bm{I}_{m+p},
-$$
-that is, let $\bm{y}_t$ consist of $m$ original series and $p$ components whose forecasts are all uncorrelated with each other with variance $1$, then
+Suppose $\bm{y}_t$ comprises $m$ original series and $p$ components whose forecasts are all uncorrelated with each other and have  variance $1$. Then $\bm{W}_h = \bm{I}_{m+p}$, and
 $$
 \begin{aligned}
 \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
@@ -264,65 +260,54 @@ $$
 $$
 where
 $$
-\bm{C} = \begin{bmatrix} -\underset{p \times m}{\bm{\Phi}}& \underset{p \times p}{\bm{I}_{p}} \end{bmatrix}.
+\bm{C} = \begin{bmatrix} - \bm{\Phi}& \bm{I}_{p} \end{bmatrix}.
 $$
-Let $\bm{\Phi}$ consists of unit vectors that are orthogonal to each other, for example, those obtained from Principal Component Analysis [PCA, see @Jol2002 among others]. That is,
+Let $\bm{\Phi}$ consist of orthogonal unit vectors, for example, those obtained from Principal Component Analysis [PCA, @Jol2002]. That is,
 $$
 \bm{\Phi}\bm{\Phi}' = \bm{I}_p\text{ when } p\le m
+\qquad\text{and}\qquad
+\bm{\Phi}'\bm{\Phi} = \bm{I}_m\text{ when } p= m.
 $$
-and
+Then
 $$
-\bm{\Phi}'\bm{\Phi} = \bm{I}_m\text{ when } p= m,
-$$
-then
-$$
-\begin{aligned}
 \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
-& =
-\frac{1}{2}
-\begin{bmatrix}
-\bm{\Phi}'\bm{\Phi} & -\bm{\Phi}'\\
--\bm{\Phi} & \bm{I}_p
-\end{bmatrix}\text{ when } p\le m. \\
-& =
-\frac{1}{2}
-\begin{bmatrix}
-\bm{I}_m  &-\bm{\Phi}'\\
--\bm{\Phi} & \bm{I}_p
-\end{bmatrix}\text{ when } p=m.
-\end{aligned}
+  =  \frac{1}{2}
+      \begin{bmatrix}
+        \bm{\Phi}'\bm{\Phi} & -\bm{\Phi}'\\
+        -\bm{\Phi} & \bm{I}_p
+       \end{bmatrix}.
 $$
-We only focus on the forecast variance of the original series, which is $\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
-When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent (i.e. $(\bm{\Phi}'\bm{\Phi})(\bm{\Phi}'\bm{\Phi})= \bm{\Phi}'\bm{\Phi}\bm{\Phi}'\bm{\Phi} = \bm{\Phi}'\bm{\Phi}$), we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. The reduction on the forecast variance of the original series is $p/2$.
+We only focus on the forecast variance reduction for the original series, which is $\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
+When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. The reduction in the forecast variance of the original series is $p/2$.
 When $p=m$, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$, and the reduction is $m/2$.
-If we have two series ($m=2$) to begin with, using $1$ component ($p=1$) in the mapping will reduce the sum of forecast variance by $0.5$, and using $2$ components ($p=m=2$) will reduce the sum of forecast variance by $1$, that is a $50\%$ reduction when the original sum of forecast variance is only $2$.
+If we have two series ($m=2$) to begin with, using $p=1$ component in the mapping will reduce the sum of forecast variance by $0.5$, and using $p=2$ components will reduce the sum of forecast variance by $1$; that is a $50\%$ reduction as the original sum of forecast variances is $2$.
 
-If we keep increasing the number of components, the result in @thm-psdvar still holds, but $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example in the sense that the forecast variance $\bm{W}_h$ can hardly be identity in practice, as the forecasts of a linear combination of two series are likely to be correlated with the forecasts of these series. Nonetheless, we can see how the forecast variance can be reduced as a result of uncorrelatedness between the forecast of components and the series, representing the new information brought by the components.
+If we keep increasing the number of components, the result in @thm-psdvar still holds, although $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example because the forecast variance $\bm{W}_h$ can hardly be an identity in practice, as the forecasts of a linear combination of two series are likely to be correlated with the forecasts of these series. Nonetheless, we can see how the forecast variance can be reduced as a result of the component forecasts bringing new information about the original series.
 :::
 
-The variance reduction becomes larger as we increase the number of component $p$ from $1$ to $2$ in @exm-identityW. In fact, this is not a coincidence but rather a much desired property of forecast projection, as shown in the next section.
+The variance reduction becomes larger as we increase the number of components $p$ from $1$ to $2$ in @exm-identityW. This is not a coincidence but a desirable property of forecast projection, as shown in the next section.
 
 ## Monotonicity
 
-In the results that follow, we break the base forecast variance covariance matrix into smaller blocks:
+In the results that follow, we break the base forecast covariance matrix into smaller blocks:
 $$
 \bm{W}_h =
 \begin{bmatrix}
 \bm{W}_{z, h} & \bm{W}_{zc, h} \\
-\bm{W}_{cz, h} & \bm{W}_{c, h}
+\bm{W}_{zc, h}' & \bm{W}_{c, h}
 \end{bmatrix},
 $$
-where $\bm{W}_{z, h}$ is the forecast variance covariance matrix of $\hat{\bm{z}}_{t+h}$,  $\bm{W}_{c, h}$ is the forecast variance covariance matrix of $\hat{\bm{c}}_{t+h}$,
-and $\bm{W}_{zc, h}$ ($\bm{W}_{cz, h}$) consists of covariance between elements of $\hat{\bm{z}}_{t+h}$ and $\hat{\bm{c}}_{t+h}$ ($\hat{\bm{c}}_{t+h}$ and $\hat{\bm{z}}_{t+h}$).
+where $\bm{W}_{z, h}$ is the forecast covariance matrix of $\hat{\bm{z}}_{t+h}$,  $\bm{W}_{c, h}$ is the forecast covariance matrix of $\hat{\bm{c}}_{t+h}$,
+and $\bm{W}_{zc, h}$ contains covariances between elements of $\hat{\bm{z}}_{t+h}$ and $\hat{\bm{c}}_{t+h}$.
 
 ::: {#thm-monotone}
 
 #### Monotonicity
-The sum of reduced forecast variance
+The sum of forecast variance reductions
 $$
 \tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
 $$ {#eq-trdvar}
-is non-decreasing as $p$ increases.^[We thank Daniele Girolimetto for contributing to the initial proof (of the second statement in the proof) in his unpublished work.]
+is non-decreasing as $p$ increases.
 :::
 ::: {.toappendix}
 ::: {.proof}
@@ -345,7 +330,7 @@ $$
 \end{bmatrix}
 $$ {#eq-Cstar}
 where $\overline{\bm{C}}$ contains the first $p$ rows of $\bm{C}^*$ and $\underline{\bm{C}}$ contains the remaining $q$ rows of $\bm{C}^*$,
-the forecast variance covariance matrix
+the forecast covariance matrix
 $$
 \Var(\hat{\bm{y}}_{t+h}^* - \bm{y}_{t+h}^*) = \bm{W}_h^* = \begin{bmatrix}\bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c,h}^*\end{bmatrix}.
 $$
@@ -657,9 +642,9 @@ being the trace of a positive semi-definite matrix, which is non-negative. This 
 :::
 :::
 
-@thm-monotone is the key result that justifies the usefulness of forecast projection by providing a practical way to increase its power. It means we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the true base forecast variance covariance of all the series and components. It requires $\bm{C}$ to be $\begin{bmatrix} -\bm{\Phi}&\bm{I}_{p} \end{bmatrix}$ or $\begin{bmatrix} -\bm{\Phi}& {\bm{L}} \end{bmatrix}$ where $\bm{L}$ is a lower triangular matrix (the upper right corner needs to be all $0$s). This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components (which are linear combinations themselves) of the original series, is just a linear combination of the original series.
+@thm-monotone is the key result that demonstrates the usefulness of forecast projection. It means that we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the base forecast covariance of all the series and components. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix (with upper right corner all $0$s). This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series.
 
-Extending the proof of @thm-monotone, we can outline the condition for the reduced variance to be positive. That is, if the new component satisfies these relationships with the previous (projected) forecasts, the projected forecast variance with the new component is smaller than the base forecast variance or the projected variance with only the previous components. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \begin{bmatrix}\bm{\phi}_1' & \bm{\phi}_2' & \dots & \bm{\phi}_p'\end{bmatrix}'$.
+Extending the proof of @thm-monotone, we can outline the condition for the reduced variance to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{z},h}$ denote the covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}z,h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component, and the projected forecasts of the original series, based on the first $i-1$ components.
 
 ::: {#thm-pos-condition}
 
@@ -667,14 +652,12 @@ Extending the proof of @thm-monotone, we can outline the condition for the reduc
 
 For the first component to have a guaranteed reduction of forecast variance (for the reduced variance matrix in @thm-psdvar to have positive trace), the following condition must be satisfied:
 $$
-\bm{\phi}_1\bm{W}_{z,h}\neq\bm{W}_{c_1z,h},
+\bm{\phi}_1\bm{W}_{z,h}\neq\bm{w}_{c_1z,h}.
 $$ {#eq-pcon}
-where $\bm{W}_{c_{1}z,h}$ denotes the base forecast covariance of the first components and the original series.
-For the $i$th component to have a positive reduction on forecast variance of the original series, the following condition is satisfied:
+For the $i$th component to have a positive reduction on forecast variance of the original series, the following condition must be satisfied:
 $$
-\bm{\phi}_i{\bm{W}}^{(i-1)}_{\tilde{z},h}\neq\bm{W}_{\tilde{c}_i\tilde{z},h}^{(i-1)},
+\bm{\phi}_i{\bm{W}}^{(i-1)}_{\tilde{z},h}\neq\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)},
 $$ {#eq-pconi}
-where $\bm{W}^{(i-1)}_{\tilde{z},h}$ denotes the projected forecast variance of the original series using the first $i-1$ components, and $\bm{W}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denotes the covariance between the projected forecast of the original series using the first $i-1$ components and the projected forecast of the $i$th component using the first $i-1$ components. See the proof in the Appendix for an algebraic definition.
 
 :::
 ::: {.toappendix}
@@ -694,16 +677,16 @@ $$
 -\bm{\phi}_1 & 1
 \end{bmatrix}
 \begin{bmatrix}
-\bm{W}_{z,h} & \bm{W}_{zc_1,h} \\
-\bm{W}_{c_1z,h} & \bm{W}_{c_1,h}
+\bm{W}_{z,h} & \bm{w}'_{c_1z,h} \\
+\bm{w}_{c_1z,h} & \bm{W}_{c_1,h}
 \end{bmatrix}
 \begin{bmatrix}
 \bm{I}_m\\ 0
 \end{bmatrix} \\
-=& -\bm{\phi}_1\bm{W}_{z,h} + \bm{W}_{c_1z,h}.
+=& -\bm{\phi}_1\bm{W}_{z,h} + \bm{w}_{c_1z,h}.
 \end{aligned}
 $$
-@eq-trdvar1 is obviously non-negative. For it to be larger than $0$, we need $\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' \neq 0$, which gives $\bm{\phi}_1\bm{W}_{z,h} \neq \bm{W}_{c_1z,h}$.
+@eq-trdvar1 is obviously non-negative. For it to be larger than $0$, we need $\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' \neq 0$, which gives $\bm{\phi}_1\bm{W}_{z,h} \neq \bm{w}_{c_1z,h}$.
 
 When it comes to adding the $i$th component on top of the first $i-1$ components, we define
 $$
@@ -747,55 +730,53 @@ Similar to before, we would want $\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m
 $$
 \bm{\phi}_i\bm{W}_{\tilde{z},h}^{(i-1)} \neq \big[\bm{0}_{1\times m+i-1} ~~~ 1 \big]\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}',
 $$
-where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the projected forecast variance of the original series using the first $i-1$ components, and the right hand side of the inequality is simply a one-row matrix consisting of the first $m$ elements in the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, which can be denoted as $\bm{W}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ and interpreted as the covariance between the projected forecast of the original series using the first $i-1$ components, and the projected forecast of the $i$th component using the first $i-1$ components.
+where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the projected forecast variance of the original series using the first $i-1$ components, and the right hand side of the inequality is simply a one-row matrix consisting of the first $m$ elements in the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, which can be denoted as $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ and interpreted as the covariance between the projected forecast of the original series using the first $i-1$ components, and the projected forecast of the $i$th component using the first $i-1$ components.
 :::
 :::
 
-If we look at each element of the terms in @eq-pcon, we can interpret the condition in the following way: for at least one series, the forecast covariance between the new component and this series is not exactly a linear combination, defined by $\bm{\phi}_1$, of the forecast variance of this series and the forecast covariance between this series and all other series. For the $i$th component in @eq-pconi, the interpretation is similar, where the linear combination is defined by $\bm{\phi}_i$ and the forecast variance is replaced by the projected forecast variance and covariance associated with the first $i-1$ components. This interpretation constitutes a measure of forecast information. For the new component to be beneficial, the information brought by this new component, measured as the covariance, cannot be a combination of already existing information.
+We can interpret the condition of @eq-pcon in the following way: for the new component to be beneficial, the information brought by this new component, measured as the covariance, cannot be a linear combination of already existing information.
 
-@thm-pos-condition can potentially provide insights into the selection of component weights and forecast models to satisfy the conditions. We leave this issue in a later article, as practically the conditions in @thm-pos-condition are either almost always satisfied if the weights are simulated randomly on a continuous scale, or the loss associated with the rare occasions where the conditions are not satisfied is neglectable compared to the estimation error imposed by the limited sample size as the number of components increases, as discussed in @sec-simulation and @sec-empirical-applications.
+@thm-pos-condition can potentially provide insights into the selection of component weights and forecast models to satisfy the conditions. We leave this issue to a later article, as practically the conditions in @thm-pos-condition are either almost always satisfied if the weights are simulated randomly on a continuous scale, or the loss associated with the rare occasions where the conditions are not satisfied is neglectable compared to the estimation error imposed by the limited sample size as the number of components increases, as discussed in @sec-simulation and @sec-empirical-applications.
 
 
 ## Alternative Interpretations
 
 @eq-y_tilde can be seen as a solution to the optimisation problem:
 $$
-\begin{aligned}
-\underset{\check{\bm{y}}_{T+h}}{\arg\min} (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h}) &\\
-\text{s.t. } \bm{C}\check{\bm{y}}_{T+h}=0&.
-\end{aligned}
+\underset{\check{\bm{y}}_{T+h}}{\arg\min}
+  (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})
+\qquad \text{s.t. } \bm{C}\check{\bm{y}}_{T+h}=0.
 $$
-In this case, the projection can be interpreted as finding the set of forecast that is closest (on the transformed space) to the base forecast that satisfies the linear constraints imposed by the components.
+That is, the projection can be interpreted as finding the set of forecasts that are closest (on the transformed space) to the base forecasts, while satisfying the linear constraints imposed by the components.
 
 Moreover, this is equivalent to the optimisation problem:
 $$
-\begin{aligned}
-\underset{\check{\bm{y}}_{T+h}}{\arg\min} (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h}) &\\
-\text{s.t. } \bm{\Phi}\check{\bm{z}}_{T+h}=\check{\bm{c}}_{T+h}&,
-\end{aligned}
+\underset{\check{\bm{y}}_{T+h}}{\arg\min} (\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{y}}_{T+h}-\check{\bm{y}}_{T+h})
+\qquad \text{s.t. } \bm{\Phi}\check{\bm{z}}_{T+h}=\check{\bm{c}}_{T+h},
 $$
-where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{y}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast variance of all series (See @AndNar2022 for a corrected proof). The result is the MinT solution
+where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{y}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast variance of all series (See @AndNar2022 for a simpler proof). The result is the MinT solution
 $$
 \tilde{\bm{y}}_{t+h} = \bm{S}\bm{G} \hat{\bm{y}}_{t+h},
 $$ {#eq-mint}
 where
-$\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix}$ contains the constraints in a different order from $\bm{C}$, so we also have $\bm{y}_{t} = \bm{S}\bm{z}_{t}$, and
+$\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix}$ contains the constraints, so that $\bm{y}_{t} = \bm{S}\bm{z}_{t}$, and
 $$
 \bm{G} = (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}.
 $$ {#eq-G}
-In @eq-mint, $\bm{G} \hat{\bm{y}}_{t+h}$ can be viewed as mapping all the series to a selected few. In the forecast reconciliation context, this is mapping series at all levels to the bottom level series; in our multivariate forecasting context, this is mapping all series including the given number of components, to the original series. The structure matrix $\bm{S}$ in the forecast reconciliation context is to map the forecast at the bottom level to the entire hierarchical structure; in our context, this is not necessary, as our focus is on the forecast of the original series only, regardless of the forecasting performance on the components. Thus, our solution in the multivariate forecast context in @eq-lcmap is equivalent to finding the $\bm{G}$ in
+In @eq-mint, $\bm{G} \hat{\bm{y}}_{t+h}$ can be viewed as mapping of all the series to a selected few. In the forecast reconciliation context, this is mapping series at all levels to the "bottom level" series. In our multivariate forecasting context, this is mapping all series including the components, to the space of the original series, leading to the solution
 $$
-\tilde{\bm{z}}_{t+h} = \bm{G}\hat{\bm{y}}_{t+h}.
+\tilde{\bm{z}}_{t+h} = \bm{G}\hat{\bm{y}}_{t+h},
 $$ {#eq-stmap}
-Recognising @eq-y_tilde is equivalent to @eq-mint, the solution in @eq-G is the solution that minimises the sum of variance of original series and all the components. Here we show in @thm-minvar that @eq-G is also the solution to minimise each individual variance (and the sum) of the original series only, which is optimal in @eq-stmap. This can be viewed as a special case of Theorem 3.3 of @PanEtAl2021, or as illustrated by @AndNar2022, but applied in a different context from forecast reconciliation. The early work we can find that noted this interpretation in a non-forecasting context can go back as far as @Lue1969 [p. 85]. We establish a few basic results leading to the optimality of this solution first, also to check that
-@lem-coherent-[-@lem-var]
+as equivalent to @eq-lcmap. Recognising that @eq-mint is equivalent to @eq-y_tilde, it is the solution that minimises the sum of forecast variances of the original series and all the components. We go further in @thm-minvar, and show that @eq-mint is also the solution to minimise each individual forecast variance of the original series, and their sum. This can be viewed as a special case of Theorem 3.3 of @PanEtAl2021, or as illustrated by @AndNar2022, but applied in a different context from forecast reconciliation. The earliest work we can find that noted this interpretation in a non-forecasting context is @Lue1969 [p.85].
+
+First we establish a few basic results, checking that Lemmas [-@lem-coherent]--[-@lem-var]
 <!-- [@lem-coherent; -@lem-var] -->
 <!-- [@lem-coherent; -@lem-self-proj; -@lem-unbiased; and @lem-var] -->
-hold under this alternative representation. It may not be immediately obvious that the constraints imposed by the components are satisfied by looking at @eq-stmap only, but this can be seen from @eq-mint and @lem-coherent can be easily checked without referencing to a specific $\bm{G}$.
+hold under this alternative representation. It may not be immediately obvious that the constraints imposed by the components are satisfied by looking at @eq-stmap only, but this can be seen from @eq-mint, and @lem-coherent can be easily checked without using a specific $\bm{G}$.
 <!-- Lemma: component constraint -->
 
 ::: {#lem-stcoherent}
-The projected forecast in @eq-stmap satisfies the constraint such that
+The projected forecast in @eq-stmap satisfies the constraint
 $$\bm{C}\tilde{\bm{y}}_{t+h}= \bm{C}\bm{S}\tilde{\bm{z}}_{t+h}= \bm{0}.$$
 :::
 
@@ -839,7 +820,7 @@ If the base forecasts are unbiased such that
 $$
 \E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t),
 $$
-then the mapping in @eq-stmap are also unbiased:
+then the projected forecasts defined in @eq-stmap are also unbiased:
 $$
 \E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t),
 $$
@@ -862,7 +843,7 @@ $$
 <!-- Lemma: Var -->
 ::: {#lem-st-var}
 
-The forecast variance covariance matrix of the mapped forecasts from @eq-stmap is given by
+The covariance matrix of the projected forecasts from @eq-stmap is given by
 $$
 \Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{G}\bm{W}_h\bm{G}'.
 $$
@@ -908,7 +889,7 @@ $$
 :::
 
 
-Putting them together, we have the following theorem.
+Putting these together, we have the following theorem.
 
 ::: {#thm-minvar}
 
@@ -916,25 +897,15 @@ Putting them together, we have the following theorem.
 
 The solution to
 $$
-\begin{aligned}
-\underset{\bm{G}}{\arg\min}\ \bm{G}\bm{W}_h\bm{G}'&\\
-\text{s.t. } \bm{G}\bm{S} = \bm{I}&
-\end{aligned}
+\underset{\bm{G}}{\arg\min}\ \bm{G}\bm{W}_h\bm{G}'
+\qquad \text{s.t. } \bm{G}\bm{S} = \bm{I}
 $$ {#eq-obj}
-is @eq-G.
-
-Recognising $\bm{G}$ is of dimension $m\times (m+p)$, this problem can be effectively split into independent subproblems such that
+is @eq-G. This problem can be effectively split into independent subproblems such that $\bm{G} = \big[\bm{g}_1 ~~ \bm{g}_2 ~~ \dots ~~ \bm{g}_m\big]'$, where $\bm{g}_i$ is the solution to the subproblem of the $i$th series
 $$
-\bm{G} = \begin{bmatrix}\bm{g}_1 & \bm{g}_2 &\dots &\bm{g}_n \end{bmatrix}',
-$$
-where $\bm{g}_i$ is the solution to the subproblem of the $i$th series
-$$
-\begin{aligned}
-\underset{\bm{g}_i}{\arg\min}\ \bm{g}_i'\bm{W}_h\bm{g}_i&\\
-\text{s.t. } \bm{g}_i'\bm{s}_{j} = \delta_{ij}, &\quad j= 1, 2, .\ldots, m,
-\end{aligned}
+\underset{\bm{g}_i}{\arg\min}\ \bm{g}_i'\bm{W}_h\bm{g}_i
+\qquad \text{s.t. } \bm{g}_i'\bm{s}_{j} = \delta_{ij}, \quad j= 1, 2, .\ldots, m,
 $$ {#eq-subobj}
-where $\delta_{ij}=\left\{\begin{array}{ll} 1 & i=j\\0 &j\neq j \end{array}\right.$ is the Kronecker delta function.
+where $\bm{s}_j$ is the $j$th column of $\bm{S}$, and $\delta_{ij}$ is the Kronecker delta function taking value 1 if $i = j$ and 0 otherwise.
 
 :::
 
@@ -974,52 +945,43 @@ $$
 $$
 :::
 :::
-In other words, the forecast projection method gives optimal projected forecast for a given set of component, in the sense that the unbiased forecast of each series has minimum variance, which is a step further from the collective optimum where the sum of the variances is minimised.
+In other words, the forecast projection method gives optimal projected forecast for a given set of components, in the sense that the unbiased forecast of each series has minimum variance.
 
 ## Estimation of $\bm{W}_h$
 
-In practice, the base forecast variance $\bm{W}_h$ is unknown and needs to be estimated. Denote $\hat{\bm{e}}_{t,h} = \bm{y}_{t} - \hat{\bm{y}}_{t|t-h}$ as the $h$-step-ahead base forecast residual. The conventional forecast variance covariance matrix estimator
+In practice, the base forecast variance $\bm{W}_h$ is unknown and needs to be estimated. Denote $\hat{\bm{e}}_{t,h} = \bm{y}_{t} - \hat{\bm{y}}_{t|t-h}$ as the $h$-step-ahead base forecast residual. The conventional forecast covariance matrix estimator
 $$
 \widehat{\bm{W}_h}=\frac{1}{T-1}\sum^T_{i=1}\hat{\bm{e}}_{t,h}\hat{\bm{e}}_{t,h}',
 $$
-albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T$. It is even singular when $(m+p)>T$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, we adopt the variance shrinkage method by @SchStr2005, which is treated as the MinT(Shrink) method by @WicEtAl2019, and the covariance shrinkage method by @OpgStr2007. The estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ whose elements are
+albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T$. It is even singular when $(m+p)>T$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, we adopt the variance shrinkage method of @SchStr2005, which is the "MinT(Shrink)"" method of @WicEtAl2019, and the covariance shrinkage method of @OpgStr2007. Then, the estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with elements
 $$
-\hat{w}_{ij,h}^{shr} = \hat{r}_{ij,h}^{shr}\sqrt{\hat{v}_{i,h}\hat{v}_{j,h}}
+\hat{w}_{ij,h}^{shr} = \hat{r}_{ij,h}^{shr}\sqrt{\hat{v}_{i,h}\hat{v}_{j,h}},
 $$
-with
-$$
-\hat{r}_{ij,h}^{shr} = (1-\hat{\lambda}_{cor})\hat{r}_{ij,h}
-$$
-and
-$$
-\hat{v}_{i,h} = \hat{\lambda}_{var}\hat{w}_{h, median} + (1-\hat{\lambda}_{var})\hat{w}_{i, h},
-$$
-with $\hat{\lambda}_{cor}$ being the shrinkage intensity parameter for the correlation:
+where $\hat{r}_{ij,h}^{shr} = (1-\hat{\lambda}_{cor})\hat{r}_{ij,h}$ and $\hat{v}_{i,h} = \hat{\lambda}_{var}\hat{w}_{h, median} + (1-\hat{\lambda}_{var})\hat{w}_{i, h}$, with $\hat{\lambda}_{cor}$ being the shrinkage intensity parameter for the correlation
 $$
 \hat{\lambda}_{cor} =
-\min(1,
+\min\left(1,
 \frac
 {\sum_{i\neq j}\widehat{\operatorname{var}}(\hat{r}_{ij,h})}
 {\sum_{i\neq j}\hat{r}_{ij,h}^2}
-),
+\right),
 $$
-and $\hat{\lambda}_{var}$ being the shrinkage intensity parameter for the variance:
+and $\hat{\lambda}_{var}$ being the shrinkage intensity parameter for the variance
 $$
 \hat{\lambda}_{var} =
-\min(1,
+\min\left(1,
 \frac
 {\sum_{i=1}^{m+p}\widehat{\operatorname{var}}(\hat{w}_{i,h})}
 {\sum_{i=1}^{m+p}(\hat{w}_{i, h} - \hat{w}_{h, median})^2}
-),
+\right),
 $$
-where $\hat{r}_{ij,h}$ is the sample correlation of the $h$-step-ahead forecast error between the $i$th and the $j$th series (component) in $\bm{y}_t$, $\hat{w}_{i, h}$ is the $h$-step-ahead sample base forecast variance associated with the $i$th series (the $i$th diagonal element of $\widehat{\bm{W}_h}$) and $\hat{w}_{h, median}$ is the median of the $h$-step-ahead sample forecast variance of the series and components (the median of the diagonal elements of $\widehat{\bm{W}_h}$). The estimation of $\widehat{\bm{W}}_h^{shr}$ in the following sections are implemented using the package `corpcor` [@corpcor] in R [@R].
+$\hat{r}_{ij,h}$ the sample correlation of the $h$-step-ahead forecast error between the $i$th and the $j$th series (component) in $\bm{y}_t$, $\hat{w}_{i, h}$ the $h$-step-ahead sample base forecast variance associated with the $i$th series (the $i$th diagonal element of $\widehat{\bm{W}_h}$), and $\hat{w}_{h, median}$ the median of the $h$-step-ahead sample forecast variance of the series and components (the median of the diagonal elements of $\widehat{\bm{W}_h}$). The estimation of $\widehat{\bm{W}}_h^{shr}$ in the following sections are implemented using the package `corpcor` [@corpcor] in R [@R].
 
 Estimating $\widehat{\bm{W}}_h^{shr}$ for each forecast horizon $h$ is desirable but computationally intensive. It involves the calculation of multi-step-ahead in-sample residuals of the forecast models, which is especially challenging for iterative forecasts. Because of this, in practice it is not unreasonable to assume the $h$-step forecast variance is proportional to the $1$-step forecast variance by a constant $\eta_h$, as do @WicEtAl2019:
 $$
 \widehat{\bm{W}}_h^{shr} = \eta_h\widehat{\bm{W}}_1^{shr}.
 $$
-Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the proportionality constant $\eta_h$ cancels out regardless of the value of $h$. We can effectively use only the one-stop forecast variance in forecast projection, if only the point forecasts are concerned. We calculate $\widehat{\bm{W}}_h^{shr}$ for each $h$ for the simulation example in @sec-simulation, but assumes this proportionality for the application in @sec-empirical-applications.
-
+Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the proportionality constant $\eta_h$ cancels out regardless of the value of $h$. We can effectively use only the one-step forecast variance in forecast projection, if we only need point forecasts. We calculate $\widehat{\bm{W}}_h^{shr}$ for each $h$ for the simulation example in @sec-simulation, but assume this proportionality for the application in @sec-empirical-applications.
 
 # Simulation {#sec-simulation}
 
@@ -1028,7 +990,7 @@ Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the pro
 ```{r simulation}
 ```
 
-In this section, we illustrate the performance of forecast projection in a simulation example. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity variance covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. We simulate $220$ such samples and the forecast is evaluated on each sample.
+In this section, we illustrate the performance of forecast projection in a simulation example. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. We simulate $220$ such samples and the forecast is evaluated on each sample.
 
 The first benchmark we use is the univariate ARIMA model. For each series, we fit an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast]. The function implements an automatic model selection procedure proposed by @HynKha2008. The number of first differences is determined by repeated KPSS tests [@KwiEtAl1992] and the number of seasonal differences is determined by the seasonal strength computed from an STL decomposition [@CleEtAl1990]. The algorithm then chooses different orders of the autoregressive (AR) and moving average (MA) parts by comparing AICc between the corresponding models in a stepwise fashion, up to a maximal order of $5$. Univariate ARIMAs are also used to produce base forecasts of the components used in projection, regardless of the base model.
 
@@ -1150,6 +1112,9 @@ In this article, we propose a new approach called forecast projection that can r
 
 We illustrate the proposed forecast projection outperforms base forecasts significantly and confirm the theoretical results in simulation and two empirical applications on the Australian domestic tourism data set and the FRED-MD data set. We find using PCA to construct components can achieve satisfactory variance reduction, and leave the issue of finding alternative optimal components to a later article. We recognise, in certain ideal cases, that the usage of forecast projection is even more important than the choice of base forecast model, emphasising the relative importance of forecast projection. We discuss that the source of the variance reduction is the reduction of model misspecification error and the forecast projection has little impact on estimation error.
 
+# Acknowledgements {.unnumbered}
+
+We thank Daniele Girolimetto for contributing to the initial proof of @thm-monotone in his unpublished work.
 
 \pagebreak
 # References {.unnumbered}
