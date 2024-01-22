@@ -130,7 +130,7 @@ $$
 so $\bm{M}$ is a projection matrix.
 For any $\bm{y}$ such that $\bm{M}\bm{y} = \bm{x}$ for some $\bm{x}$, we have
 $$
-\bm{C}\bm{x} = \bm{C}\bm{M}\bm{y} = \bm{C}\bm{y} - \bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{y}_{t+h} = \bm{0}.
+\bm{C}\bm{x} = \bm{C}\bm{M}\bm{y} = \bm{C}\bm{y} - \bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{y} = \bm{0}.
 $$
 Thus, $\bm{M}$ projects any vector onto the space where the constraint $\bm{C}$ is satisfied.
 :::
@@ -511,8 +511,7 @@ d & = (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}.
 \end{aligned}
 $$
 Thus,
-$$
-\begin{aligned}
+\begin{align*}
 \bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*
 & =
 \overline{\bm{C}}'
@@ -565,8 +564,7 @@ $$
 \underline{\bm{C}}'
 (\underline{\bm{C}}\bm{M}^{+}\bm{W}_h^*\underline{\bm{C}}')^{-1}
 \underline{\bm{C}}\bm{M}^{+}.
-\end{aligned}
-$$
+\end{align*}
 Therefore,
 $$
 \begin{aligned}
@@ -747,7 +745,7 @@ $$
 \tilde{\bm{y}}_{t+h} = \bm{S}\bm{G} \hat{\bm{y}}_{t+h},
 $$ {#eq-mint}
 where
-$\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix}$ contains the constraints, so that $\bm{y}_{t} = \bm{S}\bm{z}_{t}$, and
+$\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix}$ contains the constraints, so that $\bm{y}_{t} = \bm{S}\bm{z}_{t}$, and\pagebreak[3]
 $$
 \bm{G} = (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}.
 $$ {#eq-G}
@@ -775,9 +773,9 @@ because $\bm{C}\bm{S} = \big[-\bm{\Phi} ~~~ \bm{I} \big] \big[\bm{I} ~~~ \bm{\Ph
 ::: {#cor-corG}
 Provided that $\bm{G}\bm{S} = \bm{I}$, the following results hold.
 
-1. The projected forecast in @eq-stmap satisfies the constraint such that $\bm{C}\tilde{\bm{y}}_{t+h}= \bm{C}\bm{S}\tilde{\bm{z}}_{t+h}= \bm{0}$.
+1. The projected forecast in @eq-stmap satisfies the constraint $\bm{C}\tilde{\bm{y}}_{t+h}= \bm{C}\bm{S}\tilde{\bm{z}}_{t+h}= \bm{0}$.
 1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the mapping does not change its value: $\bm{G}\bm{y}_{t+h} = \bm{z}_{t+h}$.
-1. If the base forecasts are unbiased such that $\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)$, then the mapping in @eq-stmap are also unbiased: $\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$.
+1. If the base forecasts are unbiased such that $\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)$, then the projected forecasts in @eq-stmap are also unbiased: $\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$.
 :::
 
 ::: {.toappendix}
@@ -827,11 +825,11 @@ $$
 &= \hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})(\bm{y}_{t+h} - \hat{\bm{e}}_{y,t+h})\\
 \text{and}\qquad
 &= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})\bm{S}\bm{z}_{t+h}\\
-\bm{S} \tilde{\bm{e}}_{z,t+h}&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},
+\bm{S} \tilde{\bm{e}}_{z,t+h} &= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},
 \end{aligned}
 $$
 where the last line comes from $\bm{G}\bm{S} = \bm{I}$.
-Left multiply $\bm{G}$ to both sides, we have\pagebreak[3]
+Left multiplying $\bm{G}$ on both sides, we have\pagebreak[3]
 $$
 \bm{G}\bm{S} \tilde{\bm{e}}_{z,t+h} = \bm{G}\bm{S}\bm{G}\hat{\bm{e}}_{y,t+h}
 \qquad\text{and}\qquad
