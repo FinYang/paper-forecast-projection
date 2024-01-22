@@ -105,58 +105,49 @@ where $\bm{J} = \bm{J}_{m,p}$.
 
 We are ready to present a few immediate results, with proofs provided in the Appendix.
 
-::: {#lem-coherent}
-
-The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint
-$$
-\bm{C}\tilde{\bm{y}}_{t+h}= \tilde{\bm{c}}_{t+h} - \bm{\Phi}\tilde{\bm{z}}_{t+h} = \bm{0}.
-$$
-:::
-::: {.toappendix}
-::: {.proof}
-#### Proof of @lem-coherent
-\begin{align*}
-\bm{C}\tilde{\bm{y}}_{t+h} &=
-\bm{C}\bm{M}\hat{\bm{y}}_{t+h} \\
-&= \bm{C}(\bm{I}_{n+q} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\hat{\bm{y}}_{t+h}\\
-&= \bm{C}\hat{\bm{y}}_{t+h} - \bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{y}}_{t+h}\\
-&= \bm{0}
-\end{align*}
-:::
+::: {#lem-projectionM}
+The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}$ is satisfied. 
 :::
 
-::: {#lem-self-proj}
-The mapping matrix $\bm{M}$ projected a vector onto the space where the constraint $\bm{C}$ is satisfied. For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value:
-$$
-\bm{M}\bm{y}_{t+h} = \bm{y}_{t+h}.
-$$
-:::
 ::: {.toappendix}
 ::: {.proof}
-#### Proof of @lem-self-proj
+#### Proof of @lem-projectionM
+
+We have 
 $$
-\bm{M}\bm{y}_{t+h} = (\bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{y}_{t+h} = \bm{y}_{t+h}
+\begin{aligned}
+\bm{M}\bm{M} 
+& = \bm{I}_{m+p} - 2 \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} \\
+& \mbox{}\hspace*{1cm} + \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\\
+& =\bm{I}_{m+p} -  \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} \\
+& = \bm{M},
+\end{aligned}
 $$
-since $\bm{C}\bm{y}_{t+h} = \bm{0}$.
+so $\bm{M}$ is a projection matrix.
+For any $\bm{y}$ such that $\bm{M}\bm{y} = \bm{x}$ for some $\bm{x}$, we have
+$$
+\bm{C}\bm{x} = \bm{C}\bm{M}\bm{y} = \bm{C}\bm{y} - \bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{y}_{t+h} = \bm{0}.
+$$
+Thus, $\bm{M}$ projects any vector onto the space where the constraint $\bm{C}$ is satisfied.
 :::
 :::
 
-::: {#lem-unbiased}
-If the base forecasts are unbiased such that
-$$
-\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t),
-$$
-then the projected forecasts are also unbiased:
-$$
-\E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t).
-$$
+Based on the attractive properties of projections, we have the following corollaries.
+
+::: {#cor-corM}
+1. The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint $\bm{C}$.
+1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{y}_{t+h} = \bm{y}_{t+h}$ [@Rao1974, Lemma 2.4].
+1. If the base forecasts are unbiased such that $\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)$, then the projected forecasts are also unbiased: $\E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)$.
 :::
+
 ::: {.toappendix}
 ::: {.proof}
-#### Proof of @lem-unbiased
+#### Proof of @cor-corM
+
+Items 1 and 2 are trivial application of @lem-projectionM. To prove 3, we have 
 $$
 \E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) =
-\E(\bm{M}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{M}\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)
+\E(\bm{M}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{M}\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t).
 $$
 :::
 :::
@@ -751,78 +742,49 @@ $$
 \tilde{\bm{z}}_{t+h} = \bm{G}\hat{\bm{y}}_{t+h}.
 $$ {#eq-stmap}
 Recognising @eq-y_tilde is equivalent to @eq-mint, the solution in @eq-G is the solution that minimises the sum of variance of original series and all the components. Here we show in @thm-minvar that @eq-G is also the solution to minimise each individual variance (and the sum) of the original series only, which is optimal in @eq-stmap. This can be viewed as a special case of Theorem 3.3 of @PanEtAl2021, or as illustrated by @AndNar2022, but applied in a different context from forecast reconciliation. The early work we can find that noted this interpretation in a non-forecasting context can go back as far as @Lue1969 [p. 85]. We establish a few basic results leading to the optimality of this solution first, also to check that
-@lem-coherent-[-@lem-var]
-<!-- [@lem-coherent; -@lem-var] -->
-<!-- [@lem-coherent; -@lem-self-proj; -@lem-unbiased; and @lem-var] -->
-hold under this alternative representation. It may not be immediately obvious that the constraints imposed by the components are satisfied by looking at @eq-stmap only, but this can be seen from @eq-mint and @lem-coherent can be easily checked without referencing to a specific $\bm{G}$.
-<!-- Lemma: component constraint -->
+@lem-projectionM, @cor-corM and @lem-var
+hold under this alternative representation. 
 
-::: {#lem-stcoherent}
-The projected forecast in @eq-stmap satisfies the constraint such that
-$$\bm{C}\tilde{\bm{y}}_{t+h}= \bm{C}\bm{S}\tilde{\bm{z}}_{t+h}= \bm{0}.$$
+::: {#lem-projectionG}
+The matrix $\bm{S}\bm{G}$ is a projection onto the space where the constraint $\bm{C}$ is satisfied, provided that $\bm{G}\bm{S}=\bm{I}$. 
 :::
 
 ::: {.toappendix}
 ::: {.proof}
-#### Proof of @lem-stcoherent
-$$
-\bm{C}\tilde{\bm{y}}_{t+h}
-= \bm{C}\bm{S}\tilde{\bm{z}}_{t+h}
-= \begin{bmatrix}-\bm{\Phi} & \bm{I} \end{bmatrix}
-\begin{bmatrix}\bm{I} \\ \bm{\Phi} \end{bmatrix}\tilde{\bm{z}}_{t+h}
-= (-\bm{\Phi} + \bm{\Phi})\tilde{\bm{z}}_{t+h}
-= \bm{0}.
-$$
+#### Proof of @lem-projectionG
+If $\bm{G}\bm{S}=\bm{I}$, $\bm{S}\bm{G}$ is a projection matrix: $\bm{S}\bm{G}\bm{S}\bm{G} = \bm{S}\bm{G}$.
+
+For any $\bm{y}$ such that $\bm{S}\bm{G}\bm{y} = \bm{x}$ for some $\bm{x}$, we have $\bm{C}\bm{x} = \bm{C}\bm{S}\bm{G}\bm{y} = \bm{0}$
+because $\bm{C}\bm{S} = \big[-\bm{\Phi} ~~~ \bm{I} \big] \big[\bm{I} ~~~ \bm{\Phi}' \big]' = \bm{0}$. Similarly to $\bm{M}$, $\bm{S}\bm{G}$ projects a vector to the same space where $\bm{C}$ is satisfied.
 :::
 :::
 
-::: {#lem-st-self-proj}
-For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value:
-$$
-\bm{G}\bm{y}_{t+h} = \bm{z}_{t+h}.
-$$
-:::
-::: {.toappendix}
-::: {.proof}
-#### Proof of @lem-st-self-proj
+::: {#cor-corG}
+Provided that $\bm{G}\bm{S} = \bm{I}$, the following results hold.
 
-$$
-\bm{G}\bm{y}_{t+h} =(\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}\bm{y}_{t+h}=(\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}\bm{S}\bm{z}_{t+h}= \bm{z}_{t+h}.
-$$
-:::
-:::
-
-
-
-
-<!-- Lemma: unbiased constraint -->
-::: {#lem-st-unb-const}
-
-If the base forecasts are unbiased such that
-$$
-\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t),
-$$
-then the mapping in @eq-stmap are also unbiased:
-$$
-\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t),
-$$
-provided
-$$
-\bm{G}\bm{S} = \bm{I}.
-$$
+1. The projected forecast in @eq-stmap satisfies the constraint such that $\bm{C}\tilde{\bm{y}}_{t+h}= \bm{C}\bm{S}\tilde{\bm{z}}_{t+h}= \bm{0}$.
+1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the mapping does not change its value: $\bm{G}\bm{y}_{t+h} = \bm{z}_{t+h}$.
+1. If the base forecasts are unbiased such that $\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)$, then the mapping in @eq-stmap are also unbiased: $\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$.
 :::
 
 ::: {.toappendix}
 ::: {.proof}
-#### Proof of @lem-st-unb-const
-If $\bm{G}\bm{S} = \bm{I}$, then
+#### Proof of @cor-corG
+
+Item 1 is an direct application of @lem-projectionG. From @lem-projectionG and Lemma 2.4 in @Rao1974, we have 
+$$
+\bm{S}\bm{G}\bm{y}_{t+h} = \bm{y}_{t+h} = \bm{S}\bm{z}_{t+h}.
+$$
+Left multiplying $\bm{G}$ to both sides, we have $\bm{G}\bm{y}_{t+h} = \bm{z}_{t+h}$ and item 2 is proven.
+To prove Item 3, we have
 $$
 \E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) =
-\E(\bm{G}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{G}\bm{S}\bm{z}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t).
+\E(\bm{G}\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\hat{\bm{y}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{G}\bm{y}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t).
 $$
+
 :::
 :::
-<!-- Lemma: Var -->
+
 ::: {#lem-st-var}
 
 The forecast variance covariance matrix of the mapped forecasts from @eq-stmap is given by
@@ -850,11 +812,11 @@ Let the base and projected forecast errors be given as
 &= \hat{\bm{e}}_{y,t+h} + \hat{\bm{y}}_{t+h} - \bm{S}\bm{G}\hat{\bm{y}}_{t+h}\\
 &= \hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})(\bm{y}_{t+h} - \hat{\bm{e}}_{y,t+h})\\
 \text{and}\qquad
-&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})\bm{S}\bm{z}_{t+h}\\
-\bm{S} \tilde{\bm{e}}_{z,t+h}&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},
+\bm{S} \tilde{\bm{e}}_{z,t+h} &= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})\bm{S}\bm{z}_{t+h}\\
+&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},
 \end{align*}
 where the last line comes from $\bm{G}\bm{S} = \bm{I}$.
-Left multiply $\bm{G}$ to both sides, we have\pagebreak[3]
+Left multiplying $\bm{G}$ to both sides, we have\pagebreak[3]
 $$
 \bm{G}\bm{S} \tilde{\bm{e}}_{z,t+h} = \bm{G}\bm{S}\bm{G}\hat{\bm{e}}_{y,t+h}
 \qquad\text{and}\qquad
