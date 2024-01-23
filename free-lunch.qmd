@@ -1,5 +1,5 @@
 ---
-title: "Free Lunch Multivariate Forecasting: reducing forecast variance using linear combinations"
+title: "Free Lunch Multivariate Forecast Projection: reducing forecast variance using linear combinations"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 author:
  - familyname: Yang
