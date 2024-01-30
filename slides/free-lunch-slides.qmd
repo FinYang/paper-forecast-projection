@@ -170,6 +170,24 @@ $$
 
 ## Example
 
+$$\bm{W}_h = \bm{I}_{m+p}$$
+
+$$
+\begin{aligned}
+&\bm{\Phi}\bm{\Phi}' = \bm{I}_p\text{ when } p\le m \\
+&\bm{\Phi}'\bm{\Phi} = \bm{I}_m\text{ when } p= m.
+\end{aligned}
+$$
+
+$$
+\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
+  =  \frac{1}{2}
+      \begin{bmatrix}
+        \bm{\Phi}'\bm{\Phi} & -\bm{\Phi}'\\
+        -\bm{\Phi} & \bm{I}_p
+       \end{bmatrix}.
+$$
+
 ## Monotonicity
 
 ### Theorem 2.2

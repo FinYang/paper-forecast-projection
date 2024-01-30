@@ -52,11 +52,21 @@ visnights %>%
 
 ## ---- components ----
 
-visnights %>%
-  filter(Region %in% unique(Region)[seq_len(4)]) %>%
+source("../monarch/tourism/projection/R/component.R")
+visnights_wide <- visnights %>%
+  pivot_wider(names_from = Region, values_from = Nights)
+col_month <- select(visnights_wide, Month)
+visnights_wide %>%
+  select(-Month) %>%
+  as.matrix() %>%
+  component() %>%
+  getElement("x") %>%
+  bind_cols(col_month, .) %>%
+  pivot_longer(-Month, names_to = "Component") %>%
+  filter(Component %in% unique(Component)[seq_len(4)]) %>%
   ggplot() +
-  geom_line(aes(x = Month, y = Nights)) +
-  facet_grid("Region", scales = "free") +
+  geom_line(aes(x = Month, y = value)) +
+  facet_grid("Component", scales = "free") +
   theme(plot.background = element_rect(fill = "#FAFAFA", colour = "#FAFAFA"))
 
 
