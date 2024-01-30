@@ -268,7 +268,7 @@ $$
 $$
 We only focus on the forecast variance reduction for the original series, which is $\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
 When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. The reduction in the forecast variance of the original series is $p/2$.
-When $p=m$, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$, and the reduction is $m/2$.
+When $p=m$, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$, which means the reduction on the sum is $m/2$ and the reduction on each individual series is $1/2$.
 If we have two series ($m=2$) to begin with, using $p=1$ component in the mapping will reduce the sum of forecast variance by $0.5$, and using $p=2$ components will reduce the sum of forecast variance by $1$; that is a $50\%$ reduction as the original sum of forecast variances is $2$.
 
 If we keep increasing the number of components, the result in @thm-psdvar still holds, although $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example because the forecast variance $\bm{W}_h$ can hardly be an identity in practice, as the forecasts of a linear combination of two series are likely to be correlated with the forecasts of these series. Nonetheless, we can see how the forecast variance can be reduced as a result of the component forecasts bringing new information about the original series.
