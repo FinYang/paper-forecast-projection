@@ -55,7 +55,9 @@ plot_mse <- mse %>%
     values = cb_palette_grey[c(7, 6)],
     labels = c(
       "arima" = "ARIMA",
-      "dfm" = "DFM"))
+      "dfm" = "DFM")) +
+  theme(plot.background = element_blank(),
+        legend.background = element_blank())
 plot_mse
 ## ---- fig-fred-md-mcb-series ----
 
@@ -201,7 +203,9 @@ plot_mse <- mse %>%
       "TRUE.PCA_normal" = "PCA+Norm.",
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
-    ))
+    )) +
+  theme(plot.background = element_blank(),
+        legend.background = element_blank())
 plot_mse
 ## ---- fig-visnights-mcb-series ----
 # ?tsutils::nemenyi
@@ -360,7 +364,9 @@ plot_mse <- mse %>%
       "arima" = "ARIMA",
       "dfm" = "DFM",
       "true" = "VAR - DGP",
-      "var" = "VAR - Est."))
+      "var" = "VAR - Est.")) +
+  theme(plot.background = element_blank(),
+        legend.background = element_blank())
 plot_mse
 ## ---- fig-simulation-mcb-series ----
 # ?tsutils::nemenyi

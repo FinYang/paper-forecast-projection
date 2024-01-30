@@ -1,0 +1,216 @@
+---
+title: "Free Lunch Multivariate Forecast Projection: reducing forecast variance using linear combinations"
+author: [
+  "Yangzhuoran Fin Yang",
+  "Rob J Hyndman",
+  "George Athanasopoulos",
+  "Anastasios Panagiotelis"
+  ]
+template: template.tex
+keep-tex: true
+bibliography:
+  - ../references-key.bib
+  - ../references-pkg.bib
+format: 
+  beamer: 
+    pdf-engine: pdflatex
+    # cite-method: natbib
+    biblio-title: "References"
+    theme: monash
+    fonttheme: monash
+    colortheme: monashwhite
+header-includes:
+  - \usepackage{bm}
+  - \usepackage[makeroom]{cancel}
+  - \widowpenalties 1 150
+  - \newlength{\cslhangindent}
+  - \setlength{\cslhangindent}{1.5em}
+  - \newenvironment{CSLReferences}[2]{\everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces}{}
+  - \def\Var{\operatorname{Var}}
+  - \def\E{\operatorname{E}}
+  - \def\tr{\operatorname{tr}}
+titlefontsize: 18
+knitr:
+   opts_chunk: 
+     out-width: 100%
+     out-height: 100%
+execute: 
+  eval: true
+  cache: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup}
+#| cache: false
+knitr::read_chunk("free-lunch-slides.R")
+```
+```{r library}
+```
+```{r data}
+```
+
+
+## Free lunch forecast projection
+
+A model-independent post-forecast adjustment method that can reduce forecast variance without introducing new data or information.
+
+
+## Australian tourism data
+
+* The data include tourism information on seven states and territories which can be divided into 77 regions
+  - For example, Melbourne, Sydney, East Coast
+
+### Visitor nights
+The total number of nights spent by Australians away from home recorded monthly
+
+
+## Total and Region
+
+
+```{r p_aus_mel}
+```
+
+## Melbourne and Sydney
+
+```{r p_syd_mel}
+```
+
+## Intuition
+\begin{block}{Observation}
+
+1. Better signal-noise ratio in the linear combination.
+
+\pause
+2. Similar patterns are shared by different series.
+\end{block}
+
+\pause
+
+\begin{alertblock}{One step further}
+Finding components that have better signal-noise ratio:
+
+
+1. Easy to forecast;
+
+2. Capturing the common signals;
+
+3. Improving forecast of original series.
+\end{alertblock}
+
+## Literature
+
+### Forecast reconciliation
+
+### bagging
+
+### Forecast combination
+
+### Factor model
+
+## Series $\bm{z}_t\in \mathbb{R}^m$
+
+```{r series}
+```
+
+## Components $\bm{c}_t = \bm{\Phi}\bm{z}_t \in \mathbb{R}^p$
+
+```{r components}
+```
+
+## Free lunch forecast projection
+
+$$
+\bm{y}_t = \begin{bmatrix} \bm{z}_t\\ \bm{c}_t \end{bmatrix}
+\qquad \tilde{\bm{y}}_{t+h} = \bm{M} \hat{\bm{y}}_{t+h}
+$$
+
+$$
+\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h}
+\qquad \bm{J} = \bm{J}_{m,p} = \big[\bm{I}_m ~~~ \bm{O}_{m\times p}\big]
+$$
+
+$$
+\bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
+$$ 
+
+$$\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$$
+
+
+## Properties
+
+### Lemma 2.1
+
+The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}$ is satisfied.
+
+### Corollary 2.1
+1. The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint $\bm{C}$.
+1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{y}_{t+h} = \bm{y}_{t+h}$ 
+1. If the base forecasts are unbiased, then the projected forecasts are also unbiased.
+
+
+## Variance reduction
+
+### Theorem 2.1
+The variance reduction is __positive semi-definite__:
+
+$$
+\begin{aligned}
+\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -&\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})\\
+&=\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h,
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -&\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})\\ 
+&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+\end{aligned}
+$$
+
+## Example
+
+## Monotonicity
+
+### Theorem 2.2
+
+## Minimum variance of individual series
+
+### Theorem 2.4
+
+## Estimation of $\bm{W}_h$
+
+## Simulation
+
+```{r}
+#| cache: false
+knitr::read_chunk("../free-lunch.R")
+knitr::opts_knit$set(root.dir = '..')
+```
+```{r path}
+```
+
+```{r library}
+```
+
+```{r simulation}
+```
+
+```{r fig-simulation-line}
+```
+
+## Tourism
+
+```{r visnights}
+```
+
+```{r fig-visnights-line}
+```
+
+## FRED-MD
+
+```{r fred-md}
+```
+
+```{r fig-fred-md-line}
+```
