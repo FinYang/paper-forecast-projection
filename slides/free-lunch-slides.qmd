@@ -14,7 +14,6 @@ bibliography:
 format: 
   beamer: 
     pdf-engine: pdflatex
-    # cite-method: natbib
     biblio-title: "References"
     theme: monash
     fonttheme: monash
@@ -23,9 +22,6 @@ header-includes:
   - \usepackage{bm}
   - \usepackage[makeroom]{cancel}
   - \widowpenalties 1 150
-  - \newlength{\cslhangindent}
-  - \setlength{\cslhangindent}{1.5em}
-  - \newenvironment{CSLReferences}[2]{\everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces}{}
   - \def\Var{\operatorname{Var}}
   - \def\E{\operatorname{E}}
   - \def\tr{\operatorname{tr}}
