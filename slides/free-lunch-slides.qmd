@@ -42,6 +42,7 @@ editor_options:
 knitr::read_chunk("free-lunch-slides.R")
 ```
 ```{r library}
+#| cache: false
 ```
 ```{r data}
 ```
@@ -49,7 +50,10 @@ knitr::read_chunk("free-lunch-slides.R")
 
 ## Free lunch forecast projection
 
-A model-independent post-forecast adjustment method that can reduce forecast variance without introducing new data or information.
+A model-independent post-forecast adjustment method that can reduce forecast variance using linear combinations (components) without introducing new data or information.
+
+- Averaging indirect forecasts 
+- Projecting forecasts of augmented series
 
 
 ## Australian tourism data
@@ -60,49 +64,63 @@ A model-independent post-forecast adjustment method that can reduce forecast var
 ### Visitor nights
 The total number of nights spent by Australians away from home recorded monthly
 
-
-## Total and Region
-
-
-```{r p_aus_mel}
-```
-
 ## Melbourne and Sydney
 
 ```{r p_syd_mel}
 ```
 
+## Total and Region
+
+```{r p_aus_mel}
+```
+
+
 ## Intuition
 \begin{block}{Observation}
 
-1. Better signal-noise ratio in the linear combination.
+1. Similar patterns are shared by different series.
+2. Better signal-noise ratio in the linear combination.
 
-\pause
-2. Similar patterns are shared by different series.
 \end{block}
 
 \pause
 
 \begin{alertblock}{One step further}
-Finding components that have better signal-noise ratio:
+Finding components that 
 
 
-1. Easy to forecast;
+1. are easy to forecast;
 
-2. Capturing the common signals;
+2. can capture the common signals;
 
-3. Improving forecast of original series.
+3. can improve forecast of original series.
 \end{alertblock}
 
 ## Literature
 
 ### Forecast reconciliation
 
-### bagging
+* @WicEtAl2019: Projecting forecasts to be consistent with the hierarchical structure
 
 ### Forecast combination
 
-### Factor model
+* Combining forecasts of the target series
+* @HolEtAl2021: Combining direct and indirect forecasts
+* @PetSpi2021: Combining slection and transformation of the target series ("wisdom of data")
+
+## Literature
+
+### Bagging
+
+* @BerEtAl2016: Bagging ETS models to forecast
+* @PetEtAl2018: The benefits of bagging originate from the model uncertainty
+
+### Dynamic Factor model (DFM)
+
+* @StoWat2002a, @StoWat2002
+
+* @DeEtAl2019: Machine learning extension
+
 
 ## Series $\bm{z}_t\in \mathbb{R}^m$
 
@@ -121,110 +139,211 @@ $$
 \qquad \tilde{\bm{y}}_{t+h} = \bm{M} \hat{\bm{y}}_{t+h}
 $$
 
-$$
-\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h}
-\qquad \bm{J} = \bm{J}_{m,p} = \big[\bm{I}_m ~~~ \bm{O}_{m\times p}\big]
-$$
+\begin{block}{}
 
 $$
-\bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
-$$ 
-
-$$\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$$
-
-
-## Properties
-
-### Lemma 2.1
-
-The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}$ is satisfied.
-
-### Corollary 2.1
-1. The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint $\bm{C}$.
-1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{y}_{t+h} = \bm{y}_{t+h}$ 
-1. If the base forecasts are unbiased, then the projected forecasts are also unbiased.
-
-
-## Variance reduction
-
-### Theorem 2.1
-The variance reduction is __positive semi-definite__:
+\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M}\hat{\bm{y}}_{t+h}
+$$
+\end{block}
 
 $$
 \begin{aligned}
-\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -&\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})\\
-&=\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h,
+\bm{M} &= \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\\
+\bm{J} &= \bm{J}_{m,p} = \big[\bm{I}_m ~~~ \bm{O}_{m\times p}\big]\\
+\bm{C} &= \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]\\
+\bm{W}_h &= \Var(\hat{\bm{y}}_{t+h})
 \end{aligned}
 $$
 
+
+## Forecasts and projection of series 
+
+```{r series-fc}
+```
+
+
+## Unbiasedness
+
+\begin{alertblock}{Unbiasedness}
+If the base forecasts are unbiased, then the projected forecasts are also unbiased.
+\end{alertblock}
+
+### Projection matrix
+
+1. The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}$ is satisfied.
+1. The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint $\bm{C}$.
+1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{y}_{t+h} = \bm{y}_{t+h}$ 
+
+
+## Nonnegative Variance reduction
+
+Under unbiasedness, the variance reduction is __positive semi-definite__:
 $$
 \begin{aligned}
-\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -&\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})\\ 
+\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) &-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})\\ 
 &= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 \end{aligned}
 $$
 
-## Example
-
-$$\bm{W}_h = \bm{I}_{m+p}$$
+## Example $\bm{W}_h = \bm{I}_{m+p}$
 
 $$
 \begin{aligned}
-&\bm{\Phi}\bm{\Phi}' = \bm{I}_p\text{ when } p\le m \\
-&\bm{\Phi}'\bm{\Phi} = \bm{I}_m\text{ when } p= m.
+\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) &-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})\\ 
+&= \bm{J}\bm{C}'(\bm{C}\bm{C}')^{-1}\bm{C}\bm{J}'\\
+&= \bm{\Phi}'
+(\bm{\Phi}\bm{\Phi}' + \bm{I})^{-1}
+\bm{\Phi}
+\end{aligned}
+$$
+
+Let $\bm{\Phi}$ consist of orthogonal unit vectors:
+$$
+\begin{aligned}
+\bm{\Phi}\bm{\Phi}' &= \bm{I}_p\text{ when } p\le m\\
+\bm{\Phi}'\bm{\Phi} &= \bm{I}_m\text{ when } p= m.
 \end{aligned}
 $$
 
 $$
-\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})
-  =  \frac{1}{2}
-      \begin{bmatrix}
-        \bm{\Phi}'\bm{\Phi} & -\bm{\Phi}'\\
-        -\bm{\Phi} & \bm{I}_p
-       \end{bmatrix}.
+\begin{aligned}
+\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) &-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) \\
+&=\frac{1}{2}tr(\bm{\Phi}'\bm{\Phi})=\frac{1}{2}p
+\end{aligned}
 $$
+
+## Positive condition
+
+For the first component to have a guaranteed reduction of forecast variance, the following condition must be satisfied:
+
+$$
+\bm{\phi}_1\bm{W}_{z,h}\neq\bm{w}_{c_1z,h},
+$$
+<!-- where $\bm{\phi}_1$ is the weight vector of the first component, $\bm{W}_{z,h} = \Var(\hat{\bm{z}_{t+h}})$, and $\bm{w}_{c_1z,h}$ is the forecast covariance between the first component and the original series. -->
+
+* $\bm{\phi}_1$ is the weight vector of the first component
+* $\bm{W}_{z,h} = \Var(\hat{\bm{z}}_{t+h})$ 
+* $\bm{w}_{c_1z,h}$ is the forecast covariance between the first component and the original series.
+
 
 ## Monotonicity
 
-### Theorem 2.2
+The sum of forecast variance reductions
+$$
+\begin{aligned}
+\tr(\Var(\hat{\bm{z}}_{t+h} &- \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) \\&= \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
+\end{aligned}
+$$
+is non-decreasing as $p$ increases.
 
 ## Minimum variance of individual series
 
-### Theorem 2.4
+The projection is equivalent to the mapping
+$$
+\tilde{\bm{z}}_{t+h} = \bm{G}\hat{\bm{y}}_{t+h},
+$$
+where $\bm{G} = \big[\bm{g}_1 ~~ \bm{g}_2 ~~ \dots ~~ \bm{g}_m\big]' \in \mathbb{R}^{m\times (m+p)}$ is the solution to
+$$
+\underset{\bm{G}}{\arg\min}\ \bm{G}\bm{W}_h\bm{G}'
+\qquad \text{s.t. } \bm{G}\bm{S} = \bm{I}
+$$ 
+or
+$$
+\underset{\bm{g}_i}{\arg\min}\ \bm{g}_i'\bm{W}_h\bm{g}_i
+\qquad \text{s.t. } \bm{g}_i'\bm{s}_{j} = \bm{1}(i=j),
+$$
+where $\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix} = \big[\bm{s}_1\cdots \bm{s}_m\big]$.
+
+## Key results
+
+1. The forecast variance is __reduced__ with forecast projection
+1. The forecast variance __monotonically__ decreases with increasing number of components
+1. The forecast projection is __optimal__ to achieve minimum forecast variance of each series
+
+## Estimation
+
+$$
+\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M}\hat{\bm{y}}_{t+h}
+$$
+
+\begin{block}{}
+
+$$
+\bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}
+$$
+\end{block}
+
+$$
+\begin{aligned}
+\bm{W}_h &= \Var(\hat{\bm{y}}_{t+h})\\
+\bm{C} &= \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]\\
+\end{aligned}
+$$
+
+* Estimation of $\bm{W}_h$
+* Construction of $\bm{\Phi}$
+
 
 ## Estimation of $\bm{W}_h$
 
-## Simulation
+__Shrinking variance__ towards their median [@OpgStr2007] and __shrinking covariance__ towards zero [@SchStr2005].
 
-```{r}
-#| cache: false
-knitr::read_chunk("../free-lunch.R")
-knitr::opts_knit$set(root.dir = '..')
-```
-```{r path}
-```
+The shinkage estimator is
 
-```{r library}
-```
+* Positive definite
+* Numerically stable
 
-```{r simulation}
-```
+In empirical applications, we assume
+$$
+\widehat{\bm{W}}_h^{shr} = \eta_h\widehat{\bm{W}}_1^{shr}.
+$$
 
-```{r fig-simulation-line}
-```
+## Construction of $\bm{\Phi}$
 
-## Tourism
+### Principal Component Analysis (PCA)
+
+Finding the weights matrix so that the resulting components \alert{\textbf{maximise variance}}
+
+### Simulation
+
+Generating values from a random distribution and normalising them to unit vectors
+
+* Normal distribution
+* Uniform distribution
+* Orthonormal matrix [@pracma]
+
+
+## Tourism (ETS)
 
 ```{r visnights}
 ```
 
-```{r fig-visnights-line}
-```
 
-## FRED-MD
+## FRED-MD (DFM)
 
 ```{r fred-md}
 ```
 
-```{r fig-fred-md-line}
+## Simulation
+
+* Data generating process (DGP): VAR($3$) with $m=70$ variables
+* Sample size: $T=400$
+* Number of repeated samples: $220$
+* Base model: ARIMA and DFM
+
+## Simulation
+
+```{r simulation}
 ```
+
+## Future research directions
+
+* Investigate why PCA performs better than random weights
+* Find other components that are better than PCA
+* Find optimal components by minimising forecast variance with respect to $\bm{\Phi}$
+* Use forecast projection and forecast reconciliation together
+
+## References {.allowframebreaks}
+
+::: {#refs}
+:::
