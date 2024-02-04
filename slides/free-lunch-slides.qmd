@@ -50,10 +50,23 @@ knitr::read_chunk("free-lunch-slides.R")
 
 ## Free lunch forecast projection
 
-A model-independent post-forecast adjustment method that can reduce forecast variance using linear combinations (components) without introducing new data or information.
+A model-independent post-forecast adjustment method that can reduce forecast variance.
 
-- Averaging indirect forecasts 
+- Averaging indirect forecasts from linear combinations (components)
 - Projecting forecasts of augmented series
+- Free lunch: no additional data or information needed
+
+## What to expect
+
+* Intuition with data
+
+* Literature
+
+* Method formulation
+
+* Properties
+
+* Empirical applications and simulation
 
 
 ## Australian tourism data
@@ -106,7 +119,7 @@ Finding components that
 
 * Combining forecasts of the target series
 * @HolEtAl2021: Combining direct and indirect forecasts
-* @PetSpi2021: Combining selection and transformation of the target series ("wisdom of data")
+* @PetSpi2021: Combining forecasts of selections and transformations of the target series ("wisdom of data")
 
 ## Literature
 
@@ -175,7 +188,7 @@ If the base forecasts are unbiased, then the projected forecasts are also unbias
 1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{y}_{t+h} = \bm{y}_{t+h}$ 
 
 
-## Nonnegative Variance reduction
+## Nonnegative variance reduction
 
 Under unbiasedness, the variance reduction is __positive semi-definite__:
 $$

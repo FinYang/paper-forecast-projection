@@ -62,10 +62,12 @@ visnights_wide %>%
   component() %>%
   getElement("x") %>%
   bind_cols(col_month, .) %>%
-  pivot_longer(-Month, names_to = "Component") %>%
+  pivot_longer(-Month,
+               names_to = "Component",
+               values_to = "Value") %>%
   filter(Component %in% unique(Component)[seq_len(4)]) %>%
   ggplot() +
-  geom_line(aes(x = Month, y = value)) +
+  geom_line(aes(x = Month, y = Value)) +
   facet_grid("Component", scales = "free")
 
 ## ---- series-fc ----
