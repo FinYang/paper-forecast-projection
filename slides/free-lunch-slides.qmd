@@ -106,7 +106,7 @@ Finding components that
 
 * Combining forecasts of the target series
 * @HolEtAl2021: Combining direct and indirect forecasts
-* @PetSpi2021: Combining slection and transformation of the target series ("wisdom of data")
+* @PetSpi2021: Combining selection and transformation of the target series ("wisdom of data")
 
 ## Literature
 
@@ -115,7 +115,7 @@ Finding components that
 * @BerEtAl2016: Bagging ETS models to forecast
 * @PetEtAl2018: The benefits of bagging originate from the model uncertainty
 
-### Dynamic Factor model (DFM)
+### Dynamic factor model (DFM)
 
 * @StoWat2002a, @StoWat2002
 
@@ -288,10 +288,10 @@ $$
 
 __Shrinking variance__ towards their median [@OpgStr2007] and __shrinking covariance__ towards zero [@SchStr2005].
 
-The shinkage estimator is
+The shrinkage estimator is
 
-* Positive definite
-* Numerically stable
+* Positive definite, and 
+* Numerically stable.
 
 In empirical applications, we assume
 $$
@@ -300,7 +300,7 @@ $$
 
 ## Construction of $\bm{\Phi}$
 
-### Principal Component Analysis (PCA)
+### Principal component analysis (PCA)
 
 Finding the weights matrix so that the resulting components \alert{\textbf{maximise variance}}
 
