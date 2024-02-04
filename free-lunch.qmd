@@ -909,7 +909,7 @@ In practice, the base forecast variance $\bm{W}_h$ is unknown and needs to be es
 $$
 \widehat{\bm{W}_h}=\frac{1}{T-1}\sum^T_{i=1}\hat{\bm{e}}_{t,h}\hat{\bm{e}}_{t,h}',
 $$
-albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T$. It is even singular when $(m+p)>T$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, we adopt the variance shrinkage method of @SchStr2005, which is the "MinT(Shrink)"" method of @WicEtAl2019, and the covariance shrinkage method of @OpgStr2007. Then, the estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with elements
+albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T$. It is even singular when $(m+p)>T$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, we adopt the covariance shrinkage method of @SchStr2005, which is the "MinT(Shrink)" method of @WicEtAl2019, and the variance shrinkage method of @OpgStr2007. Then, the estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with elements
 $$
 \hat{w}_{ij,h}^{shr} = \hat{r}_{ij,h}^{shr}\sqrt{\hat{v}_{i,h}\hat{v}_{j,h}},
 $$
