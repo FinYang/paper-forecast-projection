@@ -27,3 +27,7 @@ names_bycv <- tar_objects(ends_with("_cv"))
 for(na in names_bycv) {
   qs::qsave(tar_read_raw(na), file.path("output", paste0(na, ".qs")))
 }
+
+
+qs::qsave(tar_read(proj_ets_pca_normal, branches = 169), "output/proj_ets_pca_normal.qs")
+qs::qsave(tar_read(fc_ets, branches = 169), "output/fc_ets.qs")
