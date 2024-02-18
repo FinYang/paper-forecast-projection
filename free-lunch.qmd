@@ -1080,10 +1080,8 @@ As usual, when proposing a new approach to a problem, there are many issues that
 * It may be possible to find optimal components by optimizing @eq-obj over $\bm{\Phi}$ and $\bm{G}$ rather than just $\bm{G}$.
 * Our proposal was motivated by the forecast reconcililation literature, and it would be possible to use both forecast reconciliation and forecast projection together. This may be particularly useful when there are relationships between series that are not captured in the known hierarchical structure.
 
-\todo[inline]{Comment on software implementation}
 
-\todo[inline]{Comment on reproducibility and github repo}
-
+The methods introduced in this paper are implemented in the `flap` package [@flap]. This paper is fully reproducible with code and documentation provided at [https://github.com/FinYang/paper-forecast-projection](https://github.com/FinYang/paper-forecast-projection).
 
 # Acknowledgements {.unnumbered}
 
