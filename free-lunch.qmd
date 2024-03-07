@@ -368,7 +368,7 @@ we have $\tilde{\bm{y}}_{t+h}^+ = \bm{M}^{+}\hat{\bm{y}}_{t+h}^*$. Further, we o
 $$
 \bm{W}_h^*\overline{\bm{C}}'
  = \begin{bmatrix}
-      \bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c}^*
+      \bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c, h}^*
     \end{bmatrix}
     \begin{bmatrix}
       \bm{C}'\\ \underset{q\times p}{\bm{0}} \\
