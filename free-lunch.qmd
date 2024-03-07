@@ -876,7 +876,7 @@ Putting these together, we have the following theorem.
 
 The solution to
 $$
-\underset{\bm{G}}{\arg\min}\ \bm{G}\bm{W}_h\bm{G}'
+\underset{\bm{G}}{\arg\min}\ \tr(\bm{G}\bm{W}_h\bm{G}')
 \qquad \text{s.t. } \bm{G}\bm{S} = \bm{I}
 $$ {#eq-obj}
 is @eq-G. This problem can be effectively split into independent subproblems such that $\bm{G} = \big[\bm{g}_1 ~~ \bm{g}_2 ~~ \dots ~~ \bm{g}_m\big]'$, where $\bm{g}_i$ is the solution to the subproblem of the $i$th series
