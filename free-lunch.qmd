@@ -121,7 +121,7 @@ $$ {#eq-M}
 
 where $\Var(\hat{\bm{y}}_{t+h}-\bm{y}_{t+h}) = \bm{W}_h$ is the forecast covariance matrix. For the proofs of this section, we will assume that $\bm{W}_h$ is known, in practice a plug-in estimate can be used that will be discussed in @sec-estW.
 
-In practice we are not interested in forecasts of the full vector $\bm{y}_t$ but of $\bm{z}_t$. We now introduce some more notation to handle this issue. Define the selection matrix $\bm{J}_{n,k} = \big[\bm{I}_n ~~~ \bm{O}_{n\times k}\big]$, so that $\bm{J}_{n,k}\bm{A}$ picks out the first $n$ rows of a matrix $\bm{A}$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ denote the first $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{z}_t$ respectively. Similarly, let $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ denote the last $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{c}_t$ respectively. Then the projected forecast of $\bm{z}_t$ can be found by
+In practice we are not interested in forecasts of the full vector $\bm{y}_t$ but of $\bm{z}_t$. We now introduce some more notation to handle this issue. Define the selection matrix $\bm{J}_{n,k} = \big[\bm{I}_n ~~~ \bm{O}_{n\times k}\big]$, so that $\bm{J}_{n,k}\bm{A}$ picks out the first $n$ rows of a matrix $\bm{A}$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ denote the first $m$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{z}_t$ respectively. Similarly, let $\hat{\bm{c}}_{t+h}$ and $\tilde{\bm{c}}_{t+h}$ denote the last $p$ elements of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$, comprising the base and projected forecasts of $\bm{c}_t$ respectively. Then the projected forecast of $\bm{z}_t$ can be found by
 $$
 \tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M} \hat{\bm{y}}_{t+h},
 $$ {#eq-lcmap}
@@ -183,7 +183,7 @@ $$
 Note that the unbiasedness of the base forecasts is true for most common forecasting models, and can otherwise be easily achieved with a simple bias correction as suggested by @PanEtAl2021. Note this is not a requirement on model specification: we do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
 
 ::: {#lem-var}
-The forecast covariance matrix of the component-constrained projected $h$-step-ahead  forecasts $\tilde{\bm{y}}_{t+h}$ is $\bm{M}\bm{W}_h$, i.e.
+The forecast covariance matrix of the component-constrained projected $h$-step-ahead forecasts $\tilde{\bm{y}}_{t+h}$ is $\bm{M}\bm{W}_h$, i.e.
 $$
 \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{M}\bm{W}_h\bm{M}' = \bm{M}\bm{W}_h,
 $$
