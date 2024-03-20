@@ -1,5 +1,5 @@
 ---
-title: "Forecast Linear Augmented Projection: A free lunch to reduce forecast variance using linear combinations"
+title: "Forecast Linear Augmented Projection (FLAP): A free lunch to reduce forecast error variance"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 author:
  - familyname: Yang
@@ -50,7 +50,7 @@ format: wp-pdf
 
 # Abstract
 
-We introduce a novel forecast linear augmented projection (FLAP) method that provably reduces the forecast variance of any unbiased multivariate forecast without introducing bias. The method constructs linear combinations of the series, produces forecasts of both the original series and the new series, and finally projects the full vector of forecasts onto a linear subspace where the constraints implied by the combination weights hold. It is proven that the trace of the forecast variance is non-increasing in the number of components, and mild conditions are found for which it is strictly decreasing. It is also shown that the proposed method achieves maximum forecast variance reduction among linear projections. The theoretical results are validated in simulations and two real data applications; namely the Australian domestic tourism data set and the FRED-MD data set. Notably, using FLAP with Principal Component Analysis (PCA) to construct the new series leads to substantial variance reduction.
+A novel forecast linear augmented projection (FLAP) method that provably reduces the forecast error variance of any unbiased multivariate forecast without introducing bias, is introduced. The method first constructs new series as linear combinations of the original series. Forecasts are then generated for both the original and new series. Finally, the full vector of forecasts are projected onto a linear subspace where the constraints implied by the combination weights hold. It is proven that the trace of the forecast variance is non-increasing with the number of components, and mild conditions are established for which it is strictly decreasing. It is also shown that the proposed method achieves maximum forecast variance reduction among linear projections. The theoretical results are validated through simulations and two empirical applications based on Australian tourism and FRED-MD data. Notably, using FLAP with Principal Component Analysis (PCA) to construct the new series leads to substantial forecast error variance reduction.
 
 ```{r setup}
 #| cache: false
