@@ -301,12 +301,12 @@ In the results that follow, we break the base forecast covariance matrix into sm
 $$
 \bm{W}_h =
 \begin{bmatrix}
-\bm{W}_{z, h} & \bm{W}_{zc, h} \\
-\bm{W}_{zc, h}' & \bm{W}_{c, h}
+\bm{W}_{y, h} & \bm{W}_{yc, h} \\
+\bm{W}_{yc, h}' & \bm{W}_{c, h}
 \end{bmatrix},
 $$
-where $\bm{W}_{z, h}$ is the forecast covariance matrix of $\hat{\bm{y}}_{t+h}$,  $\bm{W}_{c, h}$ is the forecast covariance matrix of $\hat{\bm{c}}_{t+h}$,
-and $\bm{W}_{zc, h}$ contains covariances between elements of $\hat{\bm{y}}_{t+h}$ and $\hat{\bm{c}}_{t+h}$.
+where $\bm{W}_{y, h}$ is the forecast covariance matrix of $\hat{\bm{y}}_{t+h}$,  $\bm{W}_{c, h}$ is the forecast covariance matrix of $\hat{\bm{c}}_{t+h}$,
+and $\bm{W}_{yc, h}$ contains covariances between elements of $\hat{\bm{y}}_{t+h}$ and $\hat{\bm{c}}_{t+h}$.
 
 ::: {#thm-monotone}
 
@@ -831,33 +831,33 @@ $$
 Let the base and projected forecast errors be given as
 $$
 \begin{aligned}
-\hat{\bm{e}}_{z,t+h} &= \bm{y}_{t+h} - \hat{\bm{y}}_{t+h},\\
-\hat{\bm{e}}_{y,t+h} &= \bm{z}_{t+h} - \hat{\bm{z}}_{t+h},\\
-\tilde{\bm{e}}_{z,t+h} &= \bm{y}_{t+h} - \tilde{\bm{y}}_{t+h},\\
+\hat{\bm{e}}_{y, t+h} &= \bm{y}_{t+h} - \hat{\bm{y}}_{t+h},\\
+\hat{\bm{e}}_{z, t+h} &= \bm{z}_{t+h} - \hat{\bm{z}}_{t+h},\\
+\tilde{\bm{e}}_{y, t+h} &= \bm{y}_{t+h} - \tilde{\bm{y}}_{t+h},\\
 \text{and}\qquad
-\tilde{\bm{e}}_{y,t+h} &= \bm{z}_{t+h} - \tilde{\bm{z}}_{t+h}
+\tilde{\bm{e}}_{z, t+h} &= \bm{z}_{t+h} - \tilde{\bm{z}}_{t+h}
 = \bm{S}\bm{y}_{t+h} - \bm{S}\tilde{\bm{y}}_{t+h}
-= \bm{S} \tilde{\bm{e}}_{z,t+h}. \\
+= \bm{S} \tilde{\bm{e}}_{y, t+h}. \\
 \text{Then we have}\qquad
-\tilde{\bm{e}}_{y,t+h}
-&= \hat{\bm{e}}_{y,t+h} + \hat{\bm{z}}_{t+h} - \tilde{\bm{z}}_{t+h}\\
-&= \hat{\bm{e}}_{y,t+h} + \hat{\bm{z}}_{t+h} - \bm{S}\bm{G}\hat{\bm{z}}_{t+h}\\
-&= \hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})(\bm{z}_{t+h} - \hat{\bm{e}}_{y,t+h})\\
+\tilde{\bm{e}}_{z, t+h}
+&= \hat{\bm{e}}_{z, t+h} + \hat{\bm{z}}_{t+h} - \tilde{\bm{z}}_{t+h}\\
+&= \hat{\bm{e}}_{z, t+h} + \hat{\bm{z}}_{t+h} - \bm{S}\bm{G}\hat{\bm{z}}_{t+h}\\
+&= \hat{\bm{e}}_{z, t+h} + (\bm{I} - \bm{S}\bm{G})(\bm{z}_{t+h} - \hat{\bm{e}}_{z, t+h})\\
 \text{and}\qquad
-&= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h} + (\bm{I} - \bm{S}\bm{G})\bm{S}\bm{y}_{t+h}\\
-\bm{S} \tilde{\bm{e}}_{z,t+h} &= \bm{S}\bm{G}\hat{\bm{e}}_{y,t+h},
+&= \bm{S}\bm{G}\hat{\bm{e}}_{z, t+h} + (\bm{I} - \bm{S}\bm{G})\bm{S}\bm{y}_{t+h}\\
+\bm{S} \tilde{\bm{e}}_{y, t+h} &= \bm{S}\bm{G}\hat{\bm{e}}_{z, t+h},
 \end{aligned}
 $$
 where the last line comes from $\bm{G}\bm{S} = \bm{I}$.
 Left multiplying by $\bm{G}$ on both sides, we have
 $$
-\bm{G}\bm{S} \tilde{\bm{e}}_{z,t+h} = \bm{G}\bm{S}\bm{G}\hat{\bm{e}}_{y,t+h}
+\bm{G}\bm{S} \tilde{\bm{e}}_{y, t+h} = \bm{G}\bm{S}\bm{G}\hat{\bm{e}}_{z, t+h}
 \qquad\text{and}\qquad
-\tilde{\bm{e}}_{z,t+h} = \bm{G}\hat{\bm{e}}_{y,t+h},
+\tilde{\bm{e}}_{y, t+h} = \bm{G}\hat{\bm{e}}_{z, t+h},
 $$
 and therefore
 $$
-\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) =\Var(\tilde{\bm{e}}_{z,t+h})=\Var(\bm{G}\hat{\bm{e}}_{y,t+h})= \bm{G}\Var(\hat{\bm{e}}_{y,t+h})\bm{G}'= \bm{G}\bm{W}_h\bm{G}'.
+\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) =\Var(\tilde{\bm{e}}_{y, t+h})=\Var(\bm{G}\hat{\bm{e}}_{z, t+h})= \bm{G}\Var(\hat{\bm{e}}_{z, t+h})\bm{G}'= \bm{G}\bm{W}_h\bm{G}'.
 $$
 
 :::
