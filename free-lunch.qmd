@@ -176,16 +176,16 @@ $$
 :::
 :::
 
-Note that the unbiasedness of the base forecasts is true for most common forecasting models, and can otherwise be easily achieved with a simple bias correction as suggested by @PanEtAl2021. Note this is not a requirement on model specification: we do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
+The assumption of unbiasedness of the base forecasts is not unreasonable in practice, and where it does not hold, many bias correction method can be applied [@PanEtAl2021]. Note this is not a requirement on model specification. We do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
 
 ::: {#lem-var}
-The forecast covariance matrix of the component-constrained projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is $\bm{M}\bm{W}_h$, i.e.
+The forecast error covariance matrix of the component-augmented projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is 
 $$
-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) = \bm{M}\bm{W}_h\bm{M}' = \bm{M}\bm{W}_h,
+\Var(\bm{z}_{t+h} - \tilde{\bm{z}}_{t+h}) = \bm{M}\bm{W}_h\bm{M}' = \bm{M}\bm{W}_h,
 $$
-and the forecast covariance matrix of the projected $h$-step-ahead forecasts $\tilde{\bm{y}}_{t+h}$ is
+and the forecast error covariance matrix of the projected $h$-step-ahead forecasts $\tilde{\bm{y}}_{t+h}$ is
 $$
-\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
+\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
 $$
 :::
 
@@ -222,7 +222,7 @@ To get $\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$, we just need to recognise th
 
 #### Positive Semi-Definiteness of Variance Reduction
 
-The difference between the forecast covariance matrices of the base and projected forecasts,
+The difference between the forecast error covariances of the base and projected forecasts,
 $$
 \begin{aligned}
 \Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) &=\bm{W}_h-\bm{M}\bm{W}_h\\
@@ -231,7 +231,7 @@ $$
 \end{aligned}
 $$
 is positive semi-definite.
-The difference between the forecast variance of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$,
+The difference between the forecast error variances of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$,
 $$
 \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}',
 $$
@@ -246,15 +246,13 @@ $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\
 :::
 :::
 
-@thm-psdvar is why forecast projection works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of the reduction in forecast variances, and is non-negative because the matrix is positive semi-definite. It means we can reduce the forecast variance by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace needs to be zero, and because the matrix is positive semi-definite, this implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is a zero matrix, which rarely happens in practice. See @thm-pos-condition for more discussions.
+@thm-psdvar is why FLAP works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of the reduction in forecast error variances, and is non-negative because the matrix is positive semi-definite. It implies that the forecast error variance can be reduced by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace must be zero. This implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}' = \bm{O}_{m\times m}$ as this is a positive semi-definite matrix, something rarely observed in practice. See @thm-pos-condition for more discussions.
 
-We give a simple example to show how the variance reduction works.
+The following example illustrates the mechanism of the reduction in the forecast error variance.
 
 ::: {#exm-identityW}
 
-####
-
-Suppose $\bm{z}_t$ comprises $m$ original series and $p$ components whose forecasts are all uncorrelated with each other and have  variance $1$. Then $\bm{W}_h = \bm{I}_{m+p}$, and
+Suppose $\bm{z}_t$ comprises $m$ original series $\bm{y}_t$ and $p$ components $\bm{c}_t$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ be $h$-step-ahead base and projected forecasts. Assume that their corresponding forecast errors are uncorrelated with unit variance such that $\bm{W}_h = \bm{I}_{m+p}$, then
 $$
 \begin{aligned}
 \Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})
@@ -262,7 +260,7 @@ $$
 \bm{C}'(\bm{C}\bm{C}')^{-1}\bm{C}\\
 & =
 \begin{bmatrix} -\bm{\Phi}'\\ \bm{I}_{p} \end{bmatrix}
-(\bm{\Phi}\bm{\Phi}' + \bm{I})^{-1}
+(\bm{\Phi}\bm{\Phi}' + \bm{I}_p)^{-1}
 \begin{bmatrix} -\bm{\Phi}& \bm{I}_{p} \end{bmatrix} ,
 \end{aligned}
 $$
@@ -285,19 +283,19 @@ $$
         -\bm{\Phi} & \bm{I}_p
        \end{bmatrix}.
 $$
-We only focus on the forecast variance reduction for the original series, which is $\tr(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
-When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. The reduction in the forecast variance of the original series is $p/2$.
-When $p=m$, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$, which means the reduction on the sum is $m/2$ and the reduction on each individual series is $1/2$.
-If we have two series ($m=2$) to begin with, using $p=1$ component in the mapping will reduce the sum of forecast variance by $0.5$, and using $p=2$ components will reduce the sum of forecast variance by $1$; that is a $50\%$ reduction as the original sum of forecast variances is $2$.
+Focusing on the forecast error variance reduction of the forecasts of the original series $\bm{y}_t$, i.e. $\tr(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
+When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. Hence, the reduction in the total forecast error variance of the forecasts of the original series is $p/2$.
+When $p=m$, hence all components are used, $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$. This implies means the total reduction to be $m/2$ and therefore the reduction on each individual series is $1/2$.
+For example, if we have two series ($m=2$) to begin with, using $p=1$ component will reduce the sum of forecast error variance by $0.5$, while using both components ($p=2$) will reduce the sum of forecast error variance by $1$; that is a $50\%$ reduction as the original sum of forecast error variances is $2$.
 
-If we keep increasing the number of components, the result in @thm-psdvar still holds, although $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example because the forecast variance $\bm{W}_h$ can hardly be an identity in practice, as the forecasts of a linear combination of two series are likely to be correlated with the forecasts of these series. Nonetheless, we can see how the forecast variance can be reduced as a result of the component forecasts bringing new information about the original series.
+If we keep increasing the number of components, the result in @thm-psdvar still holds, although $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example because the forecast error variance $\bm{W}_h$ can hardly be an identity in practice, because the forecast error of a linear combination of two series are likely to be correlated with the forecast error of these series. Nonetheless, we can see how the forecast error variance can be reduced as a result of the component forecasts bringing new information about the original series.
 :::
 
 The variance reduction becomes larger as we increase the number of components $p$ from $1$ to $2$ in @exm-identityW. This is not a coincidence but a desirable property of forecast projection, as shown in the next section.
 
 ## Monotonicity
 
-In the results that follow, we break the base forecast covariance matrix into smaller blocks:
+In the results that follow, we break the base forecast error covariance matrix into smaller blocks:
 $$
 \bm{W}_h =
 \begin{bmatrix}
@@ -305,8 +303,8 @@ $$
 \bm{W}_{yc, h}' & \bm{W}_{c, h}
 \end{bmatrix},
 $$
-where $\bm{W}_{y, h}$ is the forecast covariance matrix of $\hat{\bm{y}}_{t+h}$,  $\bm{W}_{c, h}$ is the forecast covariance matrix of $\hat{\bm{c}}_{t+h}$,
-and $\bm{W}_{yc, h}$ contains covariances between elements of $\hat{\bm{y}}_{t+h}$ and $\hat{\bm{c}}_{t+h}$.
+where $\bm{W}_{y, h}$ is the forecast error covariance matrix of $\hat{\bm{y}}_{t+h}$,  $\bm{W}_{c, h}$ is the forecast error covariance matrix of $\hat{\bm{c}}_{t+h}$,
+and $\bm{W}_{yc, h}$ contains error covariances between elements of $\hat{\bm{y}}_{t+h}$ and $\hat{\bm{c}}_{t+h}$.
 
 ::: {#thm-monotone}
 
@@ -322,6 +320,11 @@ $$
 $$ {#eq-trdvar}
 is non-decreasing as $p$ increases. 
 :::
+
+::: {.proof}
+See Appendix.
+:::
+
 ::: {.toappendix}
 ::: {.proof}
 #### Proof of @thm-monotone
@@ -652,9 +655,9 @@ being a positive semi-definite matrix where the diagonal terms are non-negative,
 :::
 :::
 
-@thm-monotone is the key result that demonstrates the usefulness of forecast projection. It means that we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the base forecast covariance of all the series and components. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix (with upper right corner all $0$s). This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series.
+@thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the forecast error covariance of the base forecasts of the series and the components. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the new components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series.
 
-Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{z},h}$ denote the covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}z,h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component, and the projected forecasts of the original series, based on the first $i-1$ components.
+Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{z},h}$ denote the error covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}z,h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component, and the projected forecasts of the original series, based on the first $i-1$ components.
 
 ::: {#thm-pos-condition}
 
@@ -969,9 +972,9 @@ Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the pro
 ```{r simulation}
 ```
 
-In this section, we illustrate the performance of the flap method in a simulation example. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. We simulate $220$ such samples and the forecast is evaluated on each sample.
+In this section, we illustrate the performance of FLAP in a simulation setting. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. We simulate $220$ such samples and the forecasts are evaluated on each sample.
 
-The first benchmark we use is a univariate ARIMA model. For each series, we fit an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast]. The function implements an automatic model selection procedure proposed by @HynKha2008. The number of first differences is determined by repeated KPSS tests [@KwiEtAl1992] and the number of seasonal differences is determined by the seasonal strength computed from an STL decomposition [@CleEtAl1990;@fpp3]. The algorithm then chooses different orders of the autoregressive (AR) and moving average (MA) parts by comparing AICc between the corresponding models in a stepwise fashion, up to a maximal order of $5$. Univariate ARIMAs are also used to produce base forecasts of the components used in projection, regardless of the base model.
+The first benchmark we use is a univariate ARIMA model. For each series, we fit an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast]. The function implements an automatic model selection procedure proposed by @HynKha2008. The number of first differences is determined by repeated KPSS tests [@KwiEtAl1992] and the number of seasonal differences is determined by the seasonal strength computed from an STL decomposition [@CleEtAl1990;@fpp3]. The algorithm then chooses different orders of the autoregressive (AR) and moving average (MA) parts by comparing AICc between the corresponding models in a stepwise fashion, up to a maximal order of $5$. Univariate ARIMAs are also used to produce base forecasts of the components used in projection, including the cases where the base forecasts of the series are produced by a different model.
 
 Another base model is the DFM following @StoWat2002a:
 $$
