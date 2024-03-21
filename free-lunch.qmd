@@ -311,11 +311,16 @@ and $\bm{W}_{yc, h}$ contains covariances between elements of $\hat{\bm{y}}_{t+h
 ::: {#thm-monotone}
 
 #### Monotonicity
-The sum of forecast variance reductions
+The forecast error variance reductions for each series, i.e., the diagonal elements in the matrix
+$$
+\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+$$ 
+is non-decreasing as $p$ increases. 
+In particular, the sum of forecast variance reductions 
 $$
 \tr(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
 $$ {#eq-trdvar}
-is non-decreasing as $p$ increases.
+is non-decreasing as $p$ increases. 
 :::
 ::: {.toappendix}
 ::: {.proof}
@@ -636,27 +641,26 @@ $$ {#eq-addcom}
 being positive semi-definite.
 Finally, we have
 \begin{multline*}
-\tr(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}))
+(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}))
 -
-\tr(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) \\
-= \tr(
+(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) \\
+= 
     \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) -
     \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h})
-)
 \end{multline*}
-being the trace of a positive semi-definite matrix, which is non-negative. This means using a larger number of components in the mapping achieves a lower sum of forecast variance, giving @thm-monotone.
+being a positive semi-definite matrix where the diagonal terms are non-negative, whose trace, therefore, is non-negative. This means using a larger number of components in the mapping achieves lower forecast variances, giving @thm-monotone.
 :::
 :::
 
 @thm-monotone is the key result that demonstrates the usefulness of forecast projection. It means that we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the base forecast covariance of all the series and components. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix (with upper right corner all $0$s). This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series.
 
-Extending the proof of @thm-monotone, we can outline the condition for the reduced variance to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{z},h}$ denote the covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}z,h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component, and the projected forecasts of the original series, based on the first $i-1$ components.
+Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{z},h}$ denote the covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}z,h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component, and the projected forecasts of the original series, based on the first $i-1$ components.
 
 ::: {#thm-pos-condition}
 
 #### Positive Variance Reduction Condition
 
-For the first component to have a guaranteed reduction of forecast variance (for the reduced variance matrix in @thm-psdvar to have positive trace), the following condition must be satisfied:
+For the first component to achieve a guaranteed reduction of forecast error variance (for the reduced variance matrix in @thm-psdvar to have positive trace), the following condition must be satisfied:
 $$
 \bm{\phi}_1\bm{W}_{z,h}\neq\bm{w}_{c_1z,h}.
 $$ {#eq-pcon}
