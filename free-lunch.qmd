@@ -159,9 +159,9 @@ Thus, $\bm{M}$ projects any vector onto the space where the constraint $\bm{C}$ 
 Based on the attractive properties of projections, we have the following corollaries.
 
 ::: {#cor-corM}
-1. The projected forecast $\tilde{\bm{z}}_{t+h}$ satisfies the constraint $\bm{C}$.
-1. For $\bm{z}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{z}_{t+h} = \bm{z}_{t+h}$ [@Rao1974, Lemma 2.4].
-1. If the base forecasts are unbiased such that $\E(\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$, then the projected forecasts are also unbiased: $\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$.
+1. The projected forecast $\tilde{\bm{z}}_{t+h}$ satisfies the constraint $\bm{C}\bm{z}_{t+h}=0$.
+1. For $\bm{z}_{t+h}$ that already satisfies the constraint, the projection does not change its value, i.e., $\bm{M}\bm{z}_{t+h} = \bm{z}_{t+h}$ [@Rao1974, Lemma 2.4].
+1. If the base forecasts are unbiased such that $\E(\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$, then the projected forecasts are also unbiased, i.e., $\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$.
 :::
 
 ::: {.toappendix}
@@ -176,7 +176,7 @@ $$
 :::
 :::
 
-The assumption of unbiasedness of the base forecasts is not unreasonable in practice, and where it does not hold, many bias correction method can be applied [@PanEtAl2021]. Note this is not a requirement on model specification. We do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
+The assumption of unbiasedness of the base forecasts is not unreasonable in practice, and where it does not hold, many bias correction method can be applied. Note this is not a requirement on model specification. We do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
 
 ::: {#lem-var}
 The forecast error covariance matrix of the component-augmented projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is 
@@ -222,10 +222,10 @@ To get $\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$, we just need to recognise th
 
 #### Positive Semi-Definiteness of Variance Reduction
 
-The difference between the forecast error covariances of the base and projected forecasts,
+The difference between the forecast error variances of the base and projected forecasts,
 $$
 \begin{aligned}
-\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) &=\bm{W}_h-\bm{M}\bm{W}_h\\
+\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) -\Var(\bm{z}_{t+h}-\tilde{\bm{z}}_{t+h} ) &=\bm{W}_h-\bm{M}\bm{W}_h\\
 &= \bm{W}_h - (\bm{I} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\bm{W}_h\\
 &=\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h,
 \end{aligned}
@@ -233,7 +233,7 @@ $$
 is positive semi-definite.
 The difference between the forecast error variances of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$,
 $$
-\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}',
+\Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}',
 $$
 is therefore positive semi-definite.
 
@@ -655,7 +655,7 @@ being a positive semi-definite matrix where the diagonal terms are non-negative,
 :::
 :::
 
-@thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the forecast error covariance of the base forecasts of the series and the components. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the new components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series.
+@thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the forecast error covariance of the base forecasts of the series and the components. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series.
 
 Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{z},h}$ denote the error covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}z,h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component, and the projected forecasts of the original series, based on the first $i-1$ components.
 
