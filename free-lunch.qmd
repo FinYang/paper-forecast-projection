@@ -6,11 +6,11 @@ author:
    othernames: Yangzhuoran Fin
    address: Monash University\newline Melbourne, Australia
    email: Fin.Yang@monash.edu
- - familyname: Hyndman
-   othernames: Rob J.
-   address: Monash University\newline Melbourne, Australia
  - familyname: Athanasopoulos
    othernames: George
+   address: Monash University\newline Melbourne, Australia
+ - familyname: Hyndman
+   othernames: Rob J.
    address: Monash University\newline Melbourne, Australia
  - familyname: Panagiotelis
    othernames: Anastasios
@@ -105,7 +105,7 @@ In the following, all vectors and matrices are denoted in bold font. We use $\bm
 
 Let $\bm{y}_t\in\mathbf{R}^m$ be a vector of $m$ observed time series we are interested in forecasting. The FLAP method involves three steps:
 
-  1. *Form components*. Form $\bm{c}_t = \bm{\Phi}\bm{y}_t\in\mathbf{R}^p$, a vector of $p$ linear combinations of $\bm{y}_t$ at time $t$, where $\bm{\Phi}\in\mathbf{R}^{p\times m}$. We call $\bm{c}_t$ the components of $\bm{y}_t$ and the component weights $\bm{\Phi}$ are known in the sense that they are chosen by the user of the FLAP method. Let $\bm{z}_{t} = \big[\bm{y}_t', \bm{c}'_{t}\big]'$ be the concatenation of series $\bm{y}_t$ and components $\bm{c}_{t}$. We note that $\bm{z}_{t}$ will be constrained in the sense that $\bm{C}\bm{z}_t= \bm{c}_{t} - \bm{\Phi}\bm{y}_t = \bm{0}$ for any $t$ where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ is referred to as the constraint matrix
+  1. *Form components*. Form $\bm{c}_t = \bm{\Phi}\bm{y}_t\in\mathbf{R}^p$, a vector of $p$ linear combinations of $\bm{y}_t$ at time $t$, where $\bm{\Phi}\in\mathbf{R}^{p\times m}$. We call $\bm{c}_t$ the components of $\bm{y}_t$ and the component weights $\bm{\Phi}$ are known in the sense that they are chosen by the user of the FLAP method. Let $\bm{z}_{t} = \big[\bm{y}_t', \bm{c}'_{t}\big]'$ be the concatenation of series $\bm{y}_t$ and components $\bm{c}_{t}$. We note that $\bm{z}_{t}$ will be constrained in the sense that $\bm{C}\bm{z}_t= \bm{c}_{t} - \bm{\Phi}\bm{y}_t = \bm{0}$ for any $t$ where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ is referred to as the constraint matrix.
   2. *Generate forecasts*. Denote as $\hat{\bm{z}}_{t+h}$ the $h$-step-ahead base forecast of $\bm{z}_{t}$. The method used to generate forecasts is again selected by the user. This can be univariate or multivariate. In the more general setting where $\bm{z}_t$ are not time series but cross sectional data, any prediction method can be used. In general, the constraints that hold for $\bm{z}_t$ will not hold for $\hat{\bm{z}}_{t+h}$, i.e $\bm{C}\hat{\bm{z}}_{t+h}\neq \bm{0}$
   3. *Project the base forecasts*. Let $\tilde{\bm{z}}_{t+h}$ be a set of projected forecasts such that, 
 $$
@@ -123,9 +123,9 @@ $$
 $$ {#eq-lcmap}
 where $\bm{J} = \bm{J}_{m,p}$.
 
-We now present some theoretical results regarding the FLAP method, with proofs provided in the Appendix. The main results are @thm-psdvar, which establishes that the FLAP method dominates the base forecasts, in the sense that the difference between the forecast error covariance matrices of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$ is always positive definite. @thm-monotone establishes that the trace of the covariance of the forecast errors of $\tilde{\bm{y}}_{t+h}$ is non-increasing with the number of components $p$. The conditions needed to make the trace strictly decreasing are discussed in @thm-pos-condition. In @thm-minvar we prove that the projection in @eq-M achieves the minimum forecast error variance amongst the class of all projections. Finally, while the theoretical results imply that components could in principle continue to be added to improve forecasts, in practice, larger values of $p$ will make estimation of the plug-in covariance matrix $\bm{W}_h$ unreliable. We explore this issue empirically in @sec-simulation and @sec-empirical-applications.
+We now present some theoretical results regarding the FLAP method, with proofs provided in the Appendix. @thm-psdvar establishes that the forecasts produced by the FLAP method, $\hat{\bm{y}}_{t+h}$, dominate the base forecasts, $\tilde{\bm{y}}_{t+h}$, in the sense that the difference between their forecast error covariances is always positive definite. @thm-monotone establishes that the trace of the covariance of the forecast errors of $\tilde{\bm{y}}_{t+h}$ is non-increasing with the number of components $p$. The conditions needed to make the trace strictly decreasing are discussed in @thm-pos-condition. In @thm-minvar we prove that the projection in @eq-M achieves the minimum forecast error variance amongst the class of all projections. Finally, while the theoretical results imply that components could in principle continue to be added to improve forecasts, in practice, larger values of $p$ will make estimation of the plug-in covariance matrix $\bm{W}_h$ unreliable. We explore this issue empirically in @sec-simulation and @sec-empirical-applications.
 
-## Positive Semi-Definiteness of Variance Reduction
+## Positive Semi-Definiteness of Error Variance Reduction
 
 We first provide some intermediate results.
 
@@ -152,7 +152,7 @@ For any $\bm{z}$ such that $\bm{M}\bm{z} = \bm{y}$ for some $\bm{y}$, we have
 $$
 \bm{C}\bm{y} = \bm{C}\bm{M}\bm{z} = \bm{C}\bm{z} - \bm{C}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{z} = \bm{0}.
 $$
-Thus, $\bm{M}$ projects any vector onto the space where the constraint $\bm{C}$ is satisfied.
+Thus, $\bm{M}$ projects any vector onto the space where the constraint $\bm{C}\bm{y}=0$ is satisfied.
 :::
 :::
 
@@ -220,9 +220,9 @@ To get $\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$, we just need to recognise th
 
 ::: {#thm-psdvar}
 
-#### Positive Semi-Definiteness of Variance Reduction
+#### Positive Semi-Definiteness of Error Variance Reduction
 
-The difference between the forecast error variances of the base and projected forecasts,
+The difference between the forecast error variances of the base and projected component-augmented forecasts,
 $$
 \begin{aligned}
 \Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) -\Var(\bm{z}_{t+h}-\tilde{\bm{z}}_{t+h} ) &=\bm{W}_h-\bm{M}\bm{W}_h\\
@@ -231,11 +231,11 @@ $$
 \end{aligned}
 $$
 is positive semi-definite.
-The difference between the forecast error variances of $\hat{\bm{y}}_{t+h}$ and $\tilde{\bm{y}}_{t+h}$,
+The difference between the forecast error variances of the base and projected forecasts of the original series,
 $$
 \Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}',
 $$
-is therefore positive semi-definite.
+is therefore also positive semi-definite.
 
 :::
 ::: {.toappendix}
@@ -246,16 +246,16 @@ $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\
 :::
 :::
 
-@thm-psdvar is why FLAP works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of the reduction in forecast error variances, and is non-negative because the matrix is positive semi-definite. It implies that the forecast error variance can be reduced by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace must be zero. This implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}' = \bm{O}_{m\times m}$ as this is a positive semi-definite matrix, something rarely observed in practice. See @thm-pos-condition for more discussions.
+@thm-psdvar is why FLAP works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of the reduction in forecast error variances, and is non-negative because the matrix is positive semi-definite. It implies that the forecast error variance can be reduced by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace must be zero. This implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}' = \bm{O}_{m\times m}$ as this is a positive semi-definite matrix, something rarely observed in practice. See @thm-pos-condition for more discussion.
 
 The following example illustrates the mechanism of the reduction in the forecast error variance.
 
 ::: {#exm-identityW}
 
-Suppose $\bm{z}_t$ comprises $m$ original series $\bm{y}_t$ and $p$ components $\bm{c}_t$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ be $h$-step-ahead base and projected forecasts. Assume that their corresponding forecast errors are uncorrelated with unit variance such that $\bm{W}_h = \bm{I}_{m+p}$, then
+Suppose $\bm{z}_t$ comprises $m$ original series $\bm{y}_t$ and $p$ components $\bm{c}_t$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ be $h$-step-ahead base and projected forecasts of $\bm{z}_t$. Assume that their corresponding forecast errors are uncorrelated with unit variance such that $\bm{W}_h = \bm{I}_{m+p}$, then
 $$
 \begin{aligned}
-\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})
+\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})
 &=
 \bm{C}'(\bm{C}\bm{C}')^{-1}\bm{C}\\
 & =
@@ -268,30 +268,26 @@ where
 $$
 \bm{C} = \begin{bmatrix} - \bm{\Phi}& \bm{I}_{p} \end{bmatrix}.
 $$
-Let $\bm{\Phi}$ consist of orthogonal unit vectors, for example, those obtained from Principal Component Analysis [PCA, @Jol2002]. That is,
+Let $\bm{\Phi}$ consist of $p\le m$ orthogonal unit vectors, for example, those obtained from Principal Component Analysis [PCA, @Jol2002]. In this case $\bm{\Phi}\bm{\Phi}' = \bm{I}_p$ and 
 $$
-\bm{\Phi}\bm{\Phi}' = \bm{I}_p\text{ when } p\le m
-\qquad\text{and}\qquad
-\bm{\Phi}'\bm{\Phi} = \bm{I}_m\text{ when } p= m.
-$$
-Then
-$$
-\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})
+\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) -\Var(\bm{z}_{t+h}-\tilde{\bm{z}}_{t+h})
   =  \frac{1}{2}
       \begin{bmatrix}
         \bm{\Phi}'\bm{\Phi} & -\bm{\Phi}'\\
         -\bm{\Phi} & \bm{I}_p
        \end{bmatrix}.
 $$
-Focusing on the forecast error variance reduction of the forecasts of the original series $\bm{y}_t$, i.e. $\tr(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
-When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent, we have $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. Hence, the reduction in the total forecast error variance of the forecasts of the original series is $p/2$.
-When $p=m$, hence all components are used, $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$. This implies means the total reduction to be $m/2$ and therefore the reduction on each individual series is $1/2$.
-For example, if we have two series ($m=2$) to begin with, using $p=1$ component will reduce the sum of forecast error variance by $0.5$, while using both components ($p=2$) will reduce the sum of forecast error variance by $1$; that is a $50\%$ reduction as the original sum of forecast error variances is $2$.
+Focusing on the forecast error variance reduction of the forecasts of the original series $\bm{y}_t$, i.e., $\tr(\Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h})) = \frac{1}{2}\tr(\bm{\Phi}'\bm{\Phi})$.
 
-If we keep increasing the number of components, the result in @thm-psdvar still holds, although $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example because the forecast error variance $\bm{W}_h$ can hardly be an identity in practice, because the forecast error of a linear combination of two series are likely to be correlated with the forecast error of these series. Nonetheless, we can see how the forecast error variance can be reduced as a result of the component forecasts bringing new information about the original series.
+- When $p<m$, since $\bm{\Phi}'\bm{\Phi}$ is idempotent, $\tr(\bm{\Phi}'\bm{\Phi}) = \operatorname{rank}(\bm{\Phi}'\bm{\Phi}) = p$. Hence, the reduction in the total forecast error variance of the FLAP forecasts, of the original series, compared to the base forecasts is $p/2$.
+- When $p=m$, hence all principle components are used, $\tr(\bm{\Phi}'\bm{\Phi}) = \tr(\bm{I}_m) = m$. This implies a total reduction in the error variance of $m/2$ and therefore for each of the $m$ individual series the error variance is on average halved.
+
+<!-- NOT SURE THIS HELPS -- In simplest of cases where we have two original series ($m=2$), using $p=1$ component will reduce the total forecast error variance by $0.5$, while using both components ($p=2$) will reduce the total forecast error variance by $1$; that is a $50\%$ reduction as the original sum of forecast error variances is $2$. -->
+
+If we keep increasing the number of components beyond $m$, the result in @thm-psdvar still holds, although $\bm{\Phi}$ can no longer contain orthogonal vectors, and the example here becomes intractable. This is an artificial example as the forecast error variance $\bm{W}_h$ can hardly be an identity in practice, as the forecast error of a linear combinations of series are likely to be correlated with the forecast error of these series. Nonetheless, the aim of the example is to demonstrate how the forecast error variance can be reduced as a result of the component forecasts bringing new information about the original series. The forecast error variance reduction becomes larger as we increase the number of components $p$. This is not a coincidence but a desirable property of forecast projection, as shown in the next section.
+
 :::
 
-The variance reduction becomes larger as we increase the number of components $p$ from $1$ to $2$ in @exm-identityW. This is not a coincidence but a desirable property of forecast projection, as shown in the next section.
 
 ## Monotonicity
 
@@ -311,12 +307,12 @@ and $\bm{W}_{yc, h}$ contains error covariances between elements of $\hat{\bm{y}
 #### Monotonicity
 The forecast error variance reductions for each series, i.e., the diagonal elements in the matrix
 $$
-\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+\Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 $$ 
 is non-decreasing as $p$ increases. 
 In particular, the sum of forecast variance reductions 
 $$
-\tr(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
+\tr(\Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
 $$ {#eq-trdvar}
 is non-decreasing as $p$ increases. 
 :::
@@ -655,21 +651,21 @@ being a positive semi-definite matrix where the diagonal terms are non-negative,
 :::
 :::
 
-@thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast variance, even when the number of components exceeds the number of original series, assuming we know the forecast error covariance of the base forecasts of the series and the components. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series.
+@thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast error variance, even when the number of components exceeds the number of original series. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series. This of course assumes that the forecast error covariances are known, something we explore in @sec-estW and @sec-simulation. 
 
-Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{z},h}$ denote the error covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}z,h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component, and the projected forecasts of the original series, based on the first $i-1$ components.
+Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of forecast error variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{\bm{y}},h}$ denote the error covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}\hat{\bm{y}},h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{c_i\tilde{y},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component and the projected forecasts of the original series, based on the first $i-1$ components.
 
 ::: {#thm-pos-condition}
 
-#### Positive Variance Reduction Condition
+#### Positive Forecast Error Variance Reduction Condition
 
-For the first component to achieve a guaranteed reduction of forecast error variance (for the reduced variance matrix in @thm-psdvar to have positive trace), the following condition must be satisfied:
+For the first component to achieve a guaranteed reduction of forecast error variance (for the reduced variance matrix in @thm-psdvar to have positive trace),
 $$
-\bm{\phi}_1\bm{W}_{z,h}\neq\bm{w}_{c_1z,h}.
+\bm{\phi}_1\bm{W}_{y,h}\neq\bm{w}_{c_1y,h}.
 $$ {#eq-pcon}
-For the $i$th component to have a positive reduction on forecast variance of the original series, the following condition must be satisfied:
+For the $i$th component to have a positive reduction on forecast variance of the original series,
 $$
-\bm{\phi}_i{\bm{W}}^{(i-1)}_{\tilde{z},h}\neq\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)},
+\bm{\phi}_i{\bm{W}}^{(i-1)}_{\tilde{y},h}\neq\bm{w}_{c_i\tilde{y},h}^{(i-1)},
 $$ {#eq-pconi}
 
 :::
@@ -747,9 +743,9 @@ where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\b
 :::
 :::
 
-We can interpret the condition of @eq-pcon in the following way: for the new component to be beneficial, the information brought by this new component, measured as the covariance, cannot be a linear combination of already existing information.
+The condition of @eq-pcon demonstrates that for a new component to be beneficial, the information introduced by this new component, reflected in the error covariance, cannot be a linear combination of already existing information.
 
-@thm-pos-condition can potentially provide insights into the selection of component weights and forecast models to satisfy the conditions. We leave this issue to a later article, as practically the conditions in @thm-pos-condition are either almost always satisfied if the weights are simulated randomly on a continuous scale, or the loss associated with the rare occasions where the conditions are not satisfied is neglectable compared to the estimation error imposed by the limited sample size as the number of components increases, as discussed in @sec-simulation and @sec-empirical-applications.
+@thm-pos-condition can potentially provide insights into the selection of component weights and forecast models to satisfy the conditions. We leave this issue to a later article, as practically the conditions in @thm-pos-condition are either almost always satisfied if the weights are simulated randomly on a continuous scale, or the loss associated with the rare occasions where the conditions are not satisfied is negligible compared to the estimation error imposed by the limited sample size as the number of components increases, as discussed in @sec-simulation and @sec-empirical-applications.
 
 
 ## Optimality of the projection
