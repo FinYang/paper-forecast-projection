@@ -1,9 +1,9 @@
 ---
-title: "Free Lunch Multivariate Forecast Projection: reducing forecast variance using linear combinations"
+title: "Forecast Linear Augmented Projection (FLAP): A free lunch to reduce forecast error variance"
 author: [
   "Yangzhuoran Fin Yang",
-  "Rob J Hyndman",
   "George Athanasopoulos",
+  "Rob J Hyndman",
   "Anastasios Panagiotelis"
   ]
 template: template.tex
@@ -48,7 +48,7 @@ knitr::read_chunk("free-lunch-slides.R")
 ```
 
 
-## Free lunch forecast projection
+## Forecast Linear Augmented Projection (FLAP)
 
 A model-independent post-forecast adjustment method that can reduce forecast variance.
 
@@ -145,7 +145,7 @@ Finding components that
 ```{r components}
 ```
 
-## Free lunch forecast projection
+## FLAP
 
 $$
 \bm{y}_t = \begin{bmatrix} \bm{z}_t\\ \bm{c}_t \end{bmatrix}
@@ -169,7 +169,7 @@ $$
 $$
 
 
-## Forecasts and projection of series 
+## Forecasts and FLAP of series 
 
 ```{r series-fc}
 ```
@@ -178,7 +178,7 @@ $$
 ## Unbiasedness
 
 \begin{alertblock}{Unbiasedness}
-If the base forecasts are unbiased, then the projected forecasts are also unbiased.
+If the base forecasts are unbiased, then the FLAP forecasts are also unbiased.
 \end{alertblock}
 
 ### Projection matrix
@@ -235,16 +235,16 @@ $$
 <!-- where $\bm{\phi}_1$ is the weight vector of the first component, $\bm{W}_{z,h} = \Var(\hat{\bm{z}_{t+h}})$, and $\bm{w}_{c_1z,h}$ is the forecast covariance between the first component and the original series. -->
 
 * $\bm{\phi}_1$ is the weight vector of the first component
-* $\bm{W}_{z,h} = \Var(\hat{\bm{z}}_{t+h})$ 
+* $\bm{W}_{z,h} = \Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h})$ 
 * $\bm{w}_{c_1z,h}$ is the forecast covariance between the first component and the original series.
 
 
 ## Monotonicity
 
-The sum of forecast variance reductions
+The forecast error variance reductions, i.e. the diagonal elements of
 $$
 \begin{aligned}
-\tr(\Var(\hat{\bm{z}}_{t+h} &- \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) \\&= \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
+\Var(\hat{\bm{z}}_{t+h} &- \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) \\&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 \end{aligned}
 $$
 is non-decreasing as $p$ increases.
@@ -269,7 +269,7 @@ where $\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix} = \big[\bm{s}_1
 
 ## Key results
 
-1. The forecast variance is __reduced__ with forecast projection
+1. The forecast variance is __reduced__ with FLAP
 1. The forecast variance __monotonically__ decreases with increasing number of components
 1. The forecast projection is __optimal__ to achieve minimum forecast variance of each series
 
@@ -288,7 +288,7 @@ $$
 
 $$
 \begin{aligned}
-\bm{W}_h &= \Var(\hat{\bm{y}}_{t+h})\\
+\bm{W}_h &= \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h})\\
 \bm{C} &= \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]\\
 \end{aligned}
 $$
