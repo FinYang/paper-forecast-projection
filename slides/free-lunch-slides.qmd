@@ -135,12 +135,12 @@ Finding components that
 * @DeEtAl2019: Machine learning extension
 
 
-## Series $\bm{z}_t\in \mathbb{R}^m$
+## Series $\bm{y}_t\in \mathbb{R}^m$
 
 ```{r series}
 ```
 
-## Components $\bm{c}_t = \bm{\Phi}\bm{z}_t \in \mathbb{R}^p$
+## Components $\bm{c}_t = \bm{\Phi}\bm{y}_t \in \mathbb{R}^p$
 
 ```{r components}
 ```
@@ -148,14 +148,14 @@ Finding components that
 ## FLAP
 
 $$
-\bm{y}_t = \begin{bmatrix} \bm{z}_t\\ \bm{c}_t \end{bmatrix}
-\qquad \tilde{\bm{y}}_{t+h} = \bm{M} \hat{\bm{y}}_{t+h}
+\bm{z}_t = \begin{bmatrix} \bm{y}_t\\ \bm{c}_t \end{bmatrix}
+\qquad \tilde{\bm{z}}_{t+h} = \bm{M} \hat{\bm{z}}_{t+h}
 $$
 
 \begin{block}{}
 
 $$
-\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M}\hat{\bm{y}}_{t+h}
+\tilde{\bm{y}}_{t+h} = \bm{J}\tilde{\bm{z}}_{t+h} = \bm{J}\bm{M}\hat{\bm{z}}_{t+h}
 $$
 \end{block}
 
@@ -164,7 +164,7 @@ $$
 \bm{M} &= \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\\
 \bm{J} &= \bm{J}_{m,p} = \big[\bm{I}_m ~~~ \bm{O}_{m\times p}\big]\\
 \bm{C} &= \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]\\
-\bm{W}_h &= \Var(\hat{\bm{y}}_{t+h})
+\bm{W}_h &= \Var(\bm{z}_{t+h} - \hat{\bm{z}}_{t+h})
 \end{aligned}
 $$
 
@@ -183,9 +183,9 @@ If the base forecasts are unbiased, then the FLAP forecasts are also unbiased.
 
 ### Projection matrix
 
-1. The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}$ is satisfied.
-1. The projected forecast $\tilde{\bm{y}}_{t+h}$ satisfies the constraint $\bm{C}$.
-1. For $\bm{y}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{y}_{t+h} = \bm{y}_{t+h}$ 
+1. The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}\bm{z}_t=\bm{0}$ is satisfied.
+1. The projected forecast $\tilde{\bm{z}}_{t+h}$ satisfies the constraint $\bm{C}\tilde{\bm{z}}_{t+h}=\bm{0}$.
+1. For $\bm{z}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{z}_{t+h} = \bm{z}_{t+h}$ 
 
 
 ## Nonnegative variance reduction
@@ -193,7 +193,7 @@ If the base forecasts are unbiased, then the FLAP forecasts are also unbiased.
 Under unbiasedness, the variance reduction is __positive semi-definite__:
 $$
 \begin{aligned}
-\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) &-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})\\ 
+\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) &-\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})\\ 
 &= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 \end{aligned}
 $$
@@ -202,7 +202,7 @@ $$
 
 $$
 \begin{aligned}
-\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) &-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})\\ 
+\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) &-\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})\\ 
 &= \bm{J}\bm{C}'(\bm{C}\bm{C}')^{-1}\bm{C}\bm{J}'\\
 &= \bm{\Phi}'
 (\bm{\Phi}\bm{\Phi}' + \bm{I})^{-1}
@@ -220,7 +220,7 @@ $$
 
 $$
 \begin{aligned}
-\tr(\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h}) &-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})) \\
+\tr(\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) &-\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})) \\
 &=\frac{1}{2}tr(\bm{\Phi}'\bm{\Phi})=\frac{1}{2}p
 \end{aligned}
 $$
@@ -230,13 +230,13 @@ $$
 For the first component to have a guaranteed reduction of forecast variance, the following condition must be satisfied:
 
 $$
-\bm{\phi}_1\bm{W}_{z,h}\neq\bm{w}_{c_1z,h},
+\bm{\phi}_1\bm{W}_{y,h}\neq\bm{w}_{c_1y,h},
 $$
 <!-- where $\bm{\phi}_1$ is the weight vector of the first component, $\bm{W}_{z,h} = \Var(\hat{\bm{z}_{t+h}})$, and $\bm{w}_{c_1z,h}$ is the forecast covariance between the first component and the original series. -->
 
 * $\bm{\phi}_1$ is the weight vector of the first component
-* $\bm{W}_{z,h} = \Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h})$ 
-* $\bm{w}_{c_1z,h}$ is the forecast covariance between the first component and the original series.
+* $\bm{W}_{y,h} = \Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h})$ 
+* $\bm{w}_{c_1y,h}$ is the forecast covariance between the first component and the original series.
 
 
 ## Monotonicity
@@ -244,7 +244,7 @@ $$
 The forecast error variance reductions, i.e. the diagonal elements of
 $$
 \begin{aligned}
-\Var(\hat{\bm{z}}_{t+h} &- \bm{z}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h}) \\&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+\Var(\bm{y}_{t+h} &- \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) \\&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 \end{aligned}
 $$
 is non-decreasing as $p$ increases.
@@ -253,7 +253,7 @@ is non-decreasing as $p$ increases.
 
 The projection is equivalent to the mapping
 $$
-\tilde{\bm{z}}_{t+h} = \bm{G}\hat{\bm{y}}_{t+h},
+\tilde{\bm{y}}_{t+h} = \bm{G}\hat{\bm{z}}_{t+h},
 $$
 where $\bm{G} = \big[\bm{g}_1 ~~ \bm{g}_2 ~~ \dots ~~ \bm{g}_m\big]' \in \mathbb{R}^{m\times (m+p)}$ is the solution to
 $$
@@ -276,7 +276,7 @@ where $\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix} = \big[\bm{s}_1
 ## Estimation
 
 $$
-\tilde{\bm{z}}_{t+h} = \bm{J}\tilde{\bm{y}}_{t+h} = \bm{J}\bm{M}\hat{\bm{y}}_{t+h}
+\tilde{\bm{y}}_{t+h} = \bm{J}\tilde{\bm{z}}_{t+h} = \bm{J}\bm{M}\hat{\bm{z}}_{t+h}
 $$
 
 \begin{block}{}
@@ -288,7 +288,7 @@ $$
 
 $$
 \begin{aligned}
-\bm{W}_h &= \Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h})\\
+\bm{W}_h &= \Var(\bm{z}_{t+h} - \hat{\bm{z}}_{t+h})\\
 \bm{C} &= \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]\\
 \end{aligned}
 $$
