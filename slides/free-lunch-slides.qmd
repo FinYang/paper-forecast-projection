@@ -50,7 +50,7 @@ knitr::read_chunk("free-lunch-slides.R")
 
 ## Forecast Linear Augmented Projection (FLAP)
 
-A model-independent post-forecast adjustment method that can reduce forecast variance.
+A model-independent post-forecast adjustment method that can reduce forecast error variance.
 
 - Averaging indirect forecasts from linear combinations (components)
 - Projecting forecasts of augmented series
@@ -227,7 +227,7 @@ $$
 
 ## Positive condition
 
-For the first component to have a guaranteed reduction of forecast variance, the following condition must be satisfied:
+For the first component to have a guaranteed reduction of forecast error variance, the following condition must be satisfied:
 
 $$
 \bm{\phi}_1\bm{W}_{y,h}\neq\bm{w}_{c_1y,h},
@@ -269,9 +269,9 @@ where $\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix} = \big[\bm{s}_1
 
 ## Key results
 
-1. The forecast variance is __reduced__ with FLAP
-1. The forecast variance __monotonically__ decreases with increasing number of components
-1. The forecast projection is __optimal__ to achieve minimum forecast variance of each series
+1. The forecast error variance is __reduced__ with FLAP
+1. The forecast error variance __monotonically__ decreases with increasing number of components
+1. The forecast projection is __optimal__ to achieve minimum forecast error variance of each series
 
 ## Estimation
 
@@ -353,7 +353,7 @@ Generating values from a random distribution and normalising them to unit vector
 
 * Investigate why PCA performs better than random weights
 * Find other components that are better than PCA
-* Find optimal components by minimising forecast variance with respect to $\bm{\Phi}$
+* Find optimal components by minimising forecast error variance with respect to $\bm{\Phi}$
 * Use forecast projection and forecast reconciliation together
 
 ## References {.allowframebreaks}
