@@ -25,7 +25,7 @@ blind: false
 cover: true
 toc: false
 keep-tex: true
-fig-height: 5
+fig-height: 6
 fig-width: 8
 number-sections: true
 execute:
@@ -763,7 +763,7 @@ $$
 \underset{\check{\bm{z}}_{T+h}}{\arg\min} (\hat{\bm{z}}_{T+h}-\check{\bm{z}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{z}}_{T+h}-\check{\bm{z}}_{T+h})
 \qquad \text{s.t. } \bm{\Phi}\check{\bm{y}}_{T+h}=\check{\bm{c}}_{T+h},
 $$
-where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{z}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast variance of all series (See @AndNar2022 for a simpler proof). The result is the MinT solution
+where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{z}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast variance of all series (See @AndNar2022 for a simpler proof). The result is
 $$
 \tilde{\bm{z}}_{t+h} = \bm{S}\bm{G} \hat{\bm{z}}_{t+h},
 $$ {#eq-mint}
@@ -930,7 +930,7 @@ In practice, the base forecast variance $\bm{W}_h$ is unknown and needs to be es
 $$
 \widehat{\bm{W}_h}=\frac{1}{T-h-1}\sum^T_{t=h+1}\hat{\bm{e}}_{t,h}\hat{\bm{e}}_{t,h}',
 $$
-albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T-h$. It is even singular when $(m+p)>T-h$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, we adopt the covariance shrinkage method of @SchStr2005, which is the "MinT(Shrink)" method of @WicEtAl2019, and the variance shrinkage method of @OpgStr2007. Then, the estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p} \in \mathbf{R}^{(m+p) \times (m+p)}_{\geq0}$ with the element in row $i$ and column $j$ 
+albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T-h$. It is even singular when $(m+p)>T-h$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, while other shrinkage estimators can be considered, we adopt the covariance shrinkage method of @SchStr2005 and the variance shrinkage method of @OpgStr2007. Then, the estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with the element in row $i$ and column $j$ 
 $$
 \hat{w}_{ij,h}^{shr} = \hat{r}_{ij,h}^{shr}\sqrt{\hat{v}_{i,h}\hat{v}_{j,h}},
 $$
@@ -962,12 +962,16 @@ Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the pro
 
 # Simulation {#sec-simulation}
 
+In this section, we illustrate the performance of FLAP in a simulation setting. We generate a multivariate time series to form each sample. The $1$ to $12$-step-ahead base forecasts of the sample are generated from benchmark models, and FLAP are applied with varying number of components and component construction methods.
+The improvement of the FLAP forecasts over the base forecasts is assessed and the statistical significance of these improvements is evaluated.
+
 ## Benchmarks {#sec-benchmarks}
 
 ```{r simulation}
 ```
 
-In this section, we illustrate the performance of FLAP in a simulation setting. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. We simulate $220$ such samples and the $1$ to $12$-step-ahead forecasts are evaluated on each sample.
+We simulate $220$ samples. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. 
+
 
 The first benchmark we use to generate base forecasts is a univariate ARIMA model. For each series, we fit an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast] with the default settings. 
 
@@ -985,16 +989,17 @@ We use several sets of weights to construct components for FLAP. The types of co
 
 | Component | Description |
 | - | ----- |
-| PCA+Norm | $m$ principal components from PCA are complemented with random components whose weights are simulated from a standard normal distribution. |
-| PCA+Unif | $m$ principal components from PCA are complemented with random components whose weights are simulated from a uniform distribution. |
+| PCA | Principal components from PCA. |
 | Norm | The weights of all components are simulated from a standard normal distribution. |
 | Unif | The weights of all components are simulated from a uniform distribution |
-| Ortho+Norm | A random orthonormal matrix is generated using package `pracma` [@pracma], forming the weights of the first $m$ components. Weights of the additional components are simulated from a standard normal distribution. |
+| PCA+Norm | $m$ principal components from PCA are complemented with random components whose weights are simulated from a standard normal distribution. |
+| PCA+Unif | $m$ principal components from PCA are complemented with random components whose weights are simulated from a uniform distribution. |
+| Ortho | A random orthonormal matrix is generated using package `pracma` [@pracma] as the weight matrix. |
+| Ortho+Norm | A random orthonormal matrix is generated using package `pracma`, forming the weights of the first $m$ components. Weights of the additional components are simulated from a standard normal distribution. |
 
 : Component construction methods {#tbl-comp}
 
-Our objective is to assess whether the FLAP projected forecasts improve over the base forecasts and to evaluated whether these improvements are statistically significant. 
-We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The mean squared error (MSE) of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test. 
+We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The MSE of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test. 
 The average ranks are plotted in @fig-simulation-mcb-series for forecast horizons $1$, $6$ and $12$. The methods using FLAP are named "Model -- Component Weights -- Number of Components". The maximum number of components is chosen to be $300$. The benchmark models are named "Model -- Benchmark". These points are marked with triangles. The shaded region is the confidence interval of the best-performing model. Methods outside the shaded region are significantly worse than the best model.
 
 In @fig-simulation-line, we plot the out-of-sample MSE values as a function of the number of components $p$. Here we include the performance of the true data generating process (DGP) VAR model (VAR -- DGP), the VAR model with the correct specification (VAR -- Est.) but using estimated parameters, and their corresponding FLAP generated forecasts. We do not include methods involving a uniform distribution and random orthonormal matrices, as they are visually identical to the methods with random weights generated from a standard normal distribution. The vertical black line indicates the number of series $m=70$.
@@ -1005,7 +1010,8 @@ In @fig-simulation-line, we plot the out-of-sample MSE values as a function of t
 ```
 
 ```{r fig-simulation-line}
-#| fig-cap: 'MSE of different forecast models and component construction methods by the number of components $p$ used in FLAP in the simulation, for forecast horizons $1$, $6$ and $12$. "VAR -- DGP" indicates the performance of the true data generating VAR model. "VAR -- Est." indicates the performance of the VAR model with the same structure as the true model and estimated parameter values. The vertical black line indicates the location of $p=m$, the number of series.'
+#| fig-cap: 'Out-of-sample MSE for base and FLAP forecasts as the number of components $p$ increases, for forecast horizons $1$, $6$ and $12$, in the simulation. "VAR -- DGP" indicates the performance of the true data generating VAR model. "VAR -- Est." indicates the performance of the VAR model with the same structure as the true model but with estimated parameters. The solid horizontal lines show the MSE for the base forecasts while the dashed lines show the MSEs of the FLAP forecasts. The vertical black line indicates the location of $p=m=70$, the number of series.'
+#| fig-height: 7
 ```
 
 ## FLAP over base forecasts
@@ -1025,7 +1031,7 @@ With the help of FLAP, a simple model like ARIMA can achieve comparable performa
 
 In @fig-simulation-line, the dashed lines of FLAP ARIMA forecasts decrease monotonically as the number of components $p$ increases and reaches the MSE of base DFM at some point. This is because FLAP utilises shared information between series by capturing them in the components, making up for the overlooked cross-correlations in the univariate ARIMA models.
 
-Interestingly enough, at $h=1$, while the MSE of FLAP DFM forecasts also decreases as $p$ increases, the MSE of the FLAP ARIMA forecasts and the MSE of the FLAP DFM forecasts seems to converge to the same value as $p$ reaches $300$, no matter how the components are constructed. Note that the same forecasts of the components, generated from univariate ARIMA models of these components, are used for both the FLAP ARIMA and the FLAP DFM methods. This implies that there is valuable information in the series that is not captured by either the ARIMA model or DFM, but is captured by the components. As the number of components increases, the information captured by the components overpowers the information captured by the base models, dominating the performance of the FLAP forecasts. Once again, this emphasises the importance of the components and FLAP. In this extreme case, the simple model is as good as the more complicated model after projection, because the forecast model itself is not as valuable as FLAP.
+Interestingly enough, at $h=1$, while the MSE of FLAP DFM forecasts also decreases as $p$ increases, the MSE of the FLAP ARIMA forecasts and the MSE of the FLAP DFM forecasts seems to converge to the same value as $p$ reaches $300$, no matter how the components are constructed. Note that the same forecasts of the components, generated from univariate ARIMA models of these components, are used for both the FLAP ARIMA and the FLAP DFM methods. This implies that there is valuable information in the series that is not captured by either the ARIMA model or DFM, but is captured by the components. As the number of components increases, the information captured by the components overpowers the information captured by the base models, dominating the performance of the FLAP forecasts. Once again, this emphasises the importance of the components and FLAP. In this extreme case, the simple model is as good as the more complicated model after projection, while the forecast model itself is not as valuable as FLAP.
 
 This observation is not as obvious as the forecast horizon increases. This is because while ARIMA produces forecasts iteratively, DFM is a direct forecast model. With this simple DGP, the performance of DFM can be well maintained with larger $h$ since a different model is fitted for each $h$. This can be seen as the MSE of the base DFM does not change much with different $h$, but the MSE of base ARIMA keeps increasing as $h$ increases.
 
@@ -1056,14 +1062,15 @@ Here we apply the FLAP method to two real data examples and draw most of the sam
 
 The Australian Tourism Data Set compiled from the National Visitor Survey by Tourism Research Australia contains the total number of nights spent by Australians away from home. We refer to these as visitor nights. The monthly visitor nights are recorded for $m=77$ regions around Australia, covering the period January 1998 to December 2019. To evaluate the forecast performance, we conduct expanding window time series cross-validation [@fpp3]. The first $T = 84$ observations are used as the first training set. The following $12$ months are used as the test set for evaluation. We repeat the evaluation for the rest of the data, by expanding each training sample by one observation at a time. This generates $169$ forecasts for each of the forecast horizons from $1$ to $12$ for evaluation.
 
-The base forecasts for both the series and the components are produced using univariate ETS models selected and fitted using the `ets()` function in the `forecast` package [@forecast; @HynKha2008]. In an ETS model, the trend term describes the direction of the long-term tendency, the seasonal term describes the periodically recurring pattern with a fixed periodicity, and the error term measures the uncertainty. The trend and seasonal terms are optional. If a trend term exists, we allow it to be additive or additive damped; if a seasonality term exists, it can be addictive or multiplicative; the error can be additive or multiplicative. Excluding models with numerical instabilities, we choose the model with the smallest AICc among the $15$ possible models.
+The base forecasts for both the series and the components are produced using univariate ETS models selected and fitted using the `ets()` function in the `forecast` package [@forecast; @HynKha2008]. See @fpp2 [chap. 7] for more details.
+<!-- In an ETS model, the trend term describes the direction of the long-term tendency, the seasonal term describes the periodically recurring pattern with a fixed periodicity, and the error term measures the uncertainty. The trend and seasonal terms are optional. If a trend term exists, we allow it to be additive or additive damped; if a seasonality term exists, it can be addictive or multiplicative; the error can be additive or multiplicative. Excluding models with numerical instabilities, we choose the model with the smallest AICc among the $15$ possible models. -->
 
 ```{r fig-visnights-mcb-series}
 #| fig-cap: 'Average ranks of $1$-, $6$- and $12$-step-ahead cross-validation MSE of different model and component specifications on the visitor nights data. The methods using forecast projection are named as "Model -- Component Weights -- Number of Components". The base models are named as "Model -- Benchmark" and these points are marked with triangles. The shaded region is the confidence interval of the best performing model. Methods outside the shaded region are significantly worse than the best model.'
 ```
 
 ```{r fig-visnights-line}
-#| fig-cap: "MSE of different component construction methods by the number of components $p$ used in forecast projection with ETS models on the visitor nights data, for forecast horizons $1$, $6$ and $12$. The vertical black line indicates the location of $p=m$, the number of series."
+#| fig-cap: "Out-of-sample MSE of base and FLAP forecasts as the number of components $p$ increases, for forecast horizons $1$, $6$ and $12$, using the visitor nights data. The solid horizontal lines show the MSE for the base forecasts while the dashed lines show the MSEs of the FLAP forecasts. The vertical black line indicates the location of $p=m$, the number of series."
 ```
 
 The MCB and MSE plots for $h=1, 6, 12$ (as described in @sec-flap) are shown in @fig-visnights-mcb-series and @fig-visnights-line. 
@@ -1071,7 +1078,7 @@ The FLAP forecasts in general outperforms the base forecasts, which is consisten
 
 We highlight two different observations from @sec-simulation. First, in @fig-visnights-line, the MSE of FLAP forecasts does not always decrease as the number of components increases --- see for example for $h=1$ with $p>150$. This can also be seen from @fig-visnights-mcb-series, where the two best methods are not significantly different, even though they have very different numbers of components ($p=77$ and $p=200$). Choosing the number of components is a tradeoff between the increasing estimation error as the dimension of forecast variance $\bm{W}_h$ increases, and the additional benefit brought by the information embedded in the new components, depending on the complexity of the DGP. For the visitor nights data set, the benefit of components above the estimation error diminishes after the number of components reaches $p=m=77$.
 
-Second, unlike @sec-simulation, using principal components is significantly better than simply using random components with normal weights. In @fig-visnights-mcb-series, this is observed by comparing the performance of FLAP with PCA and random components, and the performance of FLAP with only random components, with a relatively large number of components, for example, $m=77$ or $300$. This is also clear from @fig-visnights-line, where the reduction in terms of sample MSE from using PCA is always in the lead, even after the $m$ principal components are exhausted and random components with weights generated from a normal distribution are added. 
+Second, unlike @sec-simulation, using principal components is significantly better than simply using random components with normal weights. In @fig-visnights-mcb-series, this is observed by comparing the performance of PCA related FLAP and the performance of FLAP with only random components, with a relatively large number of components, for example, $m=77$ or $300$. This is also clear from @fig-visnights-line, where the reduction in terms of sample MSE from using PCA is always in the lead, even after the $m$ principal components are exhausted and random components with weights generated from a normal distribution are added. 
 
 PCA aims to find components along the direction where the data varies the most. The first principal components accounts for the maximum variance in the data. Subsequent principal components are orthogonal to the previous ones and capture the maximum remaining variance. Based on this variance maximisation and ranking of PCA, we propose two potential explanations for its superior performance.
 
@@ -1093,7 +1100,7 @@ We generates base forecasts from ARIMA models using `auto.arima()` function from
 #| fig-cap: 'Average ranks of $1$-, $6$- and $12$-step-ahead cross-validation MSE of different model and component specifications on the FRED-MD data. The methods using forecast projection are named as "Model -- Component Weights -- Number of Components". The base models are named as "Model -- Benchmark" and these points are marked with triangles. The shaded region is the confidence interval of the best performing model. Methods outside the shaded region are significantly worse than the best model.'
 ```
 ```{r fig-fred-md-line}
-#| fig-cap: "MSE of different forecast models and component construction methods by the number of components $p$ used in forecast projection on the FRED-MD data, for forecast horizons $1$, $6$ and $12$. The vertical black line indicates the location of $p=m$ the number of series."
+#| fig-cap: "Out-of-sample MSE for base and FLAP forecasts as the number of components $p$ increases, for forecast horizons $1$, $6$ and $12$, using the FRED-MD data. The solid horizontal lines show the MSE for the base forecasts while the dashed lines show the MSEs of the FLAP forecasts. The vertical black line indicates the location of $p=m$ the number of series."
 ```
 
 The first observation worth noting in @fig-fred-md-mcb-series is the performance of base ARIMA forecasts exceeds that of the base DFM. This difference is statistically significant for $h=6$. The best models at all forecast horizons are once again FLAP forecasts using components from PCA. These are significantly better than the base forecasts at $h=1$ and $6$. The fact that the FLAP with PCA is statistically significantly better than with components with random weights, which can be seen from both the rankings in @fig-fred-md-mcb-series and the MSE in @fig-fred-md-line, reaffirms our findings from the tourism data set discussed in @sec-australian-domestic-tourism.
