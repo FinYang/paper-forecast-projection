@@ -28,6 +28,7 @@ keep-tex: true
 fig-height: 6
 fig-width: 8
 number-sections: true
+number-depth: 2
 execute:
   echo: false
   warning: false
@@ -85,7 +86,7 @@ While the theoretical results apply for any linear combinations of the original 
 
 <!-- Our FLAP method has close connections to forecast reconciliation in the hierarchical forecasting literature. See @AthEtAl2023a for a recent review of the area. In particular, the projection formulation is inspired by the minimum trace [MinT, @WicEtAl2019] solution of the forecast reconciliation problem. Forecast reconciliation is a method to modify forecasts using projection so that they conform to a specific hierarchical, grouped or temporal structure. Notably, @WicEtAl2019, @AthEtAl2017, and  @DiGir2023 have shown that forecast reconciliation can reduce forecast variance theoretically and empirically, in cross-sectional settings, temporal settings, and in cross-temporal settings. @PanEtAl2021 have provided insight into the geometric interpretation of the projection used in forecast reconciliation. However, forecast reconciliation cannot be directly applied in a general multivariate time series unless the series satisfy some linear constraints such as a hierarchical structure. In contrast, our method can be applied to any multivariate time series. It can also be used in conjunction with forecast reconciliation to further reduce forecast variance. -->
 
-In the sense that forecast accuracy can be improved without any new information, FLAP has parallels with bootstrap aggregation or "bagging" [@Bre1996;@BerEtAl2016]. Bagging can reduce prediction variance without increasing bias [@HasEtAl2003], by mitigating model uncertainty [@PetEtAl2018], and does so without introducing any new data, but rather resampled versions of the existing data. Our FLAP method also reduces forecast variance without introducing new data, but using linear combinations of the existing data, rather than bootstrapping. The FLAP method (in addition to forecast reconciliation and bagging) can be viewed as contributing to the literature where forecasts are improved by combination and data augmentation methods.  This includes the theta method [@AssNik2000], temporal aggregation [@KouEtAl2014; @AthEtAl2017], forecasting with sub-seasonal series [FOSS, @LiEtAl2022c] and forecast combination with multiple starting points [@DisPet2015]; a review of all these methods can be found in @PetSpi2021 who refer to them as using "the wisdom of data". Our FLAP method is distinct in that it aims to exploit information in the data with a focus on linear combinations of multivariate series. 
+In the sense that forecast accuracy can be improved without any new information, FLAP has parallels with bootstrap aggregation or "bagging" [@Bre1996;@BerEtAl2016]. Bagging can reduce prediction variance without increasing bias [@HasEtAl2003], by mitigating model uncertainty [@PetEtAl2018], and does so without introducing any new data, but rather resampled versions of the existing data. Our FLAP method also reduces forecast variance without introducing new data, but using linear combinations of the existing data, rather than bootstrapping. The FLAP method (in addition to forecast reconciliation and bagging) can be viewed as contributing to the literature where forecasts are improved by combination and data augmentation methods.  This includes the theta method [@AssNik2000], temporal aggregation [@KouEtAl2014; @AthEtAl2017], forecasting with sub-seasonal series [FOSS, @LiEtAl2022c] and forecast combination with multiple starting points [@DisPet2015]; a review of all these methods can be found in @PetSpi2021 who refer to them as using "the wisdom of data". Our FLAP method is distinct in that it aims to exploit information in the data with a focus on linear combinations of multivariate series.
 
 <!-- A second difference is that bagging is model dependent: it is a procedure applied to enhance the models that produce the forecasts, where the same models are fitted repeatedly. Our method is model independent: it linearly transforms a set of forecasts, regardless of which models they come from. As a result, the two methods can be used in conjunction: the projections can be applied to forecasts produced by a bagged predictor. -->
 
@@ -101,13 +102,13 @@ The remainder of the paper is structured as follows. In @sec-method, we propose 
 
 ## Method and theoretical properties
 
-In the following, all vectors and matrices are denoted in bold font. We use $\bm{I}_n$ to denote the $n\times n$ identity matrix, and $\bm{O}_{n\times k}$ to denote the $n\times k$ zero matrix. 
+In the following, all vectors and matrices are denoted in bold font. We use $\bm{I}_n$ to denote the $n\times n$ identity matrix, and $\bm{O}_{n\times k}$ to denote the $n\times k$ zero matrix.
 
 Let $\bm{y}_t\in\mathbf{R}^m$ be a vector of $m$ observed time series we are interested in forecasting. The FLAP method involves three steps:
 
   1. *Form components*. Form $\bm{c}_t = \bm{\Phi}\bm{y}_t\in\mathbf{R}^p$, a vector of $p$ linear combinations of $\bm{y}_t$ at time $t$, where $\bm{\Phi}\in\mathbf{R}^{p\times m}$. We call $\bm{c}_t$ the components of $\bm{y}_t$ and the component weights $\bm{\Phi}$ are known in the sense that they are chosen by the user of the FLAP method. Let $\bm{z}_{t} = \big[\bm{y}_t', \bm{c}'_{t}\big]'$ be the concatenation of series $\bm{y}_t$ and components $\bm{c}_{t}$. We note that $\bm{z}_{t}$ will be constrained in the sense that $\bm{C}\bm{z}_t= \bm{c}_{t} - \bm{\Phi}\bm{y}_t = \bm{0}$ for any $t$ where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ is referred to as the constraint matrix.
   2. *Generate forecasts*. Denote as $\hat{\bm{z}}_{t+h}$ the $h$-step-ahead base forecast of $\bm{z}_{t}$. The method used to generate forecasts is again selected by the user. This can be univariate or multivariate. In the more general setting where $\bm{z}_t$ are not time series but cross sectional data, any prediction method can be used. In general, the constraints that hold for $\bm{z}_t$ will not hold for $\hat{\bm{z}}_{t+h}$, i.e $\bm{C}\hat{\bm{z}}_{t+h}\neq \bm{0}$
-  3. *Project the base forecasts*. Let $\tilde{\bm{z}}_{t+h}$ be a set of projected forecasts such that, 
+  3. *Project the base forecasts*. Let $\tilde{\bm{z}}_{t+h}$ be a set of projected forecasts such that,
 $$
 \tilde{\bm{z}}_{t+h} = \bm{M} \hat{\bm{z}}_{t+h}
 $$ {#eq-z_tilde}
@@ -133,10 +134,11 @@ We first provide some intermediate results.
 Matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}\bm{z}_t=\bm{0}$ is satisfied.
 :::
 
-::: {.toappendix}
-::: {.proof}
-#### Proof of @lem-projectionM
+Proof in Appendix, page \pageref{proof1}.
 
+::: {.toappendix}
+### Proof of @lem-projectionM
+\label{proof1}
 We have
 $$
 \begin{aligned}
@@ -154,7 +156,6 @@ $$
 $$
 Thus, $\bm{M}$ projects any vector onto the space where the constraint $\bm{C}\bm{y}=0$ is satisfied.
 :::
-:::
 
 Based on the attractive properties of projections, we have the following corollaries.
 
@@ -164,22 +165,22 @@ Based on the attractive properties of projections, we have the following corolla
 1. If the base forecasts are unbiased such that $\E(\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$, then the projected forecasts are also unbiased, i.e., $\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$.
 :::
 
-::: {.toappendix}
-::: {.proof}
-#### Proof of @cor-corM
+Proof in Appendix, page \pageref{proof2}.
 
+::: {.toappendix}
+### Proof of @cor-corM
+\label{proof2}
 Items 1 and 2 are trivial application of @lem-projectionM. To prove 3, we have
 $$
 \E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) =
 \E(\bm{M}\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \bm{M}\E(\bm{z}_{t+h}|\mathcal{I}_t) = \E(\bm{M}\bm{z}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t).
 $$
 :::
-:::
 
 The assumption of unbiasedness of the base forecasts is not unreasonable in practice, and where it does not hold, many bias correction method can be applied. Note this is not a requirement on model specification. We do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of forecast projection manifests when the models are misspecified, as discussed in @sec-simulation.
 
 ::: {#lem-var}
-The forecast error covariance matrix of the component-augmented projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is 
+The forecast error covariance matrix of the component-augmented projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is
 $$
 \Var(\bm{z}_{t+h} - \tilde{\bm{z}}_{t+h}) = \bm{M}\bm{W}_h\bm{M}' = \bm{M}\bm{W}_h,
 $$
@@ -189,9 +190,11 @@ $$
 $$
 :::
 
+Proof in Appendix, page \pageref{proof3}.
+
 ::: {.toappendix}
-::: {.proof}
-#### Proof of @lem-var
+### Proof of @lem-var
+\label{proof3}
 $$
 \Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})
 = \Var(\bm{M}\hat{\bm{z}}_{t+h} - \bm{M}\bm{z}_{t+h}) \\
@@ -212,14 +215,11 @@ $$
 \end{aligned}
 $$
 To get $\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$, we just need to recognise that it is the first $m\times m$ leading principal submatrix of $\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$.
-
-:::
 :::
 
 @lem-var is a well-known result in the forecast reconciliation literature [e.g., @DiGir2023].
 
 ::: {#thm-psdvar}
-
 #### Positive Semi-Definiteness of Error Variance Reduction
 
 The difference between the forecast error variances of the base and projected component-augmented forecasts,
@@ -236,14 +236,15 @@ $$
 \Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}',
 $$
 is therefore also positive semi-definite.
-
 :::
+
+Proof in Appendix, page \pageref{proof4}.
+
 ::: {.toappendix}
-::: {.proof}
-#### Proof of @thm-psdvar
+### Proof of @thm-psdvar
+\label{proof4}
 Trivially,
 $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ are positive semi-definite. Note that $\Var(\hat{\bm{y}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{z}_{t+h})$ is the leading principal submatrix of $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$, and the leading principal submatrix of a positive semi-definite matrix is positive semi-definite.
-:::
 :::
 
 @thm-psdvar is why FLAP works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of the reduction in forecast error variances, and is non-negative because the matrix is positive semi-definite. It implies that the forecast error variance can be reduced by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace must be zero. This implies that the entire $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}' = \bm{O}_{m\times m}$ as this is a positive semi-definite matrix, something rarely observed in practice. See @thm-pos-condition for more discussion.
@@ -268,7 +269,7 @@ where
 $$
 \bm{C} = \begin{bmatrix} - \bm{\Phi}& \bm{I}_{p} \end{bmatrix}.
 $$
-Let $\bm{\Phi}$ consist of $p\le m$ orthogonal unit vectors, for example, those obtained from Principal Component Analysis [PCA, @Jol2002]. In this case $\bm{\Phi}\bm{\Phi}' = \bm{I}_p$ and 
+Let $\bm{\Phi}$ consist of $p\le m$ orthogonal unit vectors, for example, those obtained from Principal Component Analysis [PCA, @Jol2002]. In this case $\bm{\Phi}\bm{\Phi}' = \bm{I}_p$ and
 $$
 \Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) -\Var(\bm{z}_{t+h}-\tilde{\bm{z}}_{t+h})
   =  \frac{1}{2}
@@ -303,27 +304,24 @@ where $\bm{W}_{y, h}$ is the forecast error covariance matrix of $\hat{\bm{y}}_{
 and $\bm{W}_{yc, h}$ contains error covariances between elements of $\hat{\bm{y}}_{t+h}$ and $\hat{\bm{c}}_{t+h}$.
 
 ::: {#thm-monotone}
-
 #### Monotonicity
 The forecast error variance reductions for each series, i.e., the diagonal elements in the matrix
 $$
 \Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
-$$ 
-is non-decreasing as $p$ increases. 
-In particular, the sum of forecast variance reductions 
+$$
+is non-decreasing as $p$ increases.
+In particular, the sum of forecast variance reductions
 $$
 \tr(\Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
 $$ {#eq-trdvar}
-is non-decreasing as $p$ increases. 
+is non-decreasing as $p$ increases.
 :::
 
-::: {.proof}
-See Appendix.
-:::
+Proof in Appendix, page \pageref{proof5}.
 
 ::: {.toappendix}
-::: {.proof}
-#### Proof of @thm-monotone
+### Proof of @thm-monotone
+\label{proof5}
 Suppose now that we want to include $q$ more components $\bm{c}_{t}^*=\bm{\Phi}^*\bm{y}_t$ in the projection. We define $\bm{z}_{t}^* = \begin{bmatrix}\bm{z}_{t}\\ \bm{c}_{t}^*\end{bmatrix}$, the constraint matrix
 $$
 \bm{C}^* =
@@ -643,15 +641,14 @@ Finally, we have
 (\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}))
 -
 (\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) \\
-= 
+=
     \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) -
     \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h})
 \end{multline*}
 being a positive semi-definite matrix where the diagonal terms are non-negative, whose trace, therefore, is non-negative. This means using a larger number of components in the mapping achieves lower forecast variances, giving @thm-monotone.
 :::
-:::
 
-@thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast error variance, even when the number of components exceeds the number of original series. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series. This of course assumes that the forecast error covariances are known, something we explore in @sec-estW and @sec-simulation. 
+@thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast error variance, even when the number of components exceeds the number of original series. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series. This of course assumes that the forecast error covariances are known, something we explore in @sec-estW and @sec-simulation.
 
 Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of forecast error variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{\bm{y}},h}$ denote the error covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}\hat{\bm{y}},h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{c_i\tilde{y},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component and the projected forecasts of the original series, based on the first $i-1$ components.
 
@@ -667,12 +664,13 @@ For the $i$th component to have a positive reduction on forecast variance of the
 $$
 \bm{\phi}_i{\bm{W}}^{(i-1)}_{\tilde{y},h}\neq\bm{w}_{c_i\tilde{y},h}^{(i-1)}.
 $$ {#eq-pconi}
-
 :::
-::: {.toappendix}
-::: {.proof}
-#### Proof of @thm-pos-condition
 
+Proof in Appendix, page \pageref{proof6}.
+
+::: {.toappendix}
+### Proof of @thm-pos-condition
+\label{proof6}
 Denote $\bm{\psi}_i=\begin{bmatrix}-\bm{\phi}_i & \bm{0}_{1\times(i-1)} & 1\end{bmatrix}$ and $\bm{W}_{h}^{(i)}$ to be the base forecast variance of the original series and the first $i$ components. Starting with the first component, @eq-trdvar becomes
 $$
 \tr(\bm{J}_{m,1}\bm{W}_h^{(1)}\bm{\psi}_1'(\bm{\psi}_1\bm{W}_h^{(1)}\bm{\psi}_1')^{-1}\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}') =
@@ -741,7 +739,6 @@ $$
 $$
 where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the projected forecast variance of the original series using the first $i-1$ components, and the right hand side of the inequality is simply a one-row matrix consisting of the first $m$ elements in the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, which can be denoted as $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ and interpreted as the covariance between the projected forecast of the original series using the first $i-1$ components, and the projected forecast of the $i$th component using the first $i-1$ components.
 :::
-:::
 
 The condition of @eq-pcon demonstrates that for a new component to be beneficial, the information introduced by this new component, reflected in the error covariance, cannot be a linear combination of already existing information.
 
@@ -782,14 +779,15 @@ as equivalent to @eq-lcmap. Recognising that @eq-mint is equivalent to @eq-z_til
 The matrix $\bm{S}\bm{G}$ is a projection onto the space where the constraint $\bm{C}\bm{z}_t=\bm{0}$ is satisfied, provided that $\bm{G}\bm{S}=\bm{I}$.
 :::
 
+Proof in Appendix, page \pageref{proof7}.
+
 ::: {.toappendix}
-::: {.proof}
-#### Proof of @lem-projectionG
+### Proof of @lem-projectionG
+\label{proof7}
 If $\bm{G}\bm{S}=\bm{I}$, $\bm{S}\bm{G}$ is a projection matrix: $\bm{S}\bm{G}\bm{S}\bm{G} = \bm{S}\bm{G}$.
 
 For any $\bm{z}$ such that $\bm{S}\bm{G}\bm{z} = \bm{y}$ for some $\bm{y}$, we have $\bm{C}\bm{y} = \bm{C}\bm{S}\bm{G}\bm{z} = \bm{0}$
 because $\bm{C}\bm{S} = \big[-\bm{\Phi} ~~~ \bm{I} \big] \big[\bm{I} ~~~ \bm{\Phi}' \big]' = \bm{0}$. Similarly to $\bm{M}$, $\bm{S}\bm{G}$ projects a vector to the same space where $\bm{C}$ is satisfied.
-:::
 :::
 
 ::: {#cor-corG}
@@ -800,10 +798,11 @@ Provided that $\bm{G}\bm{S} = \bm{I}$, the following results hold.
 1. If the base forecasts are unbiased such that $\E(\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$, then the projected forecasts in @eq-stmap are also unbiased: $\E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t)$.
 :::
 
-::: {.toappendix}
-::: {.proof}
-#### Proof of @cor-corG
+Proof in Appendix, page \pageref{proof8}.
 
+::: {.toappendix}
+### Proof of @cor-corG
+\label{proof8}
 Item 1 is an direct application of @lem-projectionG. From @lem-projectionG and Lemma 2.4 in @Rao1974, we have
 $$
 \bm{S}\bm{G}\bm{z}_{t+h} = \bm{z}_{t+h} = \bm{S}\bm{y}_{t+h}.
@@ -814,22 +813,20 @@ $$
 \E(\tilde{\bm{y}}_{t+h}|\mathcal{I}_t) =
 \E(\bm{G}\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \bm{G}\E(\bm{z}_{t+h}|\mathcal{I}_t) = \E(\bm{G}\bm{z}_{t+h}|\mathcal{I}_t) = \E(\bm{y}_{t+h}|\mathcal{I}_t).
 $$
-
-:::
 :::
 
 ::: {#lem-st-var}
-
 The covariance matrix of the projected forecasts from @eq-stmap is given by
 $$
 \Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) = \bm{G}\bm{W}_h\bm{G}'.
 $$
-
 :::
 
+Proof in Appendix, page \pageref{proof9}.
+
 ::: {.toappendix}
-::: {.proof}
-#### Proof of @lem-st-var
+### Proof of @lem-st-var
+\label{proof9}
 Let the base and projected forecast errors be given as
 $$
 \begin{aligned}
@@ -861,8 +858,6 @@ and therefore
 $$
 \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) =\Var(\tilde{\bm{e}}_{y, t+h})=\Var(\bm{G}\hat{\bm{e}}_{z, t+h})= \bm{G}\Var(\hat{\bm{e}}_{z, t+h})\bm{G}'= \bm{G}\bm{W}_h\bm{G}'.
 $$
-
-:::
 :::
 
 
@@ -883,13 +878,13 @@ $$
 \qquad \text{s.t. } \bm{g}_i'\bm{s}_{j} = \delta_{ij}, \quad j= 1, 2, .\ldots, m,
 $$ {#eq-subobj}
 where $\bm{s}_j$ is the $j$th column of $\bm{S}$, and $\delta_{ij}$ is the Kronecker delta function taking value 1 if $i = j$ and 0 otherwise.
-
 :::
 
-::: {.toappendix}
-::: {.proof}
-#### Proof of @thm-minvar
+Proof in Appendix, page \pageref{proof10}.
 
+::: {.toappendix}
+### Proof of @thm-minvar
+\label{proof10}
 This can be proved in a few different ways. We adopt the approach of @AndNar2022 to obtain the solution to @eq-obj, but the procedure from @Lue1969 [p. 85] can also be used, where the problem is divided to @eq-subobj and reconstructed to find the solution to @eq-obj.
 
 There exists a Lagrange multiplier $\bm{\Lambda}$ such that
@@ -921,7 +916,7 @@ $$
 \bm{G} = (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}.
 $$
 :::
-:::
+
 In other words, the forecast projection method gives optimal projected forecast for a given set of components, in the sense that the unbiased forecast of each series has minimum variance.
 
 ## Estimation of $\bm{W}_h$ {#sec-estW}
@@ -930,7 +925,7 @@ In practice, the base forecast variance $\bm{W}_h$ is unknown and needs to be es
 $$
 \widehat{\bm{W}_h}=\frac{1}{T-h-1}\sum^T_{t=h+1}\hat{\bm{e}}_{t,h}\hat{\bm{e}}_{t,h}',
 $$
-albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T-h$. It is even singular when $(m+p)>T-h$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, while other shrinkage estimators can be considered, we adopt the covariance shrinkage method of @SchStr2005 and the variance shrinkage method of @OpgStr2007. Then, the estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with the element in row $i$ and column $j$ 
+albeit unbiased, is not considered a good approximation to the true forecast variance in a finite sample when $(m+p) \approx T-h$. It is even singular when $(m+p)>T-h$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, while other shrinkage estimators can be considered, we adopt the covariance shrinkage method of @SchStr2005 and the variance shrinkage method of @OpgStr2007. Then, the estimated forecast variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with the element in row $i$ and column $j$
 $$
 \hat{w}_{ij,h}^{shr} = \hat{r}_{ij,h}^{shr}\sqrt{\hat{v}_{i,h}\hat{v}_{j,h}},
 $$
@@ -970,10 +965,10 @@ The improvement of the FLAP forecasts over the base forecasts is assessed and th
 ```{r simulation}
 ```
 
-We simulate $220$ samples. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. 
+We simulate $220$ samples. In each sample, we simulate $T=400$ observations from a VAR($3$) process with $m=70$ variables. The coefficients of the VAR model are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovation in the VAR model is simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn].
 
 
-The first benchmark we use to generate base forecasts is a univariate ARIMA model. For each series, we fit an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast] with the default settings. 
+The first benchmark we use to generate base forecasts is a univariate ARIMA model. For each series, we fit an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast] with the default settings.
 
 <!-- The function implements an automatic model selection procedure proposed by @HynKha2008. The number of first differences is determined by repeated KPSS tests [@KwiEtAl1992] and the number of seasonal differences is determined by the seasonal strength computed from an STL decomposition [@CleEtAl1990;@fpp3]. The algorithm then chooses different orders of the autoregressive (AR) and moving average (MA) parts by comparing AICc between the corresponding models in a stepwise fashion, up to a maximal order of $5$. Univariate ARIMAs are also used to produce base forecasts of the components used in projection, including the cases where the base forecasts of the series are produced by a different model. -->
 
@@ -999,7 +994,7 @@ We use several sets of weights to construct components for FLAP. The types of co
 
 : Component construction methods {#tbl-comp}
 
-We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The MSE of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test. 
+We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The MSE of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test.
 The average ranks are plotted in @fig-simulation-mcb-series for forecast horizons $1$, $6$ and $12$. The methods using FLAP are named "Model -- Component Weights -- Number of Components". The maximum number of components is chosen to be $300$. The benchmark models are named "Model -- Benchmark". These points are marked with triangles. The shaded region is the confidence interval of the best-performing model. Methods outside the shaded region are significantly worse than the best model.
 
 In @fig-simulation-line, we plot the out-of-sample MSE values as a function of the number of components $p$. Here we include the performance of the true data generating process (DGP) VAR model (VAR -- DGP), the VAR model with the correct specification (VAR -- Est.) but using estimated parameters, and their corresponding FLAP generated forecasts. We do not include methods involving a uniform distribution and random orthonormal matrices, as they are visually identical to the methods with random weights generated from a standard normal distribution. The vertical black line indicates the number of series $m=70$.
@@ -1016,9 +1011,9 @@ In @fig-simulation-line, we plot the out-of-sample MSE values as a function of t
 
 ## FLAP over base forecasts
 
-The first important observation from @fig-simulation-mcb-series is the overall performance difference between the FLAP forecasts compared to the corresponding benchmark base forecasts. 
+The first important observation from @fig-simulation-mcb-series is the overall performance difference between the FLAP forecasts compared to the corresponding benchmark base forecasts.
 Note that we need to compare forecasts corresponding to the same model, i.e. FLAP ARIMA forecasts to base ARIMA forecasts and FLAP DFM forecasts to base DFM forecasts.
-The average ranks of the FLAP forecasts are better than the corresponding base forecasts for all forecast horizons, and the differences are all statistically significant. The only exception is for the the PCA-related FLAP forecasts using only $m=70$ components for forecast horizon $6$ and $12$. 
+The average ranks of the FLAP forecasts are better than the corresponding base forecasts for all forecast horizons, and the differences are all statistically significant. The only exception is for the the PCA-related FLAP forecasts using only $m=70$ components for forecast horizon $6$ and $12$.
 The number of components seems to be important. The best-performing models are all with $300$ components. Between the one-step-ahead forecasts, the methods with $300$ components are not significantly different from each other, regardless of the forecast model or how we construct the components.
 
 Indeed, from @fig-simulation-line we can see that the MSEs for ARIMA and DFM FALP forecasts keep decreasing from the base forecast as the number of components increases. This confirms @thm-monotone, that the more components we include, the more forecast variance reduction we can achieve. We should note that this is only obvious in this ideal setting where we have $400$ observations in each group while we only use at most $300$ components in FLAP. This relatively large number of observations and the simple DGP can ease the challenge of estimation. This continued reduction in forecast variance is not always achievable with real data, as we will see in @sec-empirical-applications, especially with FRED-MD in @sec-fred-md.
@@ -1027,7 +1022,7 @@ Indeed, from @fig-simulation-line we can see that the MSEs for ARIMA and DFM FAL
 
 Having simulated data from a VAR DGP, we expect the DFM to pick up the correlations between series, something not possible with univariate ARIMA. Hence we expect the DFM to perform better than the ARIMA. This is indeed the case. @fig-simulation-mcb-series shows that the base DFM forecasts are significantly better than base ARIMA forecasts, with the exception for $h=1$, where the difference is very close to significant. This is also observed in @fig-simulation-line. The solid horizontal line representing the MSE of the base DFM forecasts is always far below the horizontal solid line for the base ARIMA forecasts.
 
-With the help of FLAP, a simple model like ARIMA can achieve comparable performance to more sophisticated models like the DFM. In @fig-simulation-mcb-series, all FLAP ARIMA forecasts except the one having $m$ PCs are significantly better than base DFM at $h=1$, and all FLAP ARIMA with $300$ components are significantly better than base DFM at $h=6$. 
+With the help of FLAP, a simple model like ARIMA can achieve comparable performance to more sophisticated models like the DFM. In @fig-simulation-mcb-series, all FLAP ARIMA forecasts except the one having $m$ PCs are significantly better than base DFM at $h=1$, and all FLAP ARIMA with $300$ components are significantly better than base DFM at $h=6$.
 
 In @fig-simulation-line, the dashed lines of FLAP ARIMA forecasts decrease monotonically as the number of components $p$ increases and reaches the MSE of base DFM at some point. This is because FLAP utilises shared information between series by capturing them in the components, making up for the overlooked cross-correlations in the univariate ARIMA models.
 
@@ -1039,7 +1034,7 @@ This observation is not as obvious as the forecast horizon increases. This is be
 
 The construction of components is obviously important in the proposed FLAP. However, the simulation results show that the method of constructing components may not be as important as one may have expected. In @fig-simulation-mcb-series, the main difference that can be observed is between using a combination of PCA and random weights, versus purely using random weights. The distribution that generates the random weights has limited effect. in @fig-simulation-mcb-series, with the same number of components and the same base ARIMA model, the MSEs are not significantly different, regardless of distribution from which the weights are simulated. The same conclusion can be drawn when PCA is used. As long as principal components are used, the performance is not different whether the additional components are generated from a normal distribution (PCA+Norm) or a uniform distribution (PCA+Unif).
 
-When the weights are randomly simulated, the distribution is of limited importance. Therefore, in @fig-simulation-line, we look only at the inclusion of PCA and randomly generated components whose weights are from a standard normal distribution. When $p$ is relatively small, the MSE decreases at a faster rate when PCA is used. Comparing the two dashed lines of the FLAP ARIMA forecasts, The performance of FLAP forecasts without PCA reaches and exceeds the performance with PCA before the number of components reaches $m$, and stays in the lead thereafter, although the gap seems to diminish with large $p$. 
+When the weights are randomly simulated, the distribution is of limited importance. Therefore, in @fig-simulation-line, we look only at the inclusion of PCA and randomly generated components whose weights are from a standard normal distribution. When $p$ is relatively small, the MSE decreases at a faster rate when PCA is used. Comparing the two dashed lines of the FLAP ARIMA forecasts, The performance of FLAP forecasts without PCA reaches and exceeds the performance with PCA before the number of components reaches $m$, and stays in the lead thereafter, although the gap seems to diminish with large $p$.
 This difference of PCA comes from the variances of principal components being maximised and ranked from largest to smallest. Because the performance of using random orthonormal weight matrix is the same as using only random normal weights, the difference of PCA is not from the orthogonality of the components. This might suggest the use of simple random weights if one is prepared to include a relatively large number of components in FLAP and to use PCA only when the number of components is small. However, as we will see in @sec-empirical-applications, this is not the case with real data. In this case, PCA seems to be the preferred approach even when the number of components is large.
 
 Different constructions of components remain an important aspect of FLAP. One important future direction would be to find alternative and optimal components, as we do not limit the structure of the weight matrix in @sec-method. This should be studied together with the selection of the forecast model since both the weight matrix $\bm{\Phi}$ and the base forecast variance $\bm{W}_h$ can affect the projection simultaneously in @eq-M. This is likely to be an extension of the forecast combination literature, focusing on the properties of the base forecasts, and the diversity and robustness of the forecast model and components. Examples of studies on this issue in the forecast combination literature include @BatDua1995, @KanEtAl2022 and @LicWin2020.
@@ -1048,7 +1043,7 @@ Different constructions of components remain an important aspect of FLAP. One im
 
 At the bottom of each panel in @fig-simulation-line, the best forecasts come from the true DGP VAR model (the solid green line). The true VAR model FLAP forecasts do not improve on the base forecasts, as the uncertainty comes from the intrinsic error in the DGP that cannot be reduced. The second best forecasts come from the estimated VAR model, as the uncertainty, apart from the intrinsic error, only comes from the estimation error, not the model misspecification error like ARIMA and DFM, which are both misspecified in this simulation example. The gap between the estimated VAR and the true VAR becomes bigger for a longer forecast horizon, because VAR produces iterative forecasts, and estimation error accumulates as $h$ becomes larger.
 
-Forecast projection shows little, if any, improvement over the estimated VAR. This means that FLAP cannot reduce estimation error, which is termed as the parameter uncertainty in @PetEtAl2018. On the other hand, it shows significant improvement over misspecified base models. This implies that the uncertainty FLAP can reduce is mainly the model misspecification error, referred to as the model uncertainty in @PetEtAl2018. This is similar to bagging as bagging also reduces variance by controlling model uncertainty. 
+Forecast projection shows little, if any, improvement over the estimated VAR. This means that FLAP cannot reduce estimation error, which is termed as the parameter uncertainty in @PetEtAl2018. On the other hand, it shows significant improvement over misspecified base models. This implies that the uncertainty FLAP can reduce is mainly the model misspecification error, referred to as the model uncertainty in @PetEtAl2018. This is similar to bagging as bagging also reduces variance by controlling model uncertainty.
 @PetEtAl2018 also examine the data uncertainty, which is not studied here. It is not clear how data uncertainty translates in a projection problem. However, the uncertainty in how the components are constructed, unique in FLAP problems, is discussed in @sec-component-construction and awaits future research.
 
 # Empirical applications {#sec-empirical-applications}
@@ -1073,12 +1068,12 @@ The base forecasts for both the series and the components are produced using uni
 #| fig-cap: "Out-of-sample MSE of base and FLAP forecasts as the number of components $p$ increases, for forecast horizons $1$, $6$ and $12$, using the visitor nights data. The solid horizontal lines show the MSE for the base forecasts while the dashed lines show the MSEs of the FLAP forecasts. The vertical black line indicates the location of $p=m$, the number of series."
 ```
 
-The MCB and MSE plots for $h=1, 6, 12$ (as described in @sec-flap) are shown in @fig-visnights-mcb-series and @fig-visnights-line. 
+The MCB and MSE plots for $h=1, 6, 12$ (as described in @sec-flap) are shown in @fig-visnights-mcb-series and @fig-visnights-line.
 The FLAP forecasts in general outperforms the base forecasts, which is consistent with @sec-simulation. In @fig-visnights-mcb-series, the base forecasts are always ranked last. Even FLAP with only one component are significantly better than the base forecasts for $h=6$ and $12$.
 
 We highlight two different observations from @sec-simulation. First, in @fig-visnights-line, the MSE of FLAP forecasts does not always decrease as the number of components increases --- see for example for $h=1$ with $p>150$. This can also be seen from @fig-visnights-mcb-series, where the two best methods are not significantly different, even though they have very different numbers of components ($p=77$ and $p=200$). Choosing the number of components is a tradeoff between the increasing estimation error as the dimension of forecast variance $\bm{W}_h$ increases, and the additional benefit brought by the information embedded in the new components, depending on the complexity of the DGP. For the visitor nights data set, the benefit of components above the estimation error diminishes after the number of components reaches $p=m=77$.
 
-Second, unlike @sec-simulation, using principal components is significantly better than simply using random components with normal weights. In @fig-visnights-mcb-series, this is observed by comparing the performance of PCA related FLAP and the performance of FLAP with only random components, with a relatively large number of components, for example, $m=77$ or $300$. This is also clear from @fig-visnights-line, where the reduction in terms of sample MSE from using PCA is always in the lead, even after the $m$ principal components are exhausted and random components with weights generated from a normal distribution are added. 
+Second, unlike @sec-simulation, using principal components is significantly better than simply using random components with normal weights. In @fig-visnights-mcb-series, this is observed by comparing the performance of PCA related FLAP and the performance of FLAP with only random components, with a relatively large number of components, for example, $m=77$ or $300$. This is also clear from @fig-visnights-line, where the reduction in terms of sample MSE from using PCA is always in the lead, even after the $m$ principal components are exhausted and random components with weights generated from a normal distribution are added.
 
 PCA aims to find components along the direction where the data varies the most. The first principal components accounts for the maximum variance in the data. Subsequent principal components are orthogonal to the previous ones and capture the maximum remaining variance. Based on this variance maximisation and ranking of PCA, we propose two potential explanations for its superior performance.
 
@@ -1090,10 +1085,10 @@ PCA aims to find components along the direction where the data varies the most. 
 ```{r fred-md}
 ```
 
-The FRED-MD [@McCNg2016] is a popular monthly data set of macroeconomic variables, and shares similar properties with the @StoWat2002 data. We downloaded and transformed the data set using the `fbi` package [@fbi]. The period we use for this exercise is from January 1959 to September 2023, containing $777$ observations. Following @McCNg2016, we replace observations that deviate from the sample median by more than 10 interquartile ranges (which are recognised as outliers), with missing values. We then drop any series with more than 5% observations missing. This left us with $m=122$ series. We fill in the missing values using the expectation-maximization (EM) algorithm described in @StoWat2002a with $8$ factors. The number $8$ is identified by @McCNg2016, albeit with a different time span. 
+The FRED-MD [@McCNg2016] is a popular monthly data set of macroeconomic variables, and shares similar properties with the @StoWat2002 data. We downloaded and transformed the data set using the `fbi` package [@fbi]. The period we use for this exercise is from January 1959 to September 2023, containing $777$ observations. Following @McCNg2016, we replace observations that deviate from the sample median by more than 10 interquartile ranges (which are recognised as outliers), with missing values. We then drop any series with more than 5% observations missing. This left us with $m=122$ series. We fill in the missing values using the expectation-maximization (EM) algorithm described in @StoWat2002a with $8$ factors. The number $8$ is identified by @McCNg2016, albeit with a different time span.
 In order to relate to the theoretical forecast variance reduction, we use MSE as the error measure, instead of other scaled or percentage error measures. To reliably calculate MSE over series with different scales, we demean the series and scale them to have variance $1$. The MSEs are calculated on this standardised scale without back-transformation.
 
-We evaluate the performance of forecasts using time series cross-validation. Starting with $300$ observations in the first training set and the following $12$ observations as the test set, we repeat the evaluation for the rest of the data with the size of the training set increasing by $1$ in each iteration. This provides us with $466$ forecasts for each of the forecast horizons from $1$ to $12$ for evaluation. 
+We evaluate the performance of forecasts using time series cross-validation. Starting with $300$ observations in the first training set and the following $12$ observations as the test set, we repeat the evaluation for the rest of the data with the size of the training set increasing by $1$ in each iteration. This provides us with $466$ forecasts for each of the forecast horizons from $1$ to $12$ for evaluation.
 We generates base forecasts from ARIMA models using `auto.arima()` function from the `forecast` package [@forecast] with the default settings, and DFMs. The ranges of the meta-parameters in the DFMs are $1\leq k \leq 8$ (since $8$ factors are identified and used to fill in the missing values), $1 \leq n \leq 3$ and $0 \leq s \leq 6$. For more details see @sec-benchmarks. The MCB and MSE plots for $h=1, 6, 12$ are shown in @fig-fred-md-mcb-series and @fig-fred-md-line.
 
 ```{r fig-fred-md-mcb-series}
