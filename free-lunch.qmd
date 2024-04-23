@@ -253,7 +253,7 @@ The following example illustrates the mechanism of the reduction in the forecast
 
 ::: {#exm-identityW}
 
-Suppose $\bm{z}_t$ comprises $m$ original series $\bm{y}_t$ and $p$ components $\bm{c}_t$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ be $h$-step-ahead base and projected forecasts of $\bm{z}_t$. Assume that their corresponding forecast errors are uncorrelated with unit variance such that $\bm{W}_h = \bm{I}_{m+p}$, then
+Suppose $\bm{z}_t$ comprises $m$ original series $\bm{y}_t$ and $p$ components $\bm{c}_t$. Let $\hat{\bm{z}}_{t+h}$ and $\tilde{\bm{z}}_{t+h}$ be $h$-step-ahead base and projected forecasts of $\bm{z}_t$. Assume that their corresponding forecast errors are uncorrelated with unit variance such that $\bm{W}_h = \bm{I}_{m+p}$. Then
 $$
 \begin{aligned}
 \Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) -\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})
@@ -860,7 +860,6 @@ $$
 $$
 :::
 
-
 We are now ready to present the following theorem.
 
 ::: {#thm-minvar}
@@ -957,30 +956,29 @@ Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the pro
 
 # Simulation {#sec-simulation}
 
-In this section, we illustrate the performance of FLAP in a simulation setting. We generate time series of length $T=400$ from a $m=70$ variable VAR($3$). The coefficients for the VAR DGP are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovations are simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation are done using package `tsDyn` [@tsDyn]. 
+In this section, we illustrate the performance of FLAP in a simulation setting. We generate time series of length $T=400$ from a $m=70$ variable VAR($3$) data generating process (GDP). The coefficients for the VAR DGP are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovations are simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation is performed using the `tsDyn` package [@tsDyn]. 
 
-For each sample we generate $h=1$ to $12$-step-ahead base forecasts from benchmark models. We implement FLAP with a varying number of components and component construction methods. This process is repeated $220$ times. The improvement of FLAP forecasts over base forecasts is assessed, and the statistical significance of these improvements is evaluated.
+For each simulated sample we generate $h=1$ to $12$-step-ahead base forecasts from benchmark models. We implement FLAP with a varying number of components and component construction methods. This process is repeated $220$ times. The improvements of FLAP forecasts over base forecasts is assessed, and the statistical significance of these improvements is evaluated.
 
 
-## Benchmarks for generating base forecasts {#sec-benchmarks}
+## Generating base and FLAP forecasts {#sec-benchmarks}
 
 ```{r simulation}
 ```
 
-
-The first benchmark is the univariate ARIMA model. For each series, we fit an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast] with the default settings.
+We generate base forecasts from two benchmarks. The first benchmark is the univariate ARIMA model. For each series, we generate base forecasts from an ARIMA model using the `auto.arima()` function from the `forecast` package [@forecast] with the default settings.
 
 <!-- The function implements an automatic model selection procedure proposed by @HynKha2008. The number of first differences is determined by repeated KPSS tests [@KwiEtAl1992] and the number of seasonal differences is determined by the seasonal strength computed from an STL decomposition [@CleEtAl1990;@fpp3]. The algorithm then chooses different orders of the autoregressive (AR) and moving average (MA) parts by comparing AICc between the corresponding models in a stepwise fashion, up to a maximal order of $5$. Univariate ARIMAs are also used to produce base forecasts of the components used in projection, including the cases where the base forecasts of the series are produced by a different model. -->
 
-The second benchmark is the dymanic factor model (DFM). Following @StoWat2002a,
+The second benchmark is the dymanic factor model (DFM). Following @StoWat2002a, base forecasts
 $$
 \hat{y}_{T+h} = \hat{\alpha}_h + \sum^n_{j=1}\hat{\bm{\beta}}_{hj}'\hat{\bm{F}}_{T-j+1} + \sum^s_{j=1}\hat{\gamma}_{hj}y_{T-j+1},
 $$
 where $\hat{\bm{F}}_t$ is the vector of $k$ estimated factors, and $\hat{y}_t$ is the target series to forecast. The factors are estimated using PCA on demeaned and scaled data. The optimal model is selected for each series based on the Bayesian information criterion (BIC) from models fitted using different combinations of meta-parameters in their corresponding range: $1 \leq k \leq 6$, $1 \leq n \leq 3$ and $1 \leq s \leq 3$. We note that the DFM produces direct forecasts in the sense that a different model is fitted for each forecast horizon $h$, in contrast to indirect or iterative forecasts generated by the ARIMA models.
 
-## FLAP forecasts {#sec-flap}
+<!-- ## Generating FLAP forecasts {#sec-flap} -->
 
-We use several sets of weights to construct components for FLAP. The types of components are listed in @tbl-comp. Principal components from PCA are established using the `prcomp` function in package `stats` [@R]. We generate random components using weights simulated from a standard normal (Norm) distribution and a uniform (Unif) distribution with range $(-1, 1)$. We normalise the weights of all randomly generated components into unit vectors to maintain some level of consistency, with $\bm{\phi}_i/\sqrt{\sum_j(\phi_{ij}^2)}$ where $\phi_{ij}$ is the $j$th value in the weight vector of the $i$th component. The total number of components $p$ is selected to be either $m=70$ or $300$.
+We use several sets of weights to construct linear components for the FLAP method. The types of components are listed in @tbl-comp. Principal components from PCA are established using the `prcomp` function in the `stats` package [@R]. We generate random components using weights simulated from a standard normal (Norm) distribution and a uniform (Unif) distribution with range $(-1, 1)$. We normalise the weights of all randomly generated components into unit vectors to maintain some level of consistency, with $\bm{\phi}_i/\sqrt{\sum_j(\phi_{ij}^2)}$ where $\phi_{ij}$ is the $j$th value in the weight vector of the $i$th component. The total number of components $p$ is selected to be either $m=70$ or $300$.
 
 | Component | Description |
 | - | ----- |
@@ -994,42 +992,42 @@ We use several sets of weights to construct components for FLAP. The types of co
 
 : Component construction methods for FLAP {#tbl-comp}
 
-We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The MSE of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test.
+## Forecast evaluation
 
-The average ranks are plotted in @fig-simulation-mcb-series for forecast horizons $1$, $6$ and $12$. The methods using FLAP are labelled "Model -- Component Weights - Number of Components". The benchmarks are labelled "Model -- Benchmark". These points are marked with triangles. The shaded region is the confidence interval of the best-performing method. Methods outside the shaded region are significantly worse than the best model.
+We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The MSE of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test. The average ranks are plotted in @fig-simulation-mcb-series for forecast horizons $1$, $6$ and $12$. The methods using FLAP are labelled "Model -- Component Weights -- Number of Components". The benchmarks are labelled "Model -- Benchmark". These points are marked with triangles. The shaded region is the confidence interval of the best-performing method. Methods outside the shaded region are significantly worse than the best model.
 
-In @fig-simulation-line, we plot the out-of-sample MSE values as a function of the number of components $p$. Here we include the performance of the true data generating process (DGP) VAR model (VAR -- DGP), the VAR model with the correct specification (VAR -- Est.) but using estimated parameters, and their corresponding FLAP generated forecasts. We do not include methods involving a uniform distribution and random orthonormal matrices, as they are visually identical to the methods with random weights generated from a standard normal distribution. The vertical black line indicates the number of series $m=70$.
+In @fig-simulation-line, we plot the out-of-sample MSE values as a function of the number of components $p$ included in the FLAP method. Here we also include the performance of the DGP VAR model (VAR -- DGP), and an estimated VAR model with the correct specification (VAR -- Est.), as well as their corresponding FLAP generated forecasts. We have not presented the FLAP forecasts using components generated from a uniform distribution or random orthonormal matrices, as these are visually identical to the methods with random weights generated from a standard normal distribution. The vertical black line indicates when $p=m=70$, the number of original series.
 
 ```{r fig-simulation-mcb-series}
-#| fig-cap: 'Average ranks of $1$-, $6$- and $12$-step-ahead MSE of different model and component specifications in the simulation. The methods using FLAP are named as "Model -- Component Weights -- Number of Components". The base models are named as "Model -- Benchmark" and these points are marked with triangles. The shaded region is the confidence interval of the best performing model. Methods outside the shaded region are significantly worse than the best model.'
+#| fig-cap: 'Average ranks of $1$-, $6$- and $12$-step-ahead MSE of different model and component specifications in the simulation. The methods using FLAP are labelled as "Model -- Component Weights -- Number of Components". The two benchmark models generating base forecasts are labelled "Model -- Benchmark". Their MSEs are marked with triangles. The shaded region is the confidence interval of the best performing method. Methods outside the shaded region are significantly worse than the best method.'
 #| fig-height: 8
 ```
 
 ```{r fig-simulation-line}
-#| fig-cap: 'Out-of-sample MSE for base and FLAP forecasts as the number of components $p$ increases, for forecast horizons $1$, $6$ and $12$, in the simulation. "VAR -- DGP" indicates the performance of the true data generating VAR model. "VAR -- Est." indicates the performance of the VAR model with the same structure as the true model but with estimated parameters. The solid horizontal lines show the MSE for the base forecasts while the dashed lines show the MSEs of the FLAP forecasts. The vertical black line indicates the location of $p=m=70$, the number of series.'
+#| fig-cap: 'Out-of-sample MSE for base and FLAP forecasts as the number of components $p$ increases, for forecast horizons $1$, $6$ and $12$. "VAR -- DGP" indicates the performance of the true data generating VAR model. "VAR -- Est." indicates the performance of the VAR model with the same structure as the true model but with estimated parameters. The solid horizontal lines show the MSE for the base forecasts (with no projection) while the dashed lines show the MSEs of the FLAP forecasts. The vertical black line indicates the location of $p=m=70$, the number of series.'
 #| fig-height: 7
 ```
 
-## FLAP over base forecasts
+### Evaluating base forecasts
 
-The first important observation from @fig-simulation-mcb-series is the overall performance difference between the FLAP forecasts compared to the corresponding benchmark base forecasts.
-Note that we need to compare forecasts corresponding to the same model, i.e. FLAP ARIMA forecasts to base ARIMA forecasts and FLAP DFM forecasts to base DFM forecasts.
-The average ranks of the FLAP forecasts are better than the corresponding base forecasts for all forecast horizons, and the differences are all statistically significant. The only exception is for the the PCA-related FLAP forecasts using only $m=70$ components for forecast horizon $6$ and $12$.
-The number of components seems to be important. The best-performing models are all with $300$ components. Between the one-step-ahead forecasts, the methods with $300$ components are not significantly different from each other, regardless of the forecast model or how we construct the components.
+Having simulated data from a VAR DGP, we expect the DFM to capture the correlations between series, something not possible with univariate ARIMA models. Hence, we expect the DFM benchmark to perform better than the ARIMA benchmark. This is indeed the case. @fig-simulation-mcb-series shows that the base DFM forecasts are significantly better than base ARIMA forecasts, with the exception for $h=1$, where the difference in rank is statistically insignificant but only marginally.
 
-Indeed, from @fig-simulation-line we can see that the MSEs for ARIMA and DFM FALP forecasts keep decreasing from the base forecast as the number of components increases. This confirms @thm-monotone, that the more components we include, the more forecast error variance reduction we can achieve. We should note that this is only obvious in this ideal setting where we have $400$ observations in each group while we only use at most $300$ components in FLAP. This relatively large number of observations and the simple DGP can ease the challenge of estimation. This continued reduction in forecast error variance is not always achievable with real data, as we will see in @sec-empirical-applications, especially with FRED-MD in @sec-fred-md.
+This is also observed in @fig-simulation-line. The solid horizontal line representing the MSE of the base DFM forecasts is always much lower than the horizontal solid line for the base ARIMA forecasts.
 
-## Base forecasts
+###  Evaluating FLAP forecasts
 
-Having simulated data from a VAR DGP, we expect the DFM to pick up the correlations between series, something not possible with univariate ARIMA. Hence we expect the DFM to perform better than the ARIMA. This is indeed the case. @fig-simulation-mcb-series shows that the base DFM forecasts are significantly better than base ARIMA forecasts, with the exception for $h=1$, where the difference is very close to significant. This is also observed in @fig-simulation-line. The solid horizontal line representing the MSE of the base DFM forecasts is always far below the horizontal solid line for the base ARIMA forecasts.
+The most important observation from @fig-simulation-mcb-series are the statistically significant improvements of the FLAP forecasts over their corresponding benchmark base forecasts. Note that we are referring here to forecasts corresponding to the same model, i.e., FLAP ARIMA forecasts, compared to base ARIMA forecasts and FLAP DFM forecasts, compared to base DFM forecasts. The average ranks of the FLAP forecasts are better than the corresponding base forecasts for all forecast horizons, and the differences are all statistically significant. The only exception is for the  PCA-related FLAP forecasts using only $m=70$ components for forecast horizons $6$ and $12$.
 
-With the help of FLAP, a simple model like ARIMA can achieve comparable performance to more sophisticated models like the DFM. In @fig-simulation-mcb-series, all FLAP ARIMA forecasts except the one having $m$ PCs are significantly better than base DFM at $h=1$, and all FLAP ARIMA with $300$ components are significantly better than base DFM at $h=6$.
+The number of components seems to be important. The best-performing models all comprise the maximum $300$ components. For $h=1$-step-ahead forecasts, the differences between the methods with $300$ components are not significantly significant, regardless of the model that generated the base forecasts or the method used to construct the components. 
 
-In @fig-simulation-line, the dashed lines of FLAP ARIMA forecasts decrease monotonically as the number of components $p$ increases and reaches the MSE of base DFM at some point. This is because FLAP utilises shared information between series by capturing them in the components, making up for the overlooked cross-correlations in the univariate ARIMA models.
+Indeed, @fig-simulation-line shows that the MSEs for the FLAP ARIMA and DFM forecasts, represented by the dashed lines, decrease monotonically from the base, as the number of components increases. This supports @thm-monotone, demonstrating that increasing the number of components in FLAP reduces the forecast error variance. Of course this is feasible in this ideal setting where each time series has $400$ observations and we use no more than $300$ components in FLAP. The relatively large number of observations coupled with the relatively simple VAR DGP, has potentially eased the challenge of estimation. This continuous reduction in forecast error variance is not always achievable with real data, as demonstrated in the empirical applications in  @sec-empirical-applications, especially with FRED-MD dataset in @sec-fred-md.
 
-Interestingly enough, at $h=1$, while the MSE of FLAP DFM forecasts also decreases as $p$ increases, the MSE of the FLAP ARIMA forecasts and the MSE of the FLAP DFM forecasts seems to converge to the same value as $p$ reaches $300$, no matter how the components are constructed. Note that the same forecasts of the components, generated from univariate ARIMA models of these components, are used for both the FLAP ARIMA and the FLAP DFM methods. This implies that there is valuable information in the series that is not captured by either the ARIMA model or DFM, but is captured by the components. As the number of components increases, the information captured by the components overpowers the information captured by the base models, dominating the performance of the FLAP forecasts. Once again, this emphasises the importance of the components and FLAP. In this extreme case, the simple model is as good as the more complicated model after projection, while the forecast model itself is not as valuable as FLAP.
+Worth noting from @fig-simulation-line is the performance of the FLAP ARIMA forecasts relative to DMF forecasts as the number of components $p$ increases. The MSE of the  FLAP ARIMA forecasts becomes lower than the DFM base forecasts for $p<70$ for $h=1$, for $70<p<100$ for $h=6$ and for a larger $p$ for $h=12$. Hence, FLAP is able to enhance univariate ARIMA forecasts with shared information between series by capturing and projecting these cross-correlations with the components.
 
-This observation is not as obvious as the forecast horizon increases. This is because while ARIMA produces forecasts iteratively, DFM is a direct forecast model. With this simple DGP, the performance of DFM can be well maintained with larger $h$ since a different model is fitted for each $h$. This can be seen as the MSE of the base DFM does not change much with different $h$, but the MSE of base ARIMA keeps increasing as $h$ increases.
+Interestingly, for $h=1$, the MSEs of FLAP ARIMA and FLAP DFM forecasts converge to the same value as $p$ reaches $300$, no matter how the components are constructed. For the longer forecast horizons, the MSEs again converge, however they do not reach the same value for $p=300$, although they are closer for $h=6$ than $h=12$. The reason for this is not the contribution of FLAP, but the starting point of the two sets of base forecasts. As the forecast horizon increases the ARIMA base forecasts MSE increases, while the MSE for DFM base forecasts remains at relatively constant level. Thus, it seems that the direct forecasts from the DFM model, particularly fitting a different model for each forecast horizon $h$, is advantageous for the longer forecast horizons, in this setting of forecasting data generated from a simple VAR DGP. This is in contrast to the iterative nature of ARIMA generated forecasts.
+
+GA: NOT SURE THAT THIS IS NOT REFLECTED ABOVENote that the same forecasts of the components, generated from univariate ARIMA models of these components, are used for both the FLAP ARIMA and the FLAP DFM methods. This implies that there is valuable information in the series that is not captured by either the ARIMA model or DFM, but is captured by the components. As the number of components increases, the information captured by the components overpowers the information captured by the base models, dominating the performance of the FLAP forecasts. Once again, this emphasises the importance of the components and FLAP. In this extreme case, the simple model is as good as the more complicated model after projection, while the forecast model itself is not as valuable as FLAP.
+
 
 ## Component construction {#sec-component-construction}
 
