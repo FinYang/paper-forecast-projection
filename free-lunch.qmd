@@ -650,7 +650,7 @@ being a positive semi-definite matrix where the diagonal terms are non-negative,
 
 @thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast error variance, even when the number of components exceeds the number of original series. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series. This of course assumes that the forecast error covariances are known, something we explore in @sec-estW and @sec-simulation.
 
-Extending the proof of @thm-monotone, we can outline the condition for the reduced sum of forecast error variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{\bm{y}},h}$ denote the error covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}\hat{\bm{y}},h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{c_i\tilde{y},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component and the projected forecasts of the original series, based on the first $i-1$ components.
+Extending the proof of @thm-monotone, we can outline \textcolor{red}{state? present? derive?} the condition for the reduced sum of forecast error variances to be positive. Denote $\bm{\phi}_i$ as the row vector containing the weights associated with the $i$th component, so that with $p$ components, the weights matrix is $\bm{\Phi} = \big[\bm{\phi}_1' ~~~ \bm{\phi}_2' ~~~ \dots ~~~ \bm{\phi}_p'\big]'$. Let $\bm{W}^{(i-1)}_{\tilde{\bm{y}},h}$ denote the error covariance matrix of the projected forecasts of the original series based on the first $i-1$ components, $\bm{w}_{c_{1}\hat{\bm{y}},h}$ denote a vector of covariances of the first component and the base forecasts of the original series, and $\bm{w}_{c_i\tilde{y},h}^{(i-1)}$ denote a vector of covariances of the projected $i$th component and the projected forecasts of the original series, based on the first $i-1$ components.
 
 ::: {#thm-pos-condition}
 
@@ -747,7 +747,7 @@ The condition of @eq-pcon demonstrates that for a new component to be beneficial
 
 ## Optimality of the projection
 
-@eq-z_tilde can be seen as a solution to the optimisation problem:
+@eq-z_tilde can be seen as a solution to the optimisation problem,
 $$
 \underset{\check{\bm{z}}_{T+h}}{\arg\min}
   (\hat{\bm{z}}_{T+h}-\check{\bm{z}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{z}}_{T+h}-\check{\bm{z}}_{T+h})
@@ -924,7 +924,7 @@ In practice, the base forecast error variance $\bm{W}_h$ is unknown and needs to
 $$
 \widehat{\bm{W}}_h=\frac{1}{T-h-1}\sum^T_{t=h+1}\hat{\bm{e}}_{t,h}\hat{\bm{e}}_{t,h}',
 $$
-albeit unbiased, is not considered a good approximation to the true forecast error variance in a finite sample when $(m+p) \approx T-h$. It is even singular when $(m+p)>T-h$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, while other shrinkage estimators can be considered, we adopt the covariance shrinkage method of @SchStr2005 and the variance shrinkage method of @OpgStr2007. Then, the estimated forecast error variance matrix is guaranteed to be positive definite with few numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with the element in row $i$ and column $j$
+albeit unbiased, is not considered a good approximation to the true forecast error variance in a finite sample when $(m+p) \approx T-h$. It is even singular when $(m+p)>T-h$, which makes the quantities discussed in the previous sections impossible to calculate. For this reason, while other shrinkage estimators can be considered, we adopt the covariance shrinkage method of @SchStr2005 and the variance shrinkage method of @OpgStr2007. Then, the estimated forecast error variance matrix is guaranteed to be positive definite with few \textcolor{red}{few?} numerical problems. This estimator is denoted as $\widehat{\bm{W}}_h^{shr} = (\hat{w}_{ij,h}^{shr})_{1\leq i,j\leq m+p}$ with the element in row $i$ and column $j$
 $$
 \hat{w}_{ij,h}^{shr} = \hat{r}_{ij,h}^{shr}\sqrt{\hat{v}_{i,h}\hat{v}_{j,h}},
 $$
