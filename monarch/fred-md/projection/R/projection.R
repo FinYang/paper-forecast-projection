@@ -9,23 +9,16 @@ project <- function(fc, W, Phi) {
   C_all <- cbind(-Phi, diag(nrow(Phi)))
   p_max <- nrow(Phi)
   m <- ncol(fc) - nrow(Phi)
-  proj_fc <- lapply(
-    asplit(fc, 1), \(fc){
-    mapply(\(p, W){
-      C <- block(C_all, p, m+p)
-      WtC <- tcrossprod(W, C)
-      bf <- c(fc[seq_len(m+p)])
-      (bf -tcrossprod(WtC, t(solve(C %*% WtC, C))) %*% bf)[seq_len(m),]
-    },
-    p = seq_len(p_max),
-    W = W,
-    SIMPLIFY = FALSE)
-  })
-  proj_fc %>%
-    lapply(\(x) do.call(cbind, x)) %>%
-    list2array() %>%
-    aperm(c(3, 1, 2)) %>%
-    array2list()
+
+  mapply(\(p, W){
+    C <- block(C_all, p, m+p)
+    WtC <- tcrossprod(W, C)
+    tbf <- fc[,seq_len(m+p)]
+    t((t(tbf)-tcrossprod(WtC, t(solve(C %*% WtC, tcrossprod(C, tbf)))))[seq_len(m),])
+  },
+  p = seq_len(p_max),
+  W = W[seq_len(p_max)],
+  SIMPLIFY = FALSE)
 }
 
 block <- function(mat, m, n = m){
