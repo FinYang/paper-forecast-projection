@@ -19,17 +19,6 @@ library(tidyverse)
 tar_option_set(
   packages = c(
     "tidyverse",
-    # "feasts",
-    # "future.apply",
-    # "future",
-    # "progressr",
-    # "lubridate",
-    # "fable",
-    # "rlang",
-    # "fabletools",
-    # "ForeCA",
-    # "fable.components",
-    # "tsibble",
     "forecast",
     "tsDyn"
   ), # packages that your targets need to run
@@ -193,6 +182,34 @@ list(
   tar_target(res_arima_pca_uniform, get_res(out_arima_pca_uniform),
              iteration = "list", pattern = map(out_arima_pca_uniform)),
 
+  tar_target(pcascaled_normal, component(sim_in, "PCAscaled_normal", p = p),
+             iteration = "list",
+             pattern = map(sim_in),
+             cue = tar_cue(command = FALSE),
+             deployment = "main"),
+  tar_target(out_arima_pcascaled_normal, arima2(pcascaled_normal$x, .forecast_h),
+             iteration = "list", pattern = map(pcascaled_normal)),
+  tar_target(fc_arima_pcascaled_normal, get_fc(out_arima_pcascaled_normal),
+             iteration = "list", pattern = map(out_arima_pcascaled_normal),
+             deployment = "main"),
+  tar_target(res_arima_pcascaled_normal, get_res(out_arima_pcascaled_normal),
+             iteration = "list", pattern = map(out_arima_pcascaled_normal)),
+  tar_target(fitted_arima_pcascaled_normal, get_fitted(out_arima_pcascaled_normal),
+             iteration = "list", pattern = map(out_arima_pcascaled_normal)),
+
+  tar_target(pcascaled_uniform, component(sim_in, "PCAscaled_uniform", p = p),
+             iteration = "list",
+             pattern = map(sim_in),
+             cue = tar_cue(command = FALSE),
+             deployment = "main"),
+  tar_target(out_arima_pcascaled_uniform, arima(pcascaled_uniform$x, .forecast_h),
+             iteration = "list", pattern = map(pcascaled_uniform)),
+  tar_target(fc_arima_pcascaled_uniform, get_fc(out_arima_pcascaled_uniform),
+             iteration = "list", pattern = map(out_arima_pcascaled_uniform),
+             deployment = "main"),
+  tar_target(res_arima_pcascaled_uniform, get_res(out_arima_pcascaled_uniform),
+             iteration = "list", pattern = map(out_arima_pcascaled_uniform)),
+
   tar_target(ortho_normal, component(sim_in, "ortho_normal", p = p),
              iteration = "list",
              pattern = map(sim_in),
@@ -250,10 +267,18 @@ list(
              iteration = "list",
              pattern = map(res_arima, res_arima_pca),
              resources = future_ram(4)),
+  tar_target(W_arima_pcascaled_normal, get_W(res_arima, res_arima_pcascaled_normal),
+             iteration = "list",
+             pattern = map(res_arima, res_arima_pcascaled_normal),
+             resources = future_ram(5)),
   tar_target(W_var, get_W(res_var, res_arima_pca),
              iteration = "list",
              pattern = map(res_var, res_arima_pca),
              resources = future_ram(4)),
+  tar_target(W_var_pcascaled_normal, get_W(res_var, res_arima_pcascaled_normal),
+             iteration = "list",
+             pattern = map(res_var, res_arima_pcascaled_normal),
+             resources = future_ram(5)),
   tar_target(W_arima_wls,
              map2(res_arima, res_arima_pca,
                   \(a, b){
@@ -270,6 +295,10 @@ list(
              iteration = "list",
              pattern = map(res_dfm, res_arima_pca),
              resources = future_ram(4)),
+  tar_target(W_dfm_pcascaled_normal, get_W(res_dfm, res_arima_pcascaled_normal),
+             iteration = "list",
+             pattern = map(res_dfm, res_arima_pcascaled_normal),
+             resources = future_ram(5)),
 
   tar_target(W_true, {
     res <- cbind(res_true, res_arima_pca[[1]])
@@ -279,6 +308,14 @@ list(
   },
   iteration = "list",
   pattern = map(res_true, res_arima_pca)),
+  tar_target(W_true_pcascaled_normal, {
+    res <- cbind(res_true, res_arima_pcascaled_normal[[1]])
+    lapply(
+      seq_len(p),
+      \(pp) corpcor::cov.shrink(res[,seq_len(m+pp)], verbose = FALSE))
+  },
+  iteration = "list",
+  pattern = map(res_true, res_arima_pcascaled_normal)),
 
   tar_target(W_arima_normal, get_W(res_arima, res_arima_normal),
              iteration = "list",
@@ -292,6 +329,10 @@ list(
              iteration = "list",
              pattern = map(res_arima, res_arima_pca_uniform),
              resources = future_ram(4)),
+  tar_target(W_arima_pcascaled_uniform, get_W(res_arima, res_arima_pcascaled_uniform),
+             iteration = "list",
+             pattern = map(res_arima, res_arima_pcascaled_uniform),
+             resources = future_ram(5)),
   tar_target(W_arima_ortho_normal, get_W(res_arima, res_arima_ortho_normal),
              iteration = "list",
              pattern = map(res_arima, res_arima_ortho_normal),
@@ -316,6 +357,14 @@ list(
              iteration = "list",
              pattern = map(fc_arima, fc_arima_pca, W_arima, pca),
              resources = future_ram(4)),
+  tar_target(proj_arima_pcascaled_normal,
+             project(
+               cbind(fc_arima, fc_arima_pcascaled_normal),
+               W = W_arima_pcascaled_normal,
+               Phi = pcascaled_normal$Phi),
+             iteration = "list",
+             pattern = map(fc_arima, fc_arima_pcascaled_normal, W_arima_pcascaled_normal, pcascaled_normal),
+             resources = future_ram(4)),
   tar_target(proj_var,
              project(
                cbind(fc_var, fc_arima_pca),
@@ -323,6 +372,14 @@ list(
                Phi = pca$Phi),
              iteration = "list",
              pattern = map(fc_var, fc_arima_pca, W_var, pca),
+             resources = future_ram(4)),
+  tar_target(proj_var_pcascaled_normal,
+             project(
+               cbind(fc_var, fc_arima_pcascaled_normal),
+               W = W_var_pcascaled_normal,
+               Phi = pcascaled_normal$Phi),
+             iteration = "list",
+             pattern = map(fc_var, fc_arima_pcascaled_normal, W_var_pcascaled_normal, pcascaled_normal),
              resources = future_ram(4)),
   tar_target(proj_arima_wls,
              project(
@@ -340,6 +397,14 @@ list(
              iteration = "list",
              pattern = map(fc_dfm, fc_arima_pca, W_dfm, pca),
              resources = future_ram(4)),
+  tar_target(proj_dfm_pcascaled_normal,
+             project(
+               cbind(fc_dfm, fc_arima_pcascaled_normal),
+               W = W_dfm_pcascaled_normal,
+               Phi = pcascaled_normal$Phi),
+             iteration = "list",
+             pattern = map(fc_dfm, fc_arima_pcascaled_normal, W_dfm_pcascaled_normal, pcascaled_normal),
+             resources = future_ram(4)),
   tar_target(proj_true,
              project_1(
                cbind(fc_true, fc_arima_pca),
@@ -347,6 +412,14 @@ list(
                Phi = pca$Phi),
              iteration = "list",
              pattern = map(fc_true, fc_arima_pca, W_true, pca),
+             resources = future_ram(1)),
+  tar_target(proj_true_pcascaled_normal,
+             project_1(
+               cbind(fc_true, fc_arima_pcascaled_normal),
+               W = W_true_pcascaled_normal,
+               Phi = pcascaled_normal$Phi),
+             iteration = "list",
+             pattern = map(fc_true, fc_arima_pcascaled_normal, W_true_pcascaled_normal, pcascaled_normal),
              resources = future_ram(1)),
 
   tar_target(proj_arima_normal,
@@ -372,6 +445,14 @@ list(
                Phi = pca_uniform$Phi),
              iteration = "list",
              pattern = map(fc_arima, fc_arima_pca_uniform, W_arima_pca_uniform, pca_uniform),
+             resources = future_ram(4)),
+  tar_target(proj_arima_pcascaled_uniform,
+             project(
+               cbind(fc_arima, fc_arima_pcascaled_uniform),
+               W = W_arima_pcascaled_uniform,
+               Phi = pcascaled_uniform$Phi),
+             iteration = "list",
+             pattern = map(fc_arima, fc_arima_pcascaled_uniform, W_arima_pcascaled_uniform, pcascaled_uniform),
              resources = future_ram(4)),
   tar_target(proj_arima_ortho_normal,
              project(
@@ -452,9 +533,17 @@ list(
              iteration = "list",
              pattern = map(sim_out, proj_arima),
              deployment = "main"),
+  tar_target(se_proj_arima_pcascaled_normal, lapply(proj_arima_pcascaled_normal, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_arima_pcascaled_normal),
+             deployment = "main"),
   tar_target(se_proj_var, lapply(proj_var, \(pa) (sim_out - pa)^2),
              iteration = "list",
              pattern = map(sim_out, proj_var),
+             deployment = "main"),
+  tar_target(se_proj_var_pcascaled_normal, lapply(proj_var_pcascaled_normal, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_var_pcascaled_normal),
              deployment = "main"),
   tar_target(se_proj_arima_wls, lapply(proj_arima_wls, \(pa) (sim_out - pa)^2),
              iteration = "list",
@@ -464,9 +553,17 @@ list(
              iteration = "list",
              pattern = map(sim_out, proj_dfm),
              deployment = "main"),
+  tar_target(se_proj_dfm_pcascaled_normal, lapply(proj_dfm_pcascaled_normal, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_dfm_pcascaled_normal),
+             deployment = "main"),
   tar_target(se_proj_true, lapply(proj_true, \(pa) (sim_out - pa)^2),
              iteration = "list",
              pattern = map(sim_out, proj_true),
+             deployment = "main"),
+  tar_target(se_proj_true_pcascaled_normal, lapply(proj_true_pcascaled_normal, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_true_pcascaled_normal),
              deployment = "main"),
 
   tar_target(se_proj_arima_normal, lapply(proj_arima_normal, \(pa) (sim_out - pa)^2),
@@ -480,6 +577,10 @@ list(
   tar_target(se_proj_arima_pca_uniform, lapply(proj_arima_pca_uniform, \(pa) (sim_out - pa)^2),
              iteration = "list",
              pattern = map(sim_out, proj_arima_pca_uniform),
+             deployment = "main"),
+  tar_target(se_proj_arima_pcascaled_uniform, lapply(proj_arima_pcascaled_uniform, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_arima_pcascaled_uniform),
              deployment = "main"),
   tar_target(se_proj_arima_ortho_normal, lapply(proj_arima_ortho_normal, \(pa) (sim_out - pa)^2),
              iteration = "list",
@@ -562,13 +663,21 @@ list(
              resources = future_ram(3)),
   tar_target(mse_proj_arima, get_mse_proj(se_proj_arima),
              resources = future_ram(3)),
+  tar_target(mse_proj_arima_pcascaled_normal, get_mse_proj(se_proj_arima_pcascaled_normal),
+             resources = future_ram(3)),
   tar_target(mse_proj_var, get_mse_proj(se_proj_var),
+             resources = future_ram(3)),
+  tar_target(mse_proj_var_pcascaled_normal, get_mse_proj(se_proj_var_pcascaled_normal),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_wls, get_mse_proj(se_proj_arima_wls),
              resources = future_ram(3)),
   tar_target(mse_proj_dfm, get_mse_proj(se_proj_dfm),
              resources = future_ram(3)),
+  tar_target(mse_proj_dfm_pcascaled_normal, get_mse_proj(se_proj_dfm_pcascaled_normal),
+             resources = future_ram(3)),
   tar_target(mse_proj_true, get_mse_proj(se_proj_true),
+             resources = future_ram(3)),
+  tar_target(mse_proj_true_pcascaled_normal, get_mse_proj(se_proj_true_pcascaled_normal),
              resources = future_ram(3)),
 
   tar_target(mse_proj_arima_normal, get_mse_proj(se_proj_arima_normal),
@@ -576,6 +685,8 @@ list(
   tar_target(mse_proj_arima_uniform, get_mse_proj(se_proj_arima_uniform),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_pca_uniform, get_mse_proj(se_proj_arima_pca_uniform),
+             resources = future_ram(3)),
+  tar_target(mse_proj_arima_pcascaled_uniform, get_mse_proj(se_proj_arima_pcascaled_uniform),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_ortho_normal, get_mse_proj(se_proj_arima_ortho_normal),
              resources = future_ram(3)),
@@ -589,13 +700,21 @@ list(
              resources = future_ram(3)),
   tar_target(mse_proj_arima_series, get_mse_proj_series(se_proj_arima),
              resources = future_ram(3)),
+  tar_target(mse_proj_arima_pcascaled_normal_series, get_mse_proj_series(se_proj_arima_pcascaled_normal),
+             resources = future_ram(3)),
   tar_target(mse_proj_var_series, get_mse_proj_series(se_proj_var),
+             resources = future_ram(3)),
+  tar_target(mse_proj_var_pcascaled_normal_series, get_mse_proj_series(se_proj_var_pcascaled_normal),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_wls_series, get_mse_proj_series(se_proj_arima_wls),
              resources = future_ram(3)),
   tar_target(mse_proj_dfm_series, get_mse_proj_series(se_proj_dfm),
              resources = future_ram(3)),
+  tar_target(mse_proj_dfm_pcascaled_normal_series, get_mse_proj_series(se_proj_dfm_pcascaled_normal),
+             resources = future_ram(3)),
   tar_target(mse_proj_true_series, get_mse_proj_series(se_proj_true),
+             resources = future_ram(3)),
+  tar_target(mse_proj_true_pcascaled_normal_series, get_mse_proj_series(se_proj_true_pcascaled_normal),
              resources = future_ram(3)),
 
   tar_target(mse_proj_arima_normal_series, get_mse_proj_series(se_proj_arima_normal),
@@ -603,6 +722,8 @@ list(
   tar_target(mse_proj_arima_uniform_series, get_mse_proj_series(se_proj_arima_uniform),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_pca_uniform_series, get_mse_proj_series(se_proj_arima_pca_uniform),
+             resources = future_ram(3)),
+  tar_target(mse_proj_arima_pcascaled_uniform_series, get_mse_proj_series(se_proj_arima_pcascaled_uniform),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_ortho_normal_series, get_mse_proj_series(se_proj_arima_ortho_normal),
              resources = future_ram(3)),
@@ -644,10 +765,16 @@ list(
                         Phi = NA),
                get_df_mse_proj(mse_proj_arima) %>%
                  mutate(model = "arima", proj = TRUE, Phi = "PCA_normal"),
+               get_df_mse_proj(mse_proj_arima_pcascaled_normal) %>%
+                 mutate(model = "arima", proj = TRUE, Phi = "PCAscaled_normal"),
                get_df_mse_proj(mse_proj_dfm) %>%
                  mutate(model = "dfm", proj = TRUE, Phi = "PCA_normal"),
+               get_df_mse_proj(mse_proj_dfm_pcascaled_normal) %>%
+                 mutate(model = "dfm", proj = TRUE, Phi = "PCAscaled_normal"),
                get_df_mse_proj(mse_proj_true) %>%
-                 mutate(model = "true", proj = TRUE, Phi = "PCA_normal")
+                 mutate(model = "true", proj = TRUE, Phi = "PCA_normal"),
+               get_df_mse_proj(mse_proj_true_pcascaled_normal) %>%
+                 mutate(model = "true", proj = TRUE, Phi = "PCAscaled_normal")
              ),
              resources = future_ram(4)
   ),
@@ -666,17 +793,21 @@ list(
                scale_linetype_manual(
                  name = "Constraint",
                  values = c("TRUE.PCA_normal" = "solid",
+                            "TRUE.PCAscaled_normal" = "9111",
                             "FALSE.NA" = "dotted",
                             "TRUE.normal" = "55",
                             "TRUE.uniform" = "33",
                             "TRUE.PCA_uniform" = "3313",
+                            "TRUE.PCAscaled_uniform" = "911111",
                             "TRUE.ortho_normal" = "511111"
                  ),
                  labels = c("TRUE.PCA_normal" = "PCA+Norm.",
+                            "TRUE.PCAscaled_normal" = "PCAscaled+Norm.",
                             "FALSE.NA" = "No Proj.",
                             "TRUE.normal" = "Norm.",
                             "TRUE.uniform" = "Unif.",
                             "TRUE.PCA_uniform" = "PCA+Unif.",
+                            "TRUE.PCAscaled_uniform" = "PCAscaled+Unif.",
                             "TRUE.ortho_normal" = "Ortho.+Norm."
                  ))+
                geom_vline(xintercept = m)),
@@ -691,6 +822,8 @@ list(
                  mutate(model = gsub("mse_", "", model, fixed = TRUE)),
                get_df_mse_proj(mse_proj_var) %>%
                  mutate(model = "var", proj = TRUE, Phi = "PCA_normal"),
+               get_df_mse_proj(mse_proj_var_pcascaled_normal) %>%
+                 mutate(model = "var", proj = TRUE, Phi = "PCAscaled_normal"),
                get_df_mse_proj(mse_proj_arima_wls) %>%
                  mutate(model = "arima_wls", proj = TRUE, Phi = "PCA_normal"),
                get_df_mse_proj(mse_proj_arima_normal) %>%
@@ -699,6 +832,8 @@ list(
                  mutate(model = "arima", proj = TRUE, Phi = "uniform"),
                get_df_mse_proj(mse_proj_arima_pca_uniform) %>%
                  mutate(model = "arima", proj = TRUE, Phi = "PCA_uniform"),
+               get_df_mse_proj(mse_proj_arima_pcascaled_uniform) %>%
+                 mutate(model = "arima", proj = TRUE, Phi = "PCAscaled_uniform"),
                get_df_mse_proj(mse_proj_arima_ortho_normal) %>%
                  mutate(model = "arima", proj = TRUE, Phi = "ortho_normal"),
                get_df_mse_proj(mse_proj_iter_arima) %>%
