@@ -16,7 +16,6 @@ tar_option_set(
   packages = c(
     "tidyverse",
     "forecast",
-    "fbi",
     "tsibble"
   ), # packages that your targets need to run
   format = "qs", # default storage format
@@ -134,6 +133,23 @@ list(
              iteration = "list", pattern = map(out_ets_pca_normal),
              deployment = "main"),
 
+  tar_target(pcacentred_normal, component(sam_in, "PCAcentred_normal", p = p),
+             iteration = "list",
+             pattern = map(sam_in),
+             # cue = tar_cue(command = FALSE),
+             deployment = "main"),
+  tar_target(out_ets_pcacentred_normal,
+             ets_mat(pcacentred_normal$x, .h = .forecast_h,
+                       start = visnights_start, frequency = visnights_freq),
+             iteration = "list", pattern = map(pcacentred_normal),
+             resources = future_ram(3)),
+  tar_target(fc_ets_pcacentred_normal, get_fc(out_ets_pcacentred_normal),
+             iteration = "list", pattern = map(out_ets_pcacentred_normal),
+             deployment = "main"),
+  tar_target(res_ets_pcacentred_normal, get_res(out_ets_pcacentred_normal),
+             iteration = "list", pattern = map(out_ets_pcacentred_normal),
+             deployment = "main"),
+
   tar_target(normal, component(sam_in, "normal", p = p),
              iteration = "list",
              pattern = map(sam_in),
@@ -184,6 +200,10 @@ list(
              iteration = "list",
              pattern = map(res_ets, res_ets_pca_normal),
              resources = future_ram(4)),
+  tar_target(W_ets_pcacentred_normal, get_W(res_ets, res_ets_pcacentred_normal),
+             iteration = "list",
+             pattern = map(res_ets, res_ets_pcacentred_normal),
+             resources = future_ram(4)),
   # tar_target(W_dfm_pca_normal, get_W(res_dfm[[1]], res_ets_pca_normal),
   #            iteration = "list",
   #            pattern = map(res_dfm, res_ets_pca_normal),
@@ -204,6 +224,14 @@ list(
                Phi = pca_normal$Phi),
              iteration = "list",
              pattern = map(fc_ets, fc_ets_pca_normal, W_ets_pca_normal, pca_normal),
+             resources = future_ram(4)),
+  tar_target(proj_ets_pcacentred_normal,
+             project(
+               cbind(fc_ets, fc_ets_pcacentred_normal),
+               W = W_ets_pcacentred_normal,
+               Phi = pcacentred_normal$Phi),
+             iteration = "list",
+             pattern = map(fc_ets, fc_ets_pcacentred_normal, W_ets_pcacentred_normal, pcacentred_normal),
              resources = future_ram(4)),
   # tar_target(proj_dfm_pca_normal,
   #            project(
@@ -243,6 +271,10 @@ list(
              iteration = "list",
              pattern = map(sam_out, proj_ets_pca_normal),
              deployment = "main"),
+  tar_target(se_proj_ets_pcacentred_normal, lapply(proj_ets_pcacentred_normal, \(pa) (sam_out - pa)^2),
+             iteration = "list",
+             pattern = map(sam_out, proj_ets_pcacentred_normal),
+             deployment = "main"),
   # tar_target(se_proj_dfm_pca_normal, lapply(proj_dfm_pca_normal, \(pa) (sam_out - pa)^2),
   #            iteration = "list",
   #            pattern = map(sam_out, proj_dfm_pca_normal),
@@ -260,6 +292,8 @@ list(
   # tar_target(mse_dfm, get_mse(se_dfm)),
   tar_target(mse_proj_ets_pca_normal, get_mse_proj(se_proj_ets_pca_normal),
              resources = future_ram(5)),
+  tar_target(mse_proj_ets_pcacentred_normal, get_mse_proj(se_proj_ets_pcacentred_normal),
+             resources = future_ram(5)),
   # tar_target(mse_proj_dfm_pca_normal, get_mse_proj(se_proj_dfm_pca_normal),
   #            resources = future_ram(5)),
   tar_target(mse_proj_ets_normal, get_mse_proj(se_proj_ets_normal),
@@ -269,6 +303,8 @@ list(
 
   tar_target(mse_ets_series, get_mse_series(se_ets)),
   tar_target(mse_proj_ets_pca_normal_series, get_mse_proj_series(se_proj_ets_pca_normal),
+             resources = future_ram(5)),
+  tar_target(mse_proj_ets_pcacentred_normal_series, get_mse_proj_series(se_proj_ets_pcacentred_normal),
              resources = future_ram(5)),
   tar_target(mse_proj_ets_normal_series, get_mse_proj_series(se_proj_ets_normal),
              resources = future_ram(5)),
@@ -296,6 +332,8 @@ list(
                         Phi = "NA"),
                get_df_mse_proj(mse_proj_ets_pca_normal) %>%
                  mutate(model = "ets", proj = TRUE, Phi = "PCA_normal"),
+               get_df_mse_proj(mse_proj_ets_pcacentred_normal) %>%
+                 mutate(model = "ets", proj = TRUE, Phi = "PCAcentred_normal"),
                # get_df_mse_proj(mse_proj_dfm_pca_normal) %>%
                #   mutate(model = "dfm", proj = TRUE, Phi = "PCA_normal"),
                get_df_mse_proj(mse_proj_ets_normal) %>%
@@ -303,28 +341,30 @@ list(
                get_df_mse_proj(mse_proj_ets_uniform) %>%
                  mutate(model = "ets", proj = TRUE, Phi = "uniform")
              ),
-             resources = future_ram(4)
+             resources = future_ram(5)
   ),
 
   tar_target(plot_mse,
              ggplot(mse, aes(x = p, y = value,
-                             colour = model,
+                             colour = Phi,
                              linetype = paste(proj, Phi, sep = "."))) +
                geom_line() +
                geom_hline(data = \(df) filter(df, !proj),
                           aes(yintercept = value,
-                              colour = model,
+                              colour = Phi,
                               linetype = paste(proj, Phi, sep = "."))) +
                facet_wrap("h", scales = "free", labeller = label_both) +
                ylab("MSE") +
                scale_linetype_manual(
                  name = "Constraint",
                  values = c("TRUE.PCA_normal" = "solid",
+                            "TRUE.PCAcentred_normal" = "9111",
                             "FALSE.NA" = "dotted",
                             "TRUE.normal" = "55",
                             "TRUE.uniform" = "5151"
                  ),
                  labels = c("TRUE.PCA_normal" = "PCA+Norm.",
+                            "TRUE.PCAcentred_normal" = "PCAcentred+Norm.",
                             "FALSE.NA" = "No Proj.",
                             "TRUE.normal" = "Norm.",
                             "TRUE.uniform" = "Unif."
