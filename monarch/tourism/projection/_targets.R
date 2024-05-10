@@ -258,6 +258,68 @@ list(
              pattern = map(fc_ets, fc_ets_uniform, W_ets_uniform, uniform),
              resources = future_ram(4)),
 
+  tar_target(pca_normal_switch_from_sd,
+             which(apply(pca_normal$x, 2, sd) < mean(apply(normal$x[,1:100], 2, sd)))[[1]],
+             pattern = map(pca_normal, normal),
+             deployment = "main"),
+  tar_target(proj_ets_pca_normal_switch_sd,
+             project_switch(
+               fc = fc_ets,
+               fc_comp1 = fc_ets_pca_normal,
+               fc_comp2 = fc_ets_normal,
+               Phi1 = pca_normal$Phi,
+               Phi2 = normal$Phi,
+               res = res_ets,
+               res_comp1 = res_ets_pca_normal,
+               res_comp2 = res_ets_normal,
+               switch_from = pca_normal_switch_from_sd),
+             pattern = map(fc_ets, fc_ets_pca_normal, fc_ets_normal,
+                           pca_normal, normal,
+                           res_ets, res_ets_pca_normal, res_ets_normal,
+                           pca_normal_switch_from_sd),
+             resources = future_ram(3)),
+  tar_target(pca_normal_switch_from_rms,
+             which(sqrt(colMeans(pca_normal$x^2)) < mean(sqrt(colMeans(normal$x[,1:100]^2))))[[1]],
+             pattern = map(pca_normal, normal),
+             deployment = "main"),
+  tar_target(proj_ets_pca_normal_switch_rms,
+             project_switch(
+               fc = fc_ets,
+               fc_comp1 = fc_ets_pca_normal,
+               fc_comp2 = fc_ets_normal,
+               Phi1 = pca_normal$Phi,
+               Phi2 = normal$Phi,
+               res = res_ets,
+               res_comp1 = res_ets_pca_normal,
+               res_comp2 = res_ets_normal,
+               switch_from = pca_normal_switch_from_rms),
+             pattern = map(fc_ets, fc_ets_pca_normal, fc_ets_normal,
+                           pca_normal, normal,
+                           res_ets, res_ets_pca_normal, res_ets_normal,
+                           pca_normal_switch_from_rms),
+             resources = future_ram(3)),
+  tar_target(pcacentred_normal_switch_from_sd,
+             which(apply(pcacentred_normal$x, 2, sd) < mean(apply(normal$x[,1:100], 2, sd)))[[1]],
+             pattern = map(pcacentred_normal, normal),
+             deployment = "main"),
+  tar_target(proj_ets_pcacentred_normal_switch_sd,
+             project_switch(
+               fc = fc_ets,
+               fc_comp1 = fc_ets_pcacentred_normal,
+               fc_comp2 = fc_ets_normal,
+               Phi1 = pcacentred_normal$Phi,
+               Phi2 = normal$Phi,
+               res = res_ets,
+               res_comp1 = res_ets_pcacentred_normal,
+               res_comp2 = res_ets_normal,
+               switch_from = pcacentred_normal_switch_from_sd),
+             pattern = map(fc_ets, fc_ets_pcacentred_normal, fc_ets_normal,
+                           pcacentred_normal, normal,
+                           res_ets, res_ets_pcacentred_normal, res_ets_normal,
+                           pcacentred_normal_switch_from_sd),
+             resources = future_ram(3)),
+
+
 
   tar_target(se_ets, (sam_out - fc_ets)^2,
              iteration = "list",
@@ -287,6 +349,18 @@ list(
              iteration = "list",
              pattern = map(sam_out, proj_ets_uniform),
              deployment = "main"),
+  tar_target(se_proj_ets_pca_normal_switch_sd, lapply(proj_ets_pca_normal_switch_sd, \(pa) (sam_out - pa)^2),
+             iteration = "list",
+             pattern = map(sam_out, proj_ets_pca_normal_switch_sd),
+             deployment = "main"),
+  tar_target(se_proj_ets_pca_normal_switch_rms, lapply(proj_ets_pca_normal_switch_rms, \(pa) (sam_out - pa)^2),
+             iteration = "list",
+             pattern = map(sam_out, proj_ets_pca_normal_switch_rms),
+             deployment = "main"),
+  tar_target(se_proj_ets_pcacentred_normal_switch_sd, lapply(proj_ets_pcacentred_normal_switch_sd, \(pa) (sam_out - pa)^2),
+             iteration = "list",
+             pattern = map(sam_out, proj_ets_pcacentred_normal_switch_sd),
+             deployment = "main"),
 
   tar_target(mse_ets, get_mse(se_ets)),
   # tar_target(mse_dfm, get_mse(se_dfm)),
@@ -300,6 +374,12 @@ list(
              resources = future_ram(5)),
   tar_target(mse_proj_ets_uniform, get_mse_proj(se_proj_ets_uniform),
              resources = future_ram(5)),
+  tar_target(mse_proj_ets_pca_normal_switch_sd, get_mse_proj(se_proj_ets_pca_normal_switch_sd),
+             resources = future_ram(5)),
+  tar_target(mse_proj_ets_pca_normal_switch_rms, get_mse_proj(se_proj_ets_pca_normal_switch_rms),
+             resources = future_ram(5)),
+  tar_target(mse_proj_ets_pcacentred_normal_switch_sd, get_mse_proj(se_proj_ets_pcacentred_normal_switch_sd),
+             resources = future_ram(5)),
 
   tar_target(mse_ets_series, get_mse_series(se_ets)),
   tar_target(mse_proj_ets_pca_normal_series, get_mse_proj_series(se_proj_ets_pca_normal),
@@ -310,6 +390,14 @@ list(
              resources = future_ram(5)),
   tar_target(mse_proj_ets_uniform_series, get_mse_proj_series(se_proj_ets_uniform),
              resources = future_ram(5)),
+  tar_target(mse_proj_ets_pca_normal_switch_sd_series, get_mse_proj_series(se_proj_ets_pca_normal_switch_sd),
+             resources = future_ram(5)),
+  tar_target(mse_proj_ets_pca_normal_switch_rms_series, get_mse_proj_series(se_proj_ets_pca_normal_switch_rms),
+             resources = future_ram(5)),
+  tar_target(mse_proj_ets_pcacentred_normal_switch_sd_series, get_mse_proj_series(se_proj_ets_pcacentred_normal_switch_sd),
+             resources = future_ram(5)),
+
+
   tar_target(mse_ets_cv, get_mse_cv(se_ets)),
   tar_target(mse_proj_ets_pca_normal_cv, get_mse_proj_cv(se_proj_ets_pca_normal),
              resources = future_ram(5)),
@@ -321,9 +409,7 @@ list(
 
   tar_target(mse,
              bind_rows(
-               tibble(mse_ets
-                      # , mse_dfm
-                      ) %>%
+               tibble(mse_ets) %>%
                  mutate(h = row_number(),
                         p = 0,
                         proj = FALSE) %>%
@@ -339,35 +425,51 @@ list(
                get_df_mse_proj(mse_proj_ets_normal) %>%
                  mutate(model = "ets", proj = TRUE, Phi = "normal"),
                get_df_mse_proj(mse_proj_ets_uniform) %>%
-                 mutate(model = "ets", proj = TRUE, Phi = "uniform")
+                 mutate(model = "ets", proj = TRUE, Phi = "uniform"),
+               get_df_mse_proj(mse_proj_ets_pca_normal_switch_sd) %>%
+                 mutate(model = "ets", proj = TRUE, Phi = "PCA_normal_switch_sd"),
+               get_df_mse_proj(mse_proj_ets_pca_normal_switch_rms) %>%
+                 mutate(model = "ets", proj = TRUE, Phi = "PCA_normal_switch_rms"),
+               get_df_mse_proj(mse_proj_ets_pcacentred_normal_switch_sd) %>%
+                 mutate(model = "ets", proj = TRUE, Phi = "PCAcentred_normal_switch_sd"),
              ),
              resources = future_ram(5)
   ),
 
   tar_target(plot_mse,
              ggplot(mse, aes(x = p, y = value,
-                             colour = Phi,
+                             colour = paste(proj, Phi, sep = "."),
                              linetype = paste(proj, Phi, sep = "."))) +
                geom_line() +
                geom_hline(data = \(df) filter(df, !proj),
                           aes(yintercept = value,
-                              colour = Phi,
+                              colour = paste(proj, Phi, sep = "."),
                               linetype = paste(proj, Phi, sep = "."))) +
                facet_wrap("h", scales = "free", labeller = label_both) +
                ylab("MSE") +
-               scale_linetype_manual(
+               scale_colour_discrete(
                  name = "Constraint",
-                 values = c("TRUE.PCA_normal" = "solid",
-                            "TRUE.PCAcentred_normal" = "9111",
-                            "FALSE.NA" = "dotted",
-                            "TRUE.normal" = "55",
-                            "TRUE.uniform" = "5151"
-                 ),
-                 labels = c("TRUE.PCA_normal" = "PCA+Norm.",
-                            "TRUE.PCAcentred_normal" = "PCAcentred+Norm.",
-                            "FALSE.NA" = "No Proj.",
-                            "TRUE.normal" = "Norm.",
-                            "TRUE.uniform" = "Unif."
-                 ))+
+                 labels = c(
+                   "TRUE.PCA_normal" = "PCA+Norm.",
+                   "TRUE.PCAcentred_normal" = "PCAcentred+Norm.",
+                   "TRUE.PCA_normal_switch_sd" = "PCA->Norm. by sd",
+                   "TRUE.PCA_normal_switch_rms" = "PCA->Norm. by rms",
+                   "TRUE.PCAcentred_normal_switch_sd" = "PCAcentred->Norm. by sd",
+                   "FALSE.NA" = "No Proj.",
+                   "TRUE.normal" = "Norm.",
+                   "TRUE.uniform" = "Unif."
+                 )) +
+               scale_linetype_discrete(
+                 name = "Constraint",
+                 labels = c(
+                   "TRUE.PCA_normal" = "PCA+Norm.",
+                   "TRUE.PCAcentred_normal" = "PCAcentred+Norm.",
+                   "TRUE.PCA_normal_switch_sd" = "PCA->Norm. by sd",
+                   "TRUE.PCA_normal_switch_rms" = "PCA->Norm. by rms",
+                   "TRUE.PCAcentred_normal_switch_sd" = "PCAcentred->Norm. by sd",
+                   "FALSE.NA" = "No Proj.",
+                   "TRUE.normal" = "Norm.",
+                   "TRUE.uniform" = "Unif."
+                 )) +
                geom_vline(xintercept = m))
 )
