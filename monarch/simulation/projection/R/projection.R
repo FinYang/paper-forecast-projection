@@ -57,7 +57,12 @@ get_W <- function(res_ori, res_com) {
     res <- res[!apply(res, 1, anyNA),]
     lapply(
       seq_len(p),
-      \(pp) corpcor::cov.shrink(res[,seq_len(m+pp)], verbose = FALSE))
+      \(pp){
+        out <- try(corpcor::cov.shrink(res[,seq_len(m+pp)], verbose = FALSE))
+        # trying to avoid singularity issue with svd
+        while(class(out) == "try-error")
+          out <- try(corpcor::cov.shrink((res <- res[-1,seq_len(m+pp)]), verbose = FALSE))
+      })
   },
   ro = res_ori,
   rc = res_com,
@@ -89,14 +94,14 @@ project_iter <-  function(sim_in, fitted_ori, fitted_com, res_com,
         (bf -tcrossprod(WtC, t(solve(C %*% WtC, C))) %*% bf)[seq_len(m),]
       }
       for(i in seq_len(p)) {
-       rec_res[[i]] <- sim_in - rec_fit[[i]]
-       res <- cbind(rec_res[[i]], res_com[,i])
-       res <- res[!apply(res, 1, anyNA),]
-       W_ls[[i]] <- corpcor::cov.shrink(res, verbose = FALSE)
-       C <- cbind(-Phi[i,,drop = FALSE], 1)
-       WtC <- tcrossprod(W_ls[[i]], C)
-       rec_fc[[i]] <- proj_inner(bf = c(fc, fc_c[[i]]), WtC)
-       rec_fit[[i + 1]] <- t(proj_inner(bf = t(cbind(rec_fit[[i]], fit_com[,i])), WtC))
+        rec_res[[i]] <- sim_in - rec_fit[[i]]
+        res <- cbind(rec_res[[i]], res_com[,i])
+        res <- res[!apply(res, 1, anyNA),]
+        W_ls[[i]] <- corpcor::cov.shrink(res, verbose = FALSE)
+        C <- cbind(-Phi[i,,drop = FALSE], 1)
+        WtC <- tcrossprod(W_ls[[i]], C)
+        rec_fc[[i]] <- proj_inner(bf = c(fc, fc_c[[i]]), WtC)
+        rec_fit[[i + 1]] <- t(proj_inner(bf = t(cbind(rec_fit[[i]], fit_com[,i])), WtC))
       }
       rec_fc
     },
