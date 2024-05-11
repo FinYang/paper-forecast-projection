@@ -37,3 +37,37 @@ get_W <- function(res_ori, res_com) {
     seq_len(p),
     \(pp) corpcor::cov.shrink(res[,seq_len(m+pp)], verbose = FALSE))
 }
+
+
+
+project_switch <- function(fc, fc_comp1, fc_comp2,
+                           Phi1, Phi2,
+                           res, res_comp1, res_comp2,
+                           switch_from) {
+  fc <- unname(fc)
+  max_p <- ncol(fc_comp1)
+  m <- ncol(fc)
+  h <- nrow(fc)
+  stopifnot(all.equal(ncol(fc_comp1),ncol(fc_comp2)))
+  class(res_comp2) <- class(res_comp1) <-
+    class(fc_comp2) <- class(fc_comp1) <-
+    class(matrix())
+
+  stopifnot(length(switch_from)==1)
+  out <- lapply(seq_len(max_p), \(p){
+    if(p < switch_from) {
+      fc_comp <- fc_comp1[, seq_len(p), drop = FALSE]
+      Phi <- Phi1[seq_len(p), , drop = FALSE]
+      res_comp <- res_comp1[, seq_len(p), drop = FALSE]
+    } else {
+      fc_comp <- cbind(fc_comp1[, seq_len(switch_from-1), drop = FALSE],
+                       fc_comp2[, seq(switch_from, p), drop = FALSE])
+      Phi <- rbind(Phi1[seq_len(switch_from-1), , drop = FALSE],
+                   Phi2[seq(switch_from, p), , drop = FALSE])
+      res_comp <- cbind(res_comp1[, seq_len(switch_from-1), drop = FALSE],
+                        res_comp2[, seq(switch_from, p), drop = FALSE])
+    }
+    flap::flap(fc, fc_comp, Phi, res, res_comp, p = p)[[1]]
+  })
+  out
+}

@@ -18,7 +18,7 @@ gs <- function(p = last_plot(), ...)
 qs::qsave(tar_read(mse), "output/mse.qs")
 gs(tar_read(plot_mse), "plot_mse.png")
 gs(tar_read(plot_mse_scale), "plot_mse_scale.png")
-
+qs::qsave(tar_read(plot_mse), "output/plot_mse.qs")
 names_byseries <- tar_objects(ends_with("_series"))
 for(na in names_byseries) {
   qs::qsave(tar_read_raw(na), file.path("output", paste0(na, ".qs")))
