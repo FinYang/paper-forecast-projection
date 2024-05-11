@@ -59,9 +59,10 @@ get_W <- function(res_ori, res_com) {
       seq_len(p),
       \(pp){
         out <- try(corpcor::cov.shrink(res[,seq_len(m+pp)], verbose = FALSE))
-        # trying to avoid singularity issue with svd
+        # # trying to avoid singularity issue with svd
         while(class(out) == "try-error")
           out <- try(corpcor::cov.shrink((res <- res[-1,seq_len(m+pp)]), verbose = FALSE))
+        out
       })
   },
   ro = res_ori,
