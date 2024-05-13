@@ -588,7 +588,7 @@ list(
                get_df_mse_proj(mse_proj_dfm_pca_normal) %>%
                  mutate(model = "dfm", proj = TRUE, Phi = "PCA_normal"),
                get_df_mse_proj(mse_proj_dfm_pcacentred_normal) %>%
-                 mutate(model = "dfm", proj = TRUE, Phi = "PCAscaled_normal"),
+                 mutate(model = "dfm", proj = TRUE, Phi = "PCAcentred_normal"),
                get_df_mse_proj(mse_proj_dfm_ets_pca_normal) %>%
                  mutate(model = "dfm", proj = TRUE, Phi = "PCA_normal-ets"),
                get_df_mse_proj(mse_proj_arima_normal) %>%
@@ -624,7 +624,7 @@ list(
                  name = "Constraint",
                  labels = c(
                    "TRUE.PCA_normal" = "PCA+Norm.",
-                   "TRUE.PCAcentred_normal" = "PCAscaled+Norm.",
+                   "TRUE.PCAcentred_normal" = "PCAcentred+Norm.",
                    "TRUE.PCA_normal-ets" = "ETS PCA+Norm.",
                    "TRUE.PCA_normal_switch_sd" = "PCA->Norm. by sd",
                    "TRUE.PCA_normal_switch_rms" = "PCA->Norm. by rms",

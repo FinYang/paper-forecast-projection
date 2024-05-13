@@ -12,10 +12,29 @@ pa <- function(...) current_path("monarch", ...)
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(rlang)
+library(glue)
 
 cb_palette_grey <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cb_palette_black <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
+# Singular component or PCA
+SC <- FALSE
+SC <- TRUE
+
+if(SC) {
+  pca_name <- "PCA_normal"
+  comp <- "SC"
+} else {
+  pca_name <- "PCAcentred_normal"
+  comp <- "PCA"
+}
+
+c2 <- function(...) {
+  dots <- list2(...)
+  num <- unlist(dots)
+  set_names(num, names(dots))
+}
 ## ---- fred-md ----
 pa_fredmd <- function(...) pa("fred-md", "projection", "output", ...)
 m <- 122
@@ -40,13 +59,13 @@ plot_mse <- mse %>%
   ylab("MSE") +
   scale_linetype_manual(
     name = "Component",
-    values = c(
-      "TRUE.PCA_normal" = "dashed",
+    values = c2(
+      !!sym(paste0("TRUE.", pca_name)) := "dashed",
       "FALSE.NA" = "solid",
       "TRUE.normal" = "longdash"
     ),
-    labels = c(
-      "TRUE.PCA_normal" = "PCA+Norm.",
+    labels = c2(
+      !!sym(paste0("TRUE.", pca_name)) := paste0(comp, "+Norm."),
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
     )) +
@@ -65,8 +84,8 @@ plot_mse
 mse_arima_series <- qs::qread(pa_fredmd("mse_arima_series.qs"))
 mse_dfm_series <- qs::qread(pa_fredmd("mse_dfm_series.qs"))
 mse_proj_arima_normal_series <- qs::qread(pa_fredmd("mse_proj_arima_normal_series.qs"))
-mse_proj_arima_pca_normal_series <- qs::qread(pa_fredmd("mse_proj_arima_pca_normal_series.qs"))
-mse_proj_dfm_pca_normal_series <- qs::qread(pa_fredmd("mse_proj_dfm_pca_normal_series.qs"))
+mse_proj_arima_pca_normal_series <- qs::qread(pa_fredmd(glue("mse_proj_arima_{tolower(pca_name)}_series.qs")))
+mse_proj_dfm_pca_normal_series <- qs::qread(pa_fredmd(glue("mse_proj_dfm_{tolower(pca_name)}_series.qs")))
 
 mse_proj_arima_pca_normal_series_1 <- mse_proj_arima_pca_normal_series[[1]]
 mse_proj_arima_normal_series_1 <- mse_proj_arima_normal_series[[1]]
@@ -81,15 +100,15 @@ mse_proj_dfm_pca_normal_series_m <- mse_proj_dfm_pca_normal_series[[m]]
 name_vec <- c(
   mse_arima_series = "ARIMA-Benchmark",
   mse_dfm_series = "DFM-Benchmark",
-  mse_proj_arima_pca_normal_series_1 = "ARIMA-PCA-1",
+  mse_proj_arima_pca_normal_series_1 = glue("ARIMA-{comp}-1"),
   mse_proj_arima_normal_series_1 = "ARIMA-Norm-1",
-  mse_proj_dfm_pca_normal_series_1 = "DFM-PCA-1",
+  mse_proj_dfm_pca_normal_series_1 = glue("DFM-{comp}-1"),
   # mse_proj_arima_pca_normal_series_2 = "ARIMA-PCA-2",
   # mse_proj_arima_normal_series_2 = "ARIMA-Norm-2",
   # mse_proj_dfm_pca_normal_series_2 = "DFM-PCA-2",
-  mse_proj_arima_pca_normal_series_m = "ARIMA-PCA-m",
+  mse_proj_arima_pca_normal_series_m = glue("ARIMA-{comp}-m"),
   mse_proj_arima_normal_series_m = "ARIMA-Norm-m",
-  mse_proj_dfm_pca_normal_series_m = "DFM-PCA-m"
+  mse_proj_dfm_pca_normal_series_m = glue("DFM-{comp}-m")
 )
 
 
