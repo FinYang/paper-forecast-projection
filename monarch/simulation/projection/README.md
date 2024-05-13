@@ -38,6 +38,12 @@ Locally there are also files to prepare raw data and upload them to MonARCH
     + data-raw
 ```
 
+Go to target deirectory
+
+```R
+setwd("~/bw51/simulation/projection")
+```
+
 Run
 ```
 sbatch ~/bw51/simulation/projection/job.sh
@@ -51,12 +57,5 @@ Save output
 source("~/bw51/simulation/projection/output.R")
 ```
 
-
-Clean up slurm error and output files
-
-```
-unlink(dir("bw51/simulation/projection/slurm_output", full.name = TRUE))
-unlink(dir("bw51/simulation/projection/slurm_error", full.name = TRUE))
-```
 
 

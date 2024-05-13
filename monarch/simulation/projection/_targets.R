@@ -27,8 +27,9 @@ tar_option_set(
   storage = "worker",
   retrieval = "worker",
   seed = 0,
-  error = "continue",
-  # error = "stop",
+  error = "abridge",
+  iteration = "list",
+  memory = "transient",
   resources = tar_resources(
     future = tar_resources_future(
       plan = future::tweak(
@@ -100,12 +101,10 @@ list(
   tar_target(sim_ls, replicate(.n_sim, VAR.sim(B = B_true, lag = .n_lag, n = n + .forecast_h), simplify = FALSE),
              deployment = "main"),
   tar_target(Wz_true, diag(m), deployment = "main"),
-  tar_target(sim_in, sim_ls[[1]][seq_len(n),],
-             iteration = "list",
+  tar_target(sim_in, sim_ls[seq_len(n),],
              pattern = map(sim_ls),
              deployment = "main"),
-  tar_target(sim_out, sim_ls[[1]][seq(n + 1, n + .forecast_h),],
-             iteration = "list",
+  tar_target(sim_out, sim_ls[seq(n + 1, n + .forecast_h),],
              pattern = map(sim_ls),
              deployment = "main"),
 
@@ -464,6 +463,68 @@ list(
              pattern = map(fc_arima, fc_arima_ortho_normal, W_arima_ortho_normal, ortho_normal),
              resources = future_ram(4)),
 
+  tar_target(pca_normal_switch_from_sd,
+             which(apply(pca$x, 2, sd) < mean(apply(normal$x[,1:100], 2, sd)))[[1]],
+             pattern = map(pca, normal),
+             deployment = "main"),
+  tar_target(proj_arima_pca_normal_switch_sd,
+             project_switch(
+               fc = fc_arima,
+               fc_comp1 = fc_arima_pca,
+               fc_comp2 = fc_arima_normal,
+               Phi1 = pca$Phi,
+               Phi2 = normal$Phi,
+               res = res_arima,
+               res_comp1 = res_arima_pca,
+               res_comp2 = res_arima_normal,
+               switch_from = pca_normal_switch_from_sd),
+             pattern = map(fc_arima, fc_arima_pca, fc_arima_normal,
+                           pca, normal,
+                           res_arima, res_arima_pca, res_arima_normal,
+                           pca_normal_switch_from_sd),
+             resources = future_ram(10)),
+  tar_target(pca_normal_switch_from_rms,
+             which(sqrt(colMeans(pca$x^2)) < mean(sqrt(colMeans(normal$x[,1:100]^2))))[[1]],
+             pattern = map(pca, normal),
+             deployment = "main"),
+  tar_target(proj_arima_pca_normal_switch_rms,
+             project_switch(
+               fc = fc_arima,
+               fc_comp1 = fc_arima_pca,
+               fc_comp2 = fc_arima_normal,
+               Phi1 = pca$Phi,
+               Phi2 = normal$Phi,
+               res = res_arima,
+               res_comp1 = res_arima_pca,
+               res_comp2 = res_arima_normal,
+               switch_from = pca_normal_switch_from_rms),
+             pattern = map(fc_arima, fc_arima_pca, fc_arima_normal,
+                           pca, normal,
+                           res_arima, res_arima_pca, res_arima_normal,
+                           pca_normal_switch_from_rms),
+             resources = future_ram(10)),
+  tar_target(pcacentred_normal_switch_from_sd,
+             which(apply(pcacentred_normal$x, 2, sd) < mean(apply(normal$x[,1:100], 2, sd)))[[1]],
+             pattern = map(pcacentred_normal, normal),
+             deployment = "main"),
+  tar_target(proj_arima_pcacentred_normal_switch_sd,
+             project_switch(
+               fc = fc_arima,
+               fc_comp1 = fc_arima_pcacentred_normal,
+               fc_comp2 = fc_arima_normal,
+               Phi1 = pcacentred_normal$Phi,
+               Phi2 = normal$Phi,
+               res = res_arima,
+               res_comp1 = res_arima_pcacentred_normal,
+               res_comp2 = res_arima_normal,
+               switch_from = pcacentred_normal_switch_from_sd),
+             pattern = map(fc_arima, fc_arima_pcacentred_normal, fc_arima_normal,
+                           pcacentred_normal, normal,
+                           res_arima, res_arima_pcacentred_normal, res_arima_normal,
+                           pcacentred_normal_switch_from_sd),
+             resources = future_ram(10)),
+
+
 
   tar_target(check_fc, {
     example_size <- 6
@@ -587,6 +648,18 @@ list(
              pattern = map(sim_out, proj_arima_ortho_normal),
              deployment = "main"),
 
+  tar_target(se_proj_arima_pca_normal_switch_sd, lapply(proj_arima_pca_normal_switch_sd, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_arima_pca_normal_switch_sd),
+             deployment = "main"),
+  tar_target(se_proj_arima_pca_normal_switch_rms, lapply(proj_arima_pca_normal_switch_rms, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_arima_pca_normal_switch_rms),
+             deployment = "main"),
+  tar_target(se_proj_arima_pcacentred_normal_switch_sd, lapply(proj_arima_pcacentred_normal_switch_sd, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_arima_pcacentred_normal_switch_sd),
+             deployment = "main"),
   # tar_target(se,
   #            list(se_true, se_arima) %>%
   #              map2(c("true", "arima"), \(se, model)
@@ -691,6 +764,12 @@ list(
   tar_target(mse_proj_arima_ortho_normal, get_mse_proj(se_proj_arima_ortho_normal),
              resources = future_ram(3)),
 
+  tar_target(mse_proj_arima_pca_normal_switch_sd, get_mse_proj(se_proj_arima_pca_normal_switch_sd),
+             resources = future_ram(5)),
+  tar_target(mse_proj_arima_pca_normal_switch_rms, get_mse_proj(se_proj_arima_pca_normal_switch_rms),
+             resources = future_ram(5)),
+  tar_target(mse_proj_arima_pcacentred_normal_switch_sd, get_mse_proj(se_proj_arima_pcacentred_normal_switch_sd),
+             resources = future_ram(5)),
   # by series
   tar_target(mse_true_series, get_mse_series(se_true)),
   tar_target(mse_arima_series, get_mse_series(se_arima)),
@@ -727,6 +806,13 @@ list(
              resources = future_ram(3)),
   tar_target(mse_proj_arima_ortho_normal_series, get_mse_proj_series(se_proj_arima_ortho_normal),
              resources = future_ram(3)),
+
+  tar_target(mse_proj_arima_pca_normal_switch_sd_series, get_mse_proj_series(se_proj_arima_pca_normal_switch_sd),
+             resources = future_ram(5)),
+  tar_target(mse_proj_arima_pca_normal_switch_rms_series, get_mse_proj_series(se_proj_arima_pca_normal_switch_rms),
+             resources = future_ram(5)),
+  tar_target(mse_proj_arima_pcacentred_normal_switch_sd_series, get_mse_proj_series(se_proj_arima_pcacentred_normal_switch_sd),
+             resources = future_ram(5)),
   # by cv
   tar_target(mse_true_cv, get_mse_cv(se_true)),
   tar_target(mse_arima_cv, get_mse_cv(se_arima)),
@@ -756,13 +842,10 @@ list(
 
   tar_target(mse,
              bind_rows(
-               tibble(mse_true, mse_arima, mse_dfm) %>%
-                 mutate(h = row_number(),
-                        p = 0,
-                        proj = FALSE) %>%
+               tibble(mse_true, mse_arima, mse_dfm, mse_var) %>%
+                 mutate(h = row_number(), p = 0, proj = FALSE) %>%
                  pivot_longer(!c(h, p, proj), names_to = "model") %>%
-                 mutate(model = gsub("mse_", "", model, fixed = TRUE),
-                        Phi = NA),
+                 mutate(model = gsub("mse_", "", model, fixed = TRUE), Phi = NA),
                get_df_mse_proj(mse_proj_arima) %>%
                  mutate(model = "arima", proj = TRUE, Phi = "PCA_normal"),
                get_df_mse_proj(mse_proj_arima_pcacentred_normal) %>%
@@ -774,52 +857,7 @@ list(
                get_df_mse_proj(mse_proj_true) %>%
                  mutate(model = "true", proj = TRUE, Phi = "PCA_normal"),
                get_df_mse_proj(mse_proj_true_pcacentred_normal) %>%
-                 mutate(model = "true", proj = TRUE, Phi = "PCAcentred_normal")
-             ),
-             resources = future_ram(4)
-  ),
-
-  tar_target(plot_mse,
-             ggplot(mse, aes(x = p, y = value,
-                             colour = model,
-                             linetype = paste(proj, Phi, sep = "."))) +
-               geom_line() +
-               geom_hline(data = \(df) filter(df, !proj),
-                          aes(yintercept = value,
-                              colour = model,
-                              linetype = paste(proj, Phi, sep = "."))) +
-               facet_wrap("h", scales = "free", labeller = label_both) +
-               ylab("MSE") +
-               scale_linetype_manual(
-                 name = "Constraint",
-                 values = c("TRUE.PCA_normal" = "solid",
-                            "TRUE.PCAcentred_normal" = "9111",
-                            "FALSE.NA" = "dotted",
-                            "TRUE.normal" = "55",
-                            "TRUE.uniform" = "33",
-                            "TRUE.PCA_uniform" = "3313",
-                            "TRUE.PCAcentred_uniform" = "911111",
-                            "TRUE.ortho_normal" = "511111"
-                 ),
-                 labels = c("TRUE.PCA_normal" = "PCA+Norm.",
-                            "TRUE.PCAcentred_normal" = "PCAcentred+Norm.",
-                            "FALSE.NA" = "No Proj.",
-                            "TRUE.normal" = "Norm.",
-                            "TRUE.uniform" = "Unif.",
-                            "TRUE.PCA_uniform" = "PCA+Unif.",
-                            "TRUE.PCAcentred_uniform" = "PCAcentred+Unif.",
-                            "TRUE.ortho_normal" = "Ortho.+Norm."
-                 ))+
-               geom_vline(xintercept = m)),
-
-  tar_target(mse_exp,
-             bind_rows(
-               tibble(mse_var) %>%
-                 mutate(h = row_number(),
-                        p = 0,
-                        proj = FALSE) %>%
-                 pivot_longer(!c(h, p, proj), names_to = "model") %>%
-                 mutate(model = gsub("mse_", "", model, fixed = TRUE)),
+                 mutate(model = "true", proj = TRUE, Phi = "PCAcentred_normal"),
                get_df_mse_proj(mse_proj_var) %>%
                  mutate(model = "var", proj = TRUE, Phi = "PCA_normal"),
                get_df_mse_proj(mse_proj_var_pcacentred_normal) %>%
@@ -838,14 +876,40 @@ list(
                  mutate(model = "arima", proj = TRUE, Phi = "ortho_normal"),
                get_df_mse_proj(mse_proj_iter_arima) %>%
                  mutate(model = "arima_iter", proj = TRUE, Phi = "PCA_normal"),
-             )),
-  tar_target(plot_mse_exp,
-             plot_mse +
-               geom_line(data = mse_exp)+
-               geom_hline(data = filter(mse_exp, !proj),
+               get_df_mse_proj(mse_proj_arima_pca_normal_switch_sd) %>%
+                 mutate(model = "arima", proj = TRUE, Phi = "PCA_normal_switch_sd"),
+               get_df_mse_proj(mse_proj_arima_pca_normal_switch_rms) %>%
+                 mutate(model = "arima", proj = TRUE, Phi = "PCA_normal_switch_rms"),
+               get_df_mse_proj(mse_proj_arima_pcacentred_normal_switch_sd) %>%
+                 mutate(model = "arima", proj = TRUE, Phi = "PCAcentred_normal_switch_sd"),
+             ),
+             resources = future_ram(6)
+  ),
+
+  tar_target(plot_mse,
+             ggplot(mse, aes(x = p, y = value,
+                             colour = model,
+                             linetype = paste(proj, Phi, sep = "."))) +
+               geom_line() +
+               geom_hline(data = \(df) filter(df, !proj),
                           aes(yintercept = value,
                               colour = model,
-                              linetype = paste(proj, Phi, sep = ".")))
-  )
-
+                              linetype = paste(proj, Phi, sep = "."))) +
+               facet_wrap("h", scales = "free", labeller = label_both) +
+               ylab("MSE") +
+               scale_linetype_discrete(
+                 name = "Constraint",
+                 labels = c("TRUE.PCA_normal" = "PCA+Norm.",
+                            "TRUE.PCAcentred_normal" = "PCAcentred+Norm.",
+                            "FALSE.NA" = "No Proj.",
+                            "TRUE.normal" = "Norm.",
+                            "TRUE.uniform" = "Unif.",
+                            "TRUE.PCA_uniform" = "PCA+Unif.",
+                            "TRUE.PCAcentred_uniform" = "PCAcentred+Unif.",
+                            "TRUE.ortho_normal" = "Ortho.+Norm.",
+                            "PCA_normal_switch_sd" = "PCA->Norm by sd",
+                            "PCA_normal_switch_rms" = "PCA->Norm by rms",
+                            "PCAcentred_normal_switch_rms" = "PCAcentred->Norm by sd"
+                 ))+
+               geom_vline(xintercept = m))
 )

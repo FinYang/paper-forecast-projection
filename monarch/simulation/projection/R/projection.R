@@ -122,3 +122,49 @@ project_iter <-  function(sim_in, fitted_ori, fitted_com, res_com,
     aperm(c(3, 2, 1)) %>%
     array2list()
 }
+
+project_switch <- function(fc, fc_comp1, fc_comp2,
+                           Phi1, Phi2,
+                           res, res_comp1, res_comp2,
+                           switch_from) {
+  fc <- unname(fc)
+  max_p <- ncol(fc_comp1)
+  m <- ncol(fc)
+  stopifnot(all.equal(ncol(fc_comp1),ncol(fc_comp2)))
+  stopifnot(length(switch_from)==1)
+
+  out <- lapply(seq_along(res), \(hh){
+    res <- res[[hh]]
+    res_comp1 <- res_comp1[[hh]]
+    res_comp2 <- res_comp2[[hh]]
+    fc <- fc[hh, , drop = FALSE]
+    fc_comp1 <- fc_comp1[hh, , drop = FALSE]
+    fc_comp2 <- fc_comp2[hh, , drop = FALSE]
+    lapply(seq_len(max_p), \(p){
+      if(p < switch_from) {
+        fc_comp <- fc_comp1[, seq_len(p), drop = FALSE]
+        Phi <- Phi1[seq_len(p), , drop = FALSE]
+        res_comp <- res_comp1[, seq_len(p), drop = FALSE]
+      } else {
+        fc_comp <- cbind(fc_comp1[, seq_len(switch_from-1), drop = FALSE],
+                         fc_comp2[, seq(switch_from, p), drop = FALSE])
+        Phi <- rbind(Phi1[seq_len(switch_from-1), , drop = FALSE],
+                     Phi2[seq(switch_from, p), , drop = FALSE])
+        res_comp <- cbind(res_comp1[, seq_len(switch_from-1), drop = FALSE],
+                          res_comp2[, seq(switch_from, p), drop = FALSE])
+      }
+      x <- try(flap::flap(fc, fc_comp, Phi, res, res_comp, p = p))
+      while(any(class(x) == "try-error"))
+        x <- try(flap::flap(fc, fc_comp, Phi,
+                            res <- res[-1,,drop = FALSE],
+                            res_comp <- res_comp[-1,,drop = FALSE],
+                            p = p))
+      x[[1]]
+    })
+  }) %>%
+    lapply(\(x) do.call(rbind, x)) %>%
+    list2array() %>%
+    aperm(c(3, 2, 1)) %>%
+    array2list()
+  out
+}

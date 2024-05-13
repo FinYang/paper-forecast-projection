@@ -15,11 +15,10 @@ gs <- function(p = last_plot(), ...)
     limitsize = FALSE)
 
 qs::qsave(tar_read(mse), "output/mse.qs")
-qs::qsave(tar_read(mse_exp), "output/mse_exp.qs")
 
-p <- tar_read(plot_mse_exp)
-gs(p, "plot_mse_exp.png")
-qs::qsave(p, "output/plot_mse_exp.qs")
+p <- tar_read(plot_mse)
+gs(p, "plot_mse.png")
+qs::qsave(p, "output/plot_mse.qs")
 
 names_byseries <- tar_objects(ends_with("_series"))
 names_byseries <- names_byseries[!grepl("wls", names_byseries)]

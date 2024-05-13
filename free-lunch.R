@@ -243,10 +243,7 @@ m <- 70
 p <- 300
 
 ## ---- fig-simulation-line ----
-mse <- bind_rows(
-  qs::qread(pa_simulation("mse.qs")),
-  qs::qread(pa_simulation("mse_exp.qs"))
-)
+mse <- qs::qread(pa_simulation("mse.qs"))
 plot_mse <- mse %>%
   filter(model %in% c("arima", "dfm", "var", "true"),
          h %in% c(1, 6, 12)) %>%
