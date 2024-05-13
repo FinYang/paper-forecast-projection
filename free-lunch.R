@@ -20,7 +20,6 @@ cb_palette_black <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0
 
 # Singular component or PCA
 SC <- FALSE
-SC <- TRUE
 
 if(SC) {
   pca_name <- "PCA_normal"
@@ -250,7 +249,6 @@ mse <- bind_rows(
 )
 plot_mse <- mse %>%
   filter(model %in% c("arima", "dfm", "var", "true"),
-         Phi %in% c("PCA_normal", "normal") | is.na(Phi),
          h %in% c(1, 6, 12)) %>%
   # {print(distinct(., model, Phi))}
   ggplot(aes(x = p, y = value,
@@ -267,13 +265,13 @@ plot_mse <- mse %>%
   ylab("MSE") +
   scale_linetype_manual(
     name = "Component",
-    values = c(
-      "TRUE.PCA_normal" = "dashed",
+    values = c2(
+      !!sym(paste0("TRUE.", pca_name)) := "dashed",
       "FALSE.NA" = "solid",
       "TRUE.normal" = "longdash"
     ),
-    labels = c(
-      "TRUE.PCA_normal" = "PCA+Norm.",
+    labels = c2(
+      !!sym(paste0("TRUE.", pca_name)) := paste0(comp, "+Norm."),
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
     )) +
@@ -298,11 +296,16 @@ mse_dfm_series <- qs::qread(pa_simulation("mse_dfm_series.qs"))
 mse_var_series <- qs::qread(pa_simulation("mse_var_series.qs"))
 mse_proj_arima_normal_series <- qs::qread(pa_simulation("mse_proj_arima_normal_series.qs"))
 mse_proj_arima_ortho_normal_series <- qs::qread(pa_simulation("mse_proj_arima_ortho_normal_series.qs"))
-mse_proj_arima_series <- qs::qread(pa_simulation("mse_proj_arima_series.qs"))
-mse_proj_arima_pca_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_pca_uniform_series.qs"))
 mse_proj_arima_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_uniform_series.qs"))
-mse_proj_dfm_series <- qs::qread(pa_simulation("mse_proj_dfm_series.qs"))
-
+if(SC) {
+  mse_proj_arima_series <- qs::qread(pa_simulation("mse_proj_arima_series.qs"))
+  mse_proj_dfm_series <- qs::qread(pa_simulation("mse_proj_dfm_series.qs"))
+  mse_proj_arima_pca_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_pca_uniform_series.qs"))
+} else {
+  mse_proj_arima_series <- qs::qread(pa_simulation("mse_proj_arima_pcacentred_normal_series.qs"))
+  mse_proj_dfm_series <- qs::qread(pa_simulation("mse_proj_dfm_pcacentred_normal_series.qs"))
+  mse_proj_arima_pca_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_pcacentred_uniform_series.qs"))
+}
 mse_proj_arima_normal_series_m <- mse_proj_arima_normal_series[[m]]
 mse_proj_arima_ortho_normal_series_m <- mse_proj_arima_ortho_normal_series[[m]]
 mse_proj_arima_series_m <- mse_proj_arima_series[[m]]
@@ -322,16 +325,16 @@ name_vec <- c(
   # mse_var_series = "VAR-Base",
   mse_proj_arima_normal_series_m = "ARIMA-Norm-m",
   mse_proj_arima_ortho_normal_series_m = "ARIMA-Ortho-m",
-  mse_proj_arima_series_m = "ARIMA-PCA-m",
-  # mse_proj_arima_pca_uniform_series_m = "ARIMA-PCA+Unif-m",
+  mse_proj_arima_series_m = glue("ARIMA-{comp}-m"),
+  # mse_proj_arima_pca_uniform_series_m = "ARIMA-{comp}+Unif-m",
   mse_proj_arima_uniform_series_m = "ARIMA-Unif-m",
-  mse_proj_dfm_series_m = "DFM-PCA-m",
+  mse_proj_dfm_series_m = glue("DFM-{comp}-m"),
   mse_proj_arima_normal_series_p = "ARIMA-Norm-300",
   mse_proj_arima_ortho_normal_series_p = "ARIMA-Ortho+Norm-300",
-  mse_proj_arima_series_p = "ARIMA-PCA+Norm-300",
-  mse_proj_arima_pca_uniform_series_p = "ARIMA-PCA+Unif-300",
+  mse_proj_arima_series_p = glue("ARIMA-{comp}+Norm-300"),
+  mse_proj_arima_pca_uniform_series_p = glue("ARIMA-{comp}+Unif-300"),
   mse_proj_arima_uniform_series_p = "ARIMA-Unif-300",
-  mse_proj_dfm_series_p = "DFM-PCA+Norm-300"
+  mse_proj_dfm_series_p = glue("DFM-{comp}+Norm-300")
 )
 
 
