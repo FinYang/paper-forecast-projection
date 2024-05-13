@@ -163,13 +163,13 @@ plot_mse <- mse %>%
   ylab("MSE") +
   scale_linetype_manual(
     name = "Component",
-    values = c(
-      "TRUE.PCA_normal" = "dashed",
+    values = c2(
+      !!sym(paste0("TRUE.", pca_name)) := "dashed",
       "FALSE.NA" = "solid",
       "TRUE.normal" = "longdash"
     ),
-    labels = c(
-      "TRUE.PCA_normal" = "PCA+Norm.",
+    labels = c2(
+      !!sym(paste0("TRUE.", pca_name)) := paste0(comp, "+Norm."),
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
     )) +
@@ -180,10 +180,10 @@ plot_mse
 ## ---- fig-visnights-mcb-series ----
 # ?tsutils::nemenyi
 # dir(pa_visnights())
-
 mse_ets_series <- qs::qread(pa_visnights("mse_ets_series.qs"))
 mse_proj_ets_normal_series <- qs::qread(pa_visnights("mse_proj_ets_normal_series.qs"))
-mse_proj_ets_pca_normal_series <- qs::qread(pa_visnights("mse_proj_ets_pca_normal_series.qs"))
+mse_proj_ets_pca_normal_series <- qs::qread(pa_visnights(glue("mse_proj_ets_{tolower(pca_name)}_series.qs")))
+
 mse_proj_ets_pca_normal_series_1 <- mse_proj_ets_pca_normal_series[[1]]
 mse_proj_ets_normal_series_1 <- mse_proj_ets_normal_series[[1]]
 mse_proj_ets_pca_normal_series_2 <- mse_proj_ets_pca_normal_series[[2]]
@@ -195,13 +195,13 @@ mse_proj_ets_normal_series_p <- mse_proj_ets_normal_series[[p]]
 
 name_vec <- c(
   mse_ets_series = "ETS-Benchmark",
-  mse_proj_ets_pca_normal_series_1 = "ETS-PCA-1",
+  mse_proj_ets_pca_normal_series_1 = glue("ETS-{comp}-1"),
   mse_proj_ets_normal_series_1 = "ETS-Norm-1",
-  mse_proj_ets_pca_normal_series_2 = "ETS-PCA-2",
+  mse_proj_ets_pca_normal_series_2 = glue("ETS-{comp}-2"),
   mse_proj_ets_normal_series_2 = "ETS-Norm-2",
-  mse_proj_ets_pca_normal_series_m = "ETS-PCA-m",
+  mse_proj_ets_pca_normal_series_m = glue("ETS-{comp}-m"),
   mse_proj_ets_normal_series_m = "ETS-Norm-m",
-  mse_proj_ets_pca_normal_series_p = "ETS-PCA+Norm-200",
+  mse_proj_ets_pca_normal_series_p = glue("ETS-{comp}+Norm-200"),
   mse_proj_ets_normal_series_p = "ETS-Norm-200"
 )
 
@@ -225,16 +225,17 @@ mcb_df_ls <-  mse_series_mat_ls %>%
                        l[[which.min(value)]] <=u)
            ))
 
-
 plot_mcb_series <- mcb_df_ls %>%
+  imap(\(df, i) mutate(df, name_unique = paste(name, i))) %>%
   bind_rows(.id = "h") %>%
   mutate(h = as.integer(h)) %>%
   filter(h %in% c(1, 6, 12)) %>%
-  mutate(name = factor(name,unique(name), ordered = TRUE)) %>%
+  mutate(name = factor(name_unique, unique(name_unique), ordered = TRUE)) %>%
   group_by(h) %>%
   plot_mcb("Benchmark") +
   facet_wrap("h", scales = "free", labeller = label_both, ncol = 1,
-             strip.position = "right")
+             strip.position = "right") +
+  scale_y_discrete(labels = \(x) gsub("[[:space:]][[:digit:]]{1,2}$", "", x))
 plot_mcb_series
 
 ## ---- simulation ----

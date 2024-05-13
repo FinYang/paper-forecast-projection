@@ -19,15 +19,9 @@ qs::qsave(tar_read(mse), "output/mse.qs")
 gs(tar_read(plot_mse), "plot_mse.png")
 
 names_byseries <- tar_objects(ends_with("_series"))
+names_byseries <- names_byseries[!grepl("uniform", names_byseries)]
 for(na in names_byseries) {
   qs::qsave(tar_read_raw(na), file.path("output", paste0(na, ".qs")))
 }
 
-names_bycv <- tar_objects(ends_with("_cv"))
-for(na in names_bycv) {
-  qs::qsave(tar_read_raw(na), file.path("output", paste0(na, ".qs")))
-}
 
-
-qs::qsave(tar_read(proj_ets_pca_normal, branches = 169), "output/proj_ets_pca_normal.qs")
-qs::qsave(tar_read(fc_ets, branches = 169), "output/fc_ets.qs")
