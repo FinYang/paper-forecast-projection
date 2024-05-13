@@ -198,6 +198,19 @@ list(
   tar_target(fitted_arima_pcacentred_normal, get_fitted(out_arima_pcacentred_normal),
              iteration = "list", pattern = map(out_arima_pcacentred_normal)),
 
+  tar_target(pcacentred_uniform, component(sim_in, "PCAcentred_uniform", p = p),
+             iteration = "list",
+             pattern = map(sim_in),
+             cue = tar_cue(command = FALSE),
+             deployment = "main"),
+  tar_target(out_arima_pcacentred_uniform, arima(pcacentred_uniform$x, .forecast_h),
+             iteration = "list", pattern = map(pcacentred_uniform)),
+  tar_target(fc_arima_pcacentred_uniform, get_fc(out_arima_pcacentred_uniform),
+             iteration = "list", pattern = map(out_arima_pcacentred_uniform),
+             deployment = "main"),
+  tar_target(res_arima_pcacentred_uniform, get_res(out_arima_pcacentred_uniform),
+             iteration = "list", pattern = map(out_arima_pcacentred_uniform)),
+
   tar_target(ortho_normal, component(sim_in, "ortho_normal", p = p),
              iteration = "list",
              pattern = map(sim_in),
@@ -317,6 +330,10 @@ list(
              iteration = "list",
              pattern = map(res_arima, res_arima_pca_uniform),
              resources = future_ram(6)),
+  tar_target(W_arima_pcacentred_uniform, get_W(res_arima, res_arima_pcacentred_uniform),
+             iteration = "list",
+             pattern = map(res_arima, res_arima_pcacentred_uniform),
+             resources = future_ram(6)),
   tar_target(W_arima_ortho_normal, get_W(res_arima, res_arima_ortho_normal),
              iteration = "list",
              pattern = map(res_arima, res_arima_ortho_normal),
@@ -429,6 +446,14 @@ list(
                Phi = pca_uniform$Phi),
              iteration = "list",
              pattern = map(fc_arima, fc_arima_pca_uniform, W_arima_pca_uniform, pca_uniform),
+             resources = future_ram(4)),
+  tar_target(proj_arima_pcacentred_uniform,
+             project(
+               cbind(fc_arima, fc_arima_pcacentred_uniform),
+               W = W_arima_pcacentred_uniform,
+               Phi = pcacentred_uniform$Phi),
+             iteration = "list",
+             pattern = map(fc_arima, fc_arima_pcacentred_uniform, W_arima_pcacentred_uniform, pcacentred_uniform),
              resources = future_ram(4)),
   tar_target(proj_arima_ortho_normal,
              project(
@@ -553,6 +578,10 @@ list(
              iteration = "list",
              pattern = map(sim_out, proj_arima_pca_uniform),
              deployment = "main"),
+  tar_target(se_proj_arima_pcacentred_uniform, lapply(proj_arima_pcacentred_uniform, \(pa) (sim_out - pa)^2),
+             iteration = "list",
+             pattern = map(sim_out, proj_arima_pcacentred_uniform),
+             deployment = "main"),
   tar_target(se_proj_arima_ortho_normal, lapply(proj_arima_ortho_normal, \(pa) (sim_out - pa)^2),
              iteration = "list",
              pattern = map(sim_out, proj_arima_ortho_normal),
@@ -657,6 +686,8 @@ list(
              resources = future_ram(3)),
   tar_target(mse_proj_arima_pca_uniform, get_mse_proj(se_proj_arima_pca_uniform),
              resources = future_ram(3)),
+  tar_target(mse_proj_arima_pcacentred_uniform, get_mse_proj(se_proj_arima_pcacentred_uniform),
+             resources = future_ram(3)),
   tar_target(mse_proj_arima_ortho_normal, get_mse_proj(se_proj_arima_ortho_normal),
              resources = future_ram(3)),
 
@@ -691,6 +722,8 @@ list(
   tar_target(mse_proj_arima_uniform_series, get_mse_proj_series(se_proj_arima_uniform),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_pca_uniform_series, get_mse_proj_series(se_proj_arima_pca_uniform),
+             resources = future_ram(3)),
+  tar_target(mse_proj_arima_pcacentred_uniform_series, get_mse_proj_series(se_proj_arima_pcacentred_uniform),
              resources = future_ram(3)),
   tar_target(mse_proj_arima_ortho_normal_series, get_mse_proj_series(se_proj_arima_ortho_normal),
              resources = future_ram(3)),
@@ -799,6 +832,8 @@ list(
                  mutate(model = "arima", proj = TRUE, Phi = "uniform"),
                get_df_mse_proj(mse_proj_arima_pca_uniform) %>%
                  mutate(model = "arima", proj = TRUE, Phi = "PCA_uniform"),
+               get_df_mse_proj(mse_proj_arima_pcacentred_uniform) %>%
+                 mutate(model = "arima", proj = TRUE, Phi = "PCAcentred_uniform"),
                get_df_mse_proj(mse_proj_arima_ortho_normal) %>%
                  mutate(model = "arima", proj = TRUE, Phi = "ortho_normal"),
                get_df_mse_proj(mse_proj_iter_arima) %>%

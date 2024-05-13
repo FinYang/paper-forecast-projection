@@ -1,6 +1,6 @@
 component <- function(mat,
                       component = c("PCA", "normal", "uniform", "PCA_normal", "PCA_uniform", "ortho_normal",
-                                    "PCAscaled_normal", "PCAcentred_normal"),
+                                    "PCAscaled_normal", "PCAcentred_normal", "PCAcentred_uniform"),
                       p = ncol(mat)){
   component <- match.arg(component)
   rnorm_w_once <- function(n){
@@ -54,6 +54,21 @@ component <- function(mat,
         rr <- replicate(p-n_pca, rnorm_w_once(ncol(mat)))
         # rownames(rr) <- colnames(mat)
         colnames(rr) <- paste0("RC_norm", seq_len(ncol(rr)))
+        rotation <- cbind(rotation, rr)
+      }
+      rownames(rotation) <- colnames(mat)
+      x <- mat %*% rotation
+      list(x = x, Phi = t(rotation), sdev = pca$sdev)
+    },
+    "PCAcentred_uniform" = function(mat, p) {
+      pca <- stats::prcomp(mat, center = TRUE, scale. = FALSE)
+      n_pca <- min(ncol(mat), nrow(mat), p)
+      rotation <- pca$rotation[,seq_len(n_pca)]
+      if(p>n_pca){
+
+        rr <- replicate(p-n_pca, runif_w_once(ncol(mat)))
+        # rownames(rr) <- colnames(mat)
+        colnames(rr) <- paste0("RC_unif", seq_len(ncol(rr)))
         rotation <- cbind(rotation, rr)
       }
       rownames(rotation) <- colnames(mat)
