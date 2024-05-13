@@ -8,9 +8,9 @@ Run `targets` from a job to submit jobs.
 Use code below to sync between local folder and server.
 ```
 # local to remote
-rsync -auv --chmod=ugo=rwX -e ssh monarch/tourism/projection finy@monarch-dtn.erc.monash.edu:~/bw51/tourism/ --exclude data-raw --exclude output --exclude _targets --exclude local -h -h
+rsync -auv --chmod=ugo=rwX -e ssh monarch/tourism/projection finy@monarch-dtn2.erc.monash.edu:~/bw51/tourism/ --exclude data-raw --exclude output --exclude _targets --exclude local -h -h
 # remote to local
-rsync -auv -e ssh finy@monarch-dtn.erc.monash.edu:~/bw51/tourism/projection monarch/tourism/ --exclude _targets --exclude .future --exclude registry --exclude .RData --exclude error.err --exclude output.out -h -h
+rsync -auv -e ssh finy@monarch-dtn2.erc.monash.edu:~/bw51/tourism/projection monarch/tourism/ --exclude _targets --exclude .future --exclude registry --exclude .RData --exclude error.err --exclude output.out -h -h
 ```
 
 To initialise on MonARCH, run
