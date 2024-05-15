@@ -20,6 +20,7 @@ gs(tar_read(plot_mse), "plot_mse.png")
 
 names_byseries <- tar_objects(ends_with("_series"))
 names_byseries <- names_byseries[!grepl("uniform", names_byseries)]
+names_byseries <- names_byseries[!grepl("pca_normal_switch_sd", names_byseries, fixed = TRUE)]
 for(na in names_byseries) {
   qs::qsave(tar_read_raw(na), file.path("output", paste0(na, ".qs")))
 }
