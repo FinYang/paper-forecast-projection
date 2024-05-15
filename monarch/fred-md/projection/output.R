@@ -22,6 +22,9 @@ qs::qsave(tar_read(plot_mse), "output/plot_mse.qs")
 
 names_byseries <- tar_objects(ends_with("_series"))
 names_byseries <- names_byseries[!grepl("ets", names_byseries)]
+names_byseries <- names_byseries[!grepl("pca_normal_switch_sd", names_byseries, fixed = TRUE)]
+names_byseries <- names_byseries[!(grepl("dfm", names_byseries, fixed = TRUE) &
+                                   grepl("switch", names_byseries, fixed = TRUE))]
 for(na in names_byseries) {
   qs::qsave(tar_read_raw(na), file.path("output", paste0(na, ".qs")))
 }

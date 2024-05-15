@@ -48,11 +48,11 @@ plot_mse <- mse %>%
              colour = model,
              linetype = paste(proj, Phi, sep = "."))) +
   geom_vline(xintercept = m) +
-  geom_line() +
   geom_hline(data = \(df) filter(df, !proj),
              aes(yintercept = value,
                  colour = model,
                  linetype = paste(proj, Phi, sep = "."))) +
+  geom_line() +
   # facet_wrap("h", scales = "free", labeller = label_both) +
   facet_grid(rows = "h", scales = "free", labeller = label_both) +
   ylab("MSE") +
@@ -61,12 +61,14 @@ plot_mse <- mse %>%
     values = c2(
       !!sym(paste0("TRUE.", pca_name)) := "dashed",
       "FALSE.NA" = "solid",
-      "TRUE.normal" = "longdash"
+      "TRUE.normal" = "longdash",
+      !!sym(glue(r"(TRUE.{pca_name}_switch_{if(SC) "rms" else "sd"})")) := "dotdash"
     ),
     labels = c2(
       !!sym(paste0("TRUE.", pca_name)) := paste0(comp, "+Norm."),
       "FALSE.NA" = "No Proj.",
-      "TRUE.normal" = "Norm."
+      "TRUE.normal" = "Norm.",
+      !!sym(glue(r"(TRUE.{pca_name}_switch_{if(SC) "rms" else "sd"})")) := paste0(comp, ":Norm.")
     )) +
   scale_color_manual(
     name = "Model",
@@ -85,6 +87,8 @@ mse_dfm_series <- qs::qread(pa_fredmd("mse_dfm_series.qs"))
 mse_proj_arima_normal_series <- qs::qread(pa_fredmd("mse_proj_arima_normal_series.qs"))
 mse_proj_arima_pca_normal_series <- qs::qread(pa_fredmd(glue("mse_proj_arima_{tolower(pca_name)}_series.qs")))
 mse_proj_dfm_pca_normal_series <- qs::qread(pa_fredmd(glue("mse_proj_dfm_{tolower(pca_name)}_series.qs")))
+mse_proj_arima_pca_normal_switch_series <- qs::qread(pa_fredmd(
+  glue(r"(mse_proj_arima_{tolower(pca_name)}_switch_{if(SC) "rms" else "sd"}_series.qs)")))
 
 mse_proj_arima_pca_normal_series_1 <- mse_proj_arima_pca_normal_series[[1]]
 mse_proj_arima_normal_series_1 <- mse_proj_arima_normal_series[[1]]
@@ -95,6 +99,7 @@ mse_proj_dfm_pca_normal_series_2 <- mse_proj_dfm_pca_normal_series[[2]]
 mse_proj_arima_pca_normal_series_m <- mse_proj_arima_pca_normal_series[[m]]
 mse_proj_arima_normal_series_m <- mse_proj_arima_normal_series[[m]]
 mse_proj_dfm_pca_normal_series_m <- mse_proj_dfm_pca_normal_series[[m]]
+mse_proj_arima_pca_normal_switch_series_m <- mse_proj_arima_pca_normal_switch_series[[m]]
 
 name_vec <- c(
   mse_arima_series = "ARIMA-Benchmark",
@@ -107,7 +112,8 @@ name_vec <- c(
   # mse_proj_dfm_pca_normal_series_2 = "DFM-PCA-2",
   mse_proj_arima_pca_normal_series_m = glue("ARIMA-{comp}-m"),
   mse_proj_arima_normal_series_m = "ARIMA-Norm-m",
-  mse_proj_dfm_pca_normal_series_m = glue("DFM-{comp}-m")
+  mse_proj_dfm_pca_normal_series_m = glue("DFM-{comp}-m"),
+  mse_proj_arima_pca_normal_switch_series_m = glue("ARIMA-{comp}:Norm-m")
 )
 
 
