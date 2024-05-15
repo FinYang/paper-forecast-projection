@@ -25,6 +25,7 @@ names_byseries <- names_byseries[!grepl("wls", names_byseries)]
 names_byseries <- names_byseries[!grepl("iter", names_byseries)]
 names_byseries <- names_byseries[!grepl("true", names_byseries)]
 names_byseries <- names_byseries[!grepl("proj_var", names_byseries, fixed = TRUE)]
+names_byseries <- names_byseries[!grepl("pca_normal_switch_sd", names_byseries, fixed = TRUE)]
 for(na in names_byseries) {
   qs::qsave(tar_read_raw(na), file.path("output", paste0(na, ".qs")))
 }
