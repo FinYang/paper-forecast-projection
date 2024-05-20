@@ -1110,8 +1110,6 @@ The best ranked forecasts across all forecast horizons are once again FLAP forec
 @fig-fred-md-line shows that both FLAP ARIMA and FLAP DFM forecasts, seem to be worse than the base forecasts when using a small number of components $p$ for $h=6$ and $12$. However, this improves as $p$ increases and FLAP forecasts outperform the base forecasts gradually. The trade-off between the benefit of including more components and the losses in degrees of freedom due to estimation in a large dimension is once again observed. However in this case it seems to be more extreme, compared to the tourism example, with MSEs starting to increase for $p>m$.
 <!-- The projected forecast even worsens to the same level as the base forecast for ARIMA at $h=6$ and DFM at $h=12$ when $p=300$. -->
 
-\textcolor{red}{GA: I have not edited the following yet. I am thinking whether this would be better suited in the conclusion.}
-
 As we have seen in @sec-simulation and @sec-australian-domestic-tourism, $m$ is not always a clear cut-off point in determining the number of components to use. The performance of FLAP is jointly determined by the number of series $m$, the sample size $T$, the component construction method, and the DGP. The example of FRED-MD shows the importance of PCA, as $m$ is the point that the component changes from PCA to random normal weighted linear combinations, implying that PCA can exploit the information in the data while random weights cannot. This is more obvious for $h=1$ and $h=6$, as PCA works when $p<m$, but random normal weights do not seem to work from the beginning.
 
 # Conclusion {#sec-conclusion}
