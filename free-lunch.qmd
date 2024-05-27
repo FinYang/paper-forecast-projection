@@ -121,7 +121,7 @@ $$
 $$ {#eq-lcmap}
 where $\bm{J} = \bm{J}_{m,p}$.
 
-We now present some theoretical results regarding the FLAP method, with proofs provided in the Appendix. @thm-psdvar establishes that the forecasts produced by the FLAP method, $\tilde{\bm{y}}_{t+h}$, dominate the base forecasts, $\hat{\bm{y}}_{t+h}$, in the sense that the difference between their forecast error variances is always positive definite. @thm-monotone establishes that the trace of the covariance of the forecast errors of $\tilde{\bm{y}}_{t+h}$ is non-increasing with the number of components $p$. The conditions needed to make the trace strictly decreasing are discussed in @thm-pos-condition. In @thm-minvar we prove that the projection in @eq-M achieves the minimum forecast error variance amongst the class of all projections. Finally, while the theoretical results imply that components could in principle continue to be added to improve forecasts, in practice, larger values of $p$ will make estimation of the plug-in covariance matrix $\bm{W}_h$ unreliable. We explore this issue in a simulation setting and empirically in @sec-simulation and @sec-empirical-applications, respectively.
+We now present some theoretical results regarding the FLAP method, with proofs provided in the Appendix. @thm-psdvar establishes that the forecasts produced by the FLAP method, $\tilde{\bm{y}}_{t+h}$, dominate the base forecasts, $\hat{\bm{y}}_{t+h}$, in the sense that the difference between their forecast error variances is always positive semi-definite. @thm-monotone establishes that the trace of the covariance of the forecast errors of $\tilde{\bm{y}}_{t+h}$ is non-increasing with the number of components $p$. The conditions needed to make the trace strictly decreasing are discussed in @thm-pos-condition. In @thm-minvar we prove that the projection in @eq-M achieves the minimum forecast error variance amongst the class of all projections. Finally, while the theoretical results imply that components could in principle continue to be added to improve forecasts, in practice, larger values of $p$ will make estimation of the plug-in covariance matrix $\bm{W}_h$ unreliable. We explore this issue in a simulation setting and empirically in @sec-simulation and @sec-empirical-applications, respectively.
 
 ## Positive Semi-Definiteness of Error Variance Reduction
 
@@ -885,30 +885,59 @@ There exists a Lagrange multiplier $\bm{\Lambda}$ such that
 $$
 L(\bm{G}) = \tr(\bm{G}\bm{W}_h\bm{G}') + \tr(\bm{\Lambda}'(\bm{I} - \bm{G}\bm{S}))
 $$
-is stationary at an extremum $\bm{G}$ [@Lue1969, p. 243, Theorem 1]. We set the Gateaux differential [@Lue1969, p. 171] to zero for any matrix $\bm{H}$:
+is stationary at an extremum $\bm{G}$ [@Lue1969, p. 243, Theorem 1]. We find the numerator of the Gateaux differential [@Lue1969, p. 171] 
+$$
+\lim_{\alpha \to 0} \frac{L(\bm{G} + \alpha\bm{H}) - L(\bm{G})}{\alpha}
+$$
+to be
 $$
 \begin{aligned}
-\lim_{\alpha \to 0} \frac{L(\bm{G} + \alpha\bm{H}) - L(\bm{G})}{\alpha} &= 0 \\
-\tr(\bm{G}\bm{W}_h\bm{H}') + \tr(\bm{H}\bm{W}_h\bm{G}') - \tr(\bm{\Lambda}'(\bm{H}\bm{S}))
-  &=\tr(2\bm{H}\bm{W}_h\bm{G}'-\bm{\Lambda}'\bm{H}\bm{S})\\
-  &= \tr(\bm{H}(2\bm{W}_h\bm{G}'-\bm{S}\bm{\Lambda}')) \\
-  &=0 \\
-2\bm{W}_h\bm{G} &= \bm{S}\bm{\Lambda}' \\
-\bm{G}' &= \frac{1}{2}\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'.
+L(\bm{G} + \alpha\bm{H}) - L(\bm{G}) =&
+\tr((\bm{G} + \alpha\bm{H})\bm{W}_h(\bm{G} + \alpha\bm{H})') + \tr(\bm{\Lambda}'(\bm{I} - (\bm{G} + \alpha\bm{H})\bm{S})) - \tr(\bm{G}\bm{W}_h\bm{G}') - \tr(\bm{\Lambda}'(\bm{I} - \bm{G}\bm{S})) \\
+=&
+\tr(\bm{G}\bm{W}_h\bm{G}') + \tr(\alpha^2\bm{H}\bm{W}_h\bm{H}') + \tr(\alpha\bm{G}\bm{W}_h\bm{H}') + \tr(\alpha\bm{H}\bm{W}_h\bm{G}') + \tr(\bm{\Lambda}'(\bm{I} - \bm{G}\bm{S})) - \tr(\alpha\bm{\Lambda}'\bm{H}\bm{S}) \\
+&- \tr(\bm{G}\bm{W}_h\bm{G}') - \tr(\bm{\Lambda}'(\bm{I} - \bm{G}\bm{S}))\\
+=& \alpha^2\tr(\bm{H}\bm{W}_h\bm{H}') + \alpha\tr(\bm{G}\bm{W}_h\bm{H}') + \alpha\tr(\bm{H}\bm{W}_h\bm{G}')  -\alpha\tr(\bm{\Lambda}'\bm{H}\bm{S}).
+\end{aligned}
+$$
+Thus, the Gateaux differential becomes
+$$
+\begin{aligned}
+\lim_{\alpha \to 0} \frac{L(\bm{G} + \alpha\bm{H}) - L(\bm{G})}{\alpha} =&
+\lim_{\alpha \to 0} \alpha\tr(\bm{H}\bm{W}_h\bm{H}') + \tr(\bm{G}\bm{W}_h\bm{H}') + \tr(\bm{H}\bm{W}_h\bm{G}')  -\tr(\bm{\Lambda}'\bm{H}\bm{S})\\
+=& 
+\tr(\bm{G}\bm{W}_h\bm{H}') + \tr(\bm{H}\bm{W}_h\bm{G}') - \tr(\bm{\Lambda}'(\bm{H}\bm{S}))\\
+=&\tr(2\bm{H}\bm{W}_h\bm{G}'-\bm{\Lambda}'\bm{H}\bm{S})\\
+=& \tr(\bm{H}(2\bm{W}_h\bm{G}'-\bm{S}\bm{\Lambda}')),
+\end{aligned}
+$$
+which we set to zero with a value of $\bm{G}^*$
+$$
+\begin{aligned}
+\tr(\bm{H}(2\bm{W}_h\bm{G}^{*\prime}-\bm{S}\bm{\Lambda}'))&=0 \\
+2\bm{W}_h\bm{G}^* &= \bm{S}\bm{\Lambda}' \\
+\bm{G}^{*\prime} &= \frac{1}{2}\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'.
 \end{aligned}
 $$
 Multiplying $\bm{S}'$ to the left of both sides. we have
 $$
-\bm{S}'\bm{G}'=\bm{I} = \frac{1}{2}\bm{S}'\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'
+\bm{S}'\bm{G}^{*\prime}=\bm{I} = \frac{1}{2}\bm{S}'\bm{W}_h^{-1}\bm{S}\bm{\Lambda}'
 \qquad\text{and}\qquad
 \bm{\Lambda}' = 2 (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}
 $$
-because $\bm{G}\bm{S} = \bm{I}$. Putting it back in, we have
+because $\bm{G}^*\bm{S} = \bm{I}$. Putting it back in, we have
 $$
-\bm{G}' = \bm{W}_h^{-1}\bm{S}(\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}
+\bm{G}^{*\prime} = \bm{W}_h^{-1}\bm{S}(\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}
 \qquad\text{and}\qquad
-\bm{G} = (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}.
+\bm{G}^* = (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}.
 $$
+
+To see how @eq-obj can be split into separate problems, recognise
+$$
+\tr(\bm{G}\bm{W}_h\bm{G}') = \sum^m_{i=1} \bm{g}_i'\bm{W}_h\bm{g}_i,
+$$
+where $\bm{W}_h$ is a positive definite variance covariance matrix, which makes each $\bm{g}_i'\bm{W}_h\bm{g}_i$ positive. Additionally, the element in the $i$th row and $j$th column of $\bm{G}\bm{S}$ is $\bm{g}_i'\bm{s}_{j}$, and the element in the $i$th row and $j$th column of an identity matrix is $\delta_{ij}$. Therefore, the problem in @eq-obj is $m$ separate problems.
+
 :::
 
 In other words, the forecast projection method gives optimal projected forecast for a given set of components, in the sense that the unbiased forecast of each series has minimum variance.
