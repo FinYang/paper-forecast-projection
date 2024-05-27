@@ -158,7 +158,7 @@ Based on the attractive properties of projections, we have the following corolla
 
 ::: {#cor-corM}
 1. The projected forecast $\tilde{\bm{z}}_{t+h}$ satisfies the constraint $\bm{C}\tilde{\bm{z}}_{t+h}=\bm{0}$.
-1. For $\bm{z}_{t+h}$ that already satisfies the constraint, the projection does not change its value, i.e., $\bm{M}\bm{z}_{t+h} = \bm{z}_{t+h}$ [@Rao1974, Lemma 2.4].
+1. For $\bm{z}_{t+h}$ that already satisfies the constraint, the projection does not change its value, i.e., $\bm{M}\bm{z}_{t+h} = \bm{z}_{t+h}$ [@Rao1974-JRSSSBSM, Lemma 2.4].
 1. If the base forecasts are unbiased such that $\E(\hat{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$, then the projected forecasts are also unbiased, i.e., $\E(\tilde{\bm{z}}_{t+h}|\mathcal{I}_t) = \E(\bm{z}_{t+h}|\mathcal{I}_t)$.
 :::
 
@@ -798,7 +798,7 @@ Proof in Appendix, page \pageref{proof8}.
 ::: {.toappendix}
 ### Proof of @cor-corG
 \label{proof8}
-Item 1 is an direct application of @lem-projectionG. From @lem-projectionG and Lemma 2.4 in @Rao1974, we have
+Item 1 is an direct application of @lem-projectionG. From @lem-projectionG and Lemma 2.4 in @Rao1974-JRSSSBSM, we have
 $$
 \bm{S}\bm{G}\bm{z}_{t+h} = \bm{z}_{t+h} = \bm{S}\bm{y}_{t+h}.
 $$
@@ -951,7 +951,7 @@ Under this assumption, when $\widehat{\bm{W}}_h^{shr}$ is used in @eq-M, the pro
 
 # Simulation {#sec-simulation}
 
-In this section, we illustrate the performance of FLAP in a simulation setting. We generate time series of length $T=400$ from a $m=70$ variable VAR($3$) data generating process (GDP). The coefficients for the VAR DGP are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovations are simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation is performed using the `tsDyn` package [@tsDyn].
+In this section, we illustrate the performance of FLAP in a simulation setting. We generate time series of length $T=400$ from a $m=70$ variable VAR($3$) data generating process (DGP). The coefficients for the VAR DGP are estimated from the first $70$ series in the Australian tourism data set used in @sec-australian-domestic-tourism. The innovations are simulated from a multivariate normal distribution with an identity covariance matrix. The estimation and simulation is performed using the `tsDyn` package [@tsDyn].
 
 For each simulated sample we generate $h=1$ to $12$-step-ahead base forecasts from benchmark models. We implement FLAP with a varying number of components and component construction methods. This process is repeated $220$ times. The improvements of FLAP forecasts over base forecasts is assessed, and the statistical significance of these improvements is evaluated.
 
@@ -972,7 +972,7 @@ where $\hat{\bm{F}}_t$ is the vector of $k$ estimated factors, and $\hat{y}_t$ i
 
 <!-- ## Generating FLAP forecasts {#sec-flap} -->
 
-We use several sets of weights to construct linear components for the FLAP method. The types of components are listed in @tbl-comp. Principal components from PCA are established using the `prcomp` function in the `stats` package [@R]. We generate random components using weights simulated from a standard normal (Norm) distribution and a uniform (Unif) distribution with range $(-1, 1)$. We normalise the weights of all randomly generated components into unit vectors to maintain some level of consistency, with $\bm{\phi}_i/\sqrt{\sum_j(\phi_{ij}^2)}$ where $\phi_{ij}$ is the $j$th value in the weight vector of the $i$th component. The total number of components $p$ is selected to be either $m=70$ or $300$.
+We use several sets of weights to construct linear components for the FLAP method. The types of components are listed in @tbl-comp. Principal components from PCA are established using the `prcomp()` function in the `stats` package [@R]. We generate random components using weights simulated from a standard normal (Norm) distribution and a uniform (Unif) distribution with range $(-1, 1)$. We normalise the weights of all randomly generated components into unit vectors to maintain some level of consistency, with $\bm{\phi}_i/\sqrt{\sum_j(\phi_{ij}^2)}$ where $\phi_{ij}$ is the $j$th value in the weight vector of the $i$th component. The total number of components $p$ is selected to be either $m=70$ or $300$.
 
 | Component | Description |
 | - | ----- |
@@ -988,7 +988,7 @@ We use several sets of weights to construct linear components for the FLAP metho
 
 ## Forecast evaluation {#sec-evaluation}
 
-We employ the Friedman test [@Fri1937; @Fri1939] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The MSE of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test. The average ranks are plotted in @fig-simulation-mcb-series for forecast horizons $1$, $6$ and $12$. The methods using FLAP are labelled "Model -- Component Weights -- Number of Components". The benchmarks are labelled "Model -- Benchmark". These points are marked with triangles. The shaded region is the confidence interval of the best-performing method. Methods outside the shaded region are significantly worse than the best model.
+We employ the Friedman test [@Fri1937; @Fri1939-JASA] along with post-hoc Nemenyi tests [@Nem1963;@HolEtAl2013] using the `tsutils` package [@tsutils] to compare forecast performance between different methods. The analysis involves the use of Multiple Comparisons with the Best (MCB) plot introduced by @KonEtAl2005 to visualise the comparison. The MSE of each series over different samples is calculated, and the MSEs of all the series are treated as observations in the Nemenyi test. The average ranks are plotted in @fig-simulation-mcb-series for forecast horizons $1$, $6$ and $12$. The methods using FLAP are labelled "Model -- Component Weights -- Number of Components". The benchmarks are labelled "Model -- Benchmark". These points are marked with triangles. The shaded region is the confidence interval of the best-performing method. Methods outside the shaded region are significantly worse than the best model.
 
 In @fig-simulation-line, we plot the out-of-sample MSE values as a function of the number of components $p$ included in the FLAP method. Here we also include the performance of the DGP VAR model (VAR -- DGP), and an estimated VAR model with the correct specification (VAR -- Est.), as well as their corresponding FLAP generated forecasts. We have not presented the FLAP forecasts using components generated from a uniform distribution or random orthonormal matrices, as these are visually identical to the methods with random weights generated from a standard normal distribution. The vertical black line indicates when $p=m=70$, the number of original series.
 
