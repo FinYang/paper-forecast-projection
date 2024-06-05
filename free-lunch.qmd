@@ -750,10 +750,9 @@ $$
 $$
 If we consider the transformed space where all the vectors are first transformed via pre-multiplying by $\bm{W}_h^{-1/2}$, where $\bm{W}_h^{-1} = (\bm{W}_h^{-1/2})'\bm{W}_h^{-1/2}$, then this optimisation problem can be interpreted as finding the set of forecasts that are closest to the base forecasts on the transformed space, while satisfying the linear constraints imposed by the components.
 
-Moreover, this is equivalent to the optimisation problem:
-$$
-\underset{\check{\bm{z}}_{T+h}}{\arg\min} (\hat{\bm{z}}_{T+h}-\check{\bm{z}}_{T+h})'\bm{W}_h^{-1}(\hat{\bm{z}}_{T+h}-\check{\bm{z}}_{T+h})
-\qquad \text{s.t. } \bm{\Phi}\check{\bm{y}}_{T+h}=\check{\bm{c}}_{T+h},
+An alternative way of characterising the same constraints is 
+$$ 
+\bm{\Phi}\check{\bm{y}}_{T+h}=\check{\bm{c}}_{T+h},
 $$
 where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{z}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast error variance of all series (See @AndNar2022 for a simpler proof). The result is
 $$
