@@ -356,6 +356,20 @@ Generating values from a random distribution and normalising them to unit vector
 * Find optimal components by minimising forecast error variance with respect to $\bm{\Phi}$
 * Use forecast projection and forecast reconciliation together
 
+## R Package `flap`
+
+You can install the stable version from CRAN
+``` r
+## CRAN.R-project.org/package=flap
+install.packages("flap")
+``` 
+or the development version from Github
+```r
+## github.com/FinYang/flap
+# install.packages("remotes")
+remotes::install_github("FinYang/flap")
+```
+
 ## References {.allowframebreaks}
 
 ::: {#refs}
