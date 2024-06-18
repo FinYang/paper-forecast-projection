@@ -301,11 +301,11 @@ and $\bm{W}_{yc, h}$ contains error covariances between elements of $\hat{\bm{y}
 
 ::: {#thm-monotone}
 #### Monotonicity
-The forecast error variance reductions for each series,
+The forecast error variance reductions for each series, i.e., the diagonal elements in the matrix
 $$
 \Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 $$
-is positive semi-definite as $p$ increases.
+is non-decreasing as $p$ increases.
 In particular, the sum of forecast error variance reductions
 $$
 \tr(\Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
