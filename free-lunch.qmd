@@ -754,7 +754,7 @@ An alternative way of characterising the same constraints is
 $$ 
 \bm{\Phi}\check{\bm{y}}_{T+h}=\check{\bm{c}}_{T+h},
 $$
-where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{z}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast error variance of all series (See @AndNar2022 for a simpler proof). The result is
+where $\check{\bm{c}}_{T+h}$ is the vector of the last $p$ elements of $\check{\bm{z}}_{T+h}$, corresponding to the forecast of the components as part of the solution. This equivalence is discussed in @WicEtAl2019, where the authors find the solution by minimising the sum of forecast error variance of all series (See @AndNar2024-F for an alternative proof). The result is
 $$
 \tilde{\bm{z}}_{t+h} = \bm{S}\bm{G} \hat{\bm{z}}_{t+h},
 $$ {#eq-mint}
@@ -767,7 +767,7 @@ In @eq-mint, $\bm{G} \hat{\bm{z}}_{t+h}$ can be viewed as mapping all of the ser
 $$
 \tilde{\bm{y}}_{t+h} = \bm{G}\hat{\bm{z}}_{t+h},
 $$ {#eq-stmap}
-as equivalent to @eq-lcmap. Recognising that @eq-mint is equivalent to @eq-z_tilde, it is the solution that minimises the sum of forecast error variances of the original series and all the components. We go further in @thm-minvar, and show that @eq-mint is also the solution to minimise each individual forecast error variance of the original series, and their sum. This can be viewed as a special case of Theorem 3.3 in @PanEtAl2021, or as illustrated by @AndNar2022, but applied in a different context to forecast reconciliation. The earliest work we can find that noted this interpretation in a non-forecasting context is @Lue1969 [p.85]. We establish a few basic results leading to the optimality of this solution first, also to check that @lem-projectionM, @cor-corM and @lem-var hold under this alternative representation.
+as equivalent to @eq-lcmap. Recognising that @eq-mint is equivalent to @eq-z_tilde, it is the solution that minimises the sum of forecast error variances of the original series and all the components. We go further in @thm-minvar, and show that @eq-mint is also the solution to minimise each individual forecast error variance of the original series, and their sum. This can be viewed as a special case of Theorem 3.3 in @PanEtAl2021 applied in a forecast projection context, by taking $\bm{W}=\bm{S}(\bm{S}'\bm{S})^{-1}(\bm{S}'\bm{S})^{-1}\bm{S}'$ in @PanEtAl2021 [Thm. 3.3], as illustrated by @AndNar2024-F. The earliest work we can find that noted this interpretation in a non-forecasting context is @Lue1969 [p. 85]. We establish a few basic results leading to the optimality of this solution first, also to check that @lem-projectionM, @cor-corM and @lem-var hold under this alternative representation.
 
 ::: {#lem-projectionG}
 The matrix $\bm{S}\bm{G}$ is a projection onto the space where the constraint $\bm{C}\bm{z}_t=\bm{0}$ is satisfied, provided that $\bm{G}\bm{S}=\bm{I}$.
@@ -878,7 +878,7 @@ Proof in Appendix, page \pageref{proof10}.
 ::: {.toappendix}
 ### Proof of @thm-minvar
 \label{proof10}
-This can be proved in a few different ways. We adopt the approach of @AndNar2022 to obtain the solution to @eq-obj, but the procedure from @Lue1969 [p. 85] can also be used, where the problem is divided to @eq-subobj and reconstructed to find the solution to @eq-obj.
+This can be proved in a few different ways. We adopt the approach of @AndNar2024-F to obtain the solution to @eq-obj, but the procedure from @Lue1969 [p. 85] can also be used, where the problem is divided to @eq-subobj and reconstructed to find the solution to @eq-obj.
 
 There exists a Lagrange multiplier $\bm{\Lambda}$ such that
 $$
