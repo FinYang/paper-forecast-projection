@@ -244,7 +244,7 @@ Trivially,
 $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ are positive semi-definite. Note that $\Var(\hat{\bm{y}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{z}_{t+h})$ is the leading principal submatrix of $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$, and the leading principal submatrix of a positive semi-definite matrix is positive semi-definite.
 :::
 
-@thm-psdvar is why FLAP works. The trace of $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is the sum of the reduction in forecast error variances, and is non-negative because the matrix is positive semi-definite. It implies that the forecast error variance can be reduced by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace must be zero. This implies that $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}' = \bm{O}_{m\times m}$, as this is a positive semi-definite matrix, something rarely observed in practice. See @thm-pos-condition for more discussion.
+@thm-psdvar is why FLAP works. Note when $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is semi-definite, each of its diagonal elements, the reduction in forecast error variance for each series, is non-nagative. It implies that the forecast error variance can be reduced by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace must be zero. This implies that $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}' = \bm{O}_{m\times m}$, as this is a positive semi-definite matrix, something rarely observed in practice. See @thm-pos-condition for more discussion.
 
 The following example illustrates the mechanism of the reduction in the forecast error variance.
 
@@ -305,7 +305,7 @@ The forecast error variance reductions for each series, i.e., the diagonal eleme
 $$
 \Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h}) = \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 $$
-is non-decreasing as $p$ increases.
+are non-decreasing as $p$ increases.
 In particular, the sum of forecast error variance reductions
 $$
 \tr(\Var(\bm{y}_{t+h}-\hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h}-\tilde{\bm{y}}_{t+h})) = \tr(\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}')
@@ -641,7 +641,7 @@ Finally, we have
     \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) -
     \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h})
 \end{multline*}
-being a positive semi-definite matrix where the diagonal terms are non-negative, whose trace, therefore, is non-negative. This means using a larger number of components in the mapping achieves lower forecast error variances, giving @thm-monotone.
+being a positive semi-definite matrix where the diagonal terms are non-negative, whose trace, therefore, is non-negative. This means using a larger number of components in the mapping achieves lower or equal forecast error variances. In other words, the reduction in forecast error variance of each series is non-decreasing as more components are added, giving @thm-monotone.
 :::
 
 @thm-monotone is the key result that demonstrates the usefulness of FLAP. It means that we can keep increasing the number of components to reduce forecast error variance, even when the number of components exceeds the number of original series. It requires $\bm{C}$ to be $\big[-\bm{\Phi} ~~~ \bm{I}_{p} \big]$ or $\big[-\bm{\Phi} ~~~ \bm{L}\big]$ where $\bm{L}$ is a lower triangular matrix. This implies that the components can also be constructed from existing components, not only from the original series. This has little significance since a linear combination of components of the original series, is just a linear combination of the original series. This of course assumes that the forecast error covariances are known, something we explore in @sec-estW and @sec-simulation.
@@ -738,7 +738,7 @@ where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\b
 
 The condition of @eq-pcon demonstrates that for a new component to be beneficial, the information introduced by this new component, reflected in the error covariance, cannot be a linear combination of already existing information.
 
-@thm-pos-condition can potentially provide insights into the selection of component weights and forecast models to satisfy the conditions. Heuristically, @thm-pos-condition our choice of principal components as weight vectors since they are orthogonal by constructions. Optimal choices of weights we leave to future research, but note that practically speaking, the conditions in @thm-pos-condition are either almost always satisfied if the weights are simulated randomly on a continuous scale, or the loss associated with the rare occasions where the conditions are not satisfied is negligible compared to the estimation error imposed by the limited sample size as the number of components increases, as discussed in @sec-simulation and @sec-empirical-applications.
+@thm-pos-condition can potentially provide insights into the selection of component weights and forecast models to satisfy the conditions. Heuristically, we want the components to be introducing new information, and this is more likely when they are uncorrelated, which motivates out choice of principal components which are uncorrelated by constructions. Optimal choices of weights we leave to future research, but note that practically speaking, the conditions in @thm-pos-condition are either almost always satisfied if the weights are simulated randomly on a continuous scale, or the loss associated with the rare occasions where the conditions are not satisfied is negligible compared to the estimation error imposed by the limited sample size as the number of components increases, as discussed in @sec-simulation and @sec-empirical-applications.
 
 ## Optimality of the projection
 
