@@ -370,6 +370,16 @@ or the development version from Github
 remotes::install_github("FinYang/flap")
 ```
 
+## Contact
+
+- Email: Fin.Yang@monash.edu
+- https://yangzhuoranyang.com
+```{r}
+#| fig-align: center
+#| out-width: 220px
+knitr::include_graphics("qr-code.png")
+```
+
 ## References {.allowframebreaks}
 
 ::: {#refs}
