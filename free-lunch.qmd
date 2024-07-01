@@ -2,19 +2,36 @@
 title: "Forecast Linear Augmented Projection (FLAP): A free lunch to reduce forecast error variance"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 author:
- - familyname: Yang
-   othernames: Yangzhuoran Fin
-   address: Monash University\newline Melbourne, Australia
-   email: Fin.Yang@monash.edu
- - familyname: Athanasopoulos
-   othernames: George
-   address: Monash University\newline Melbourne, Australia
- - familyname: Hyndman
-   othernames: Rob&nbsp;J
-   address: Monash University\newline Melbourne, Australia
- - familyname: Panagiotelis
-   othernames: Anastasios
-   address: University of Sydney\newline Sydney, Australia
+  - name: Yangzhuoran Fin Yang
+    affiliations:
+      - name: Monash University
+        department: Department of Econometrics & Business Statistics
+        city: Clayton VIC
+        country: Australia
+        postal-code: 3800
+    email: Fin.Yang@monash.edu
+    corresponding: true
+  - name: George Athanasopoulos
+    affiliations:
+      - name: Monash University
+        department: Department of Econometrics & Business Statistics
+        city: Clayton VIC
+        country: Australia
+        postal-code: 3800
+  - name: Rob&nbsp;J Hyndman
+    affiliations:
+      - name: Monash University
+        department: Department of Econometrics & Business Statistics
+        city: Clayton VIC
+        country: Australia
+        postal-code: 3800
+  - name: Anastasios Panagiotelis
+    affiliations:
+      - name: University of Sydney
+        department: Discipline of Business Analytics
+        city: Camperdown NSW
+        country: Australia
+        postal-code: 2050
 pdf-engine: pdflatex
 cite-method: biblatex
 biblio-style: authoryear-comp
