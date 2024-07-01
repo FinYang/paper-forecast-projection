@@ -39,7 +39,7 @@ editor_options:
 
 ```{r setup}
 #| cache: false
-knitr::read_chunk("free-lunch-slides.R")
+knitr::read_chunk("flap-slides.R")
 ```
 ```{r library}
 #| cache: false

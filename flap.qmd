@@ -39,7 +39,7 @@ bibliography:
   - references-key.bib
   - references-pkg.bib
 blind: false
-cover: true
+cover: false
 toc: false
 keep-tex: true
 fig-height: 6
@@ -72,7 +72,7 @@ A novel forecast linear augmented projection (FLAP) method is introduced, which 
 
 ```{r setup}
 #| cache: false
-knitr::read_chunk("free-lunch.R")
+knitr::read_chunk("flap.R")
 ```
 ```{r path}
 ```
