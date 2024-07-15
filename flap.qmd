@@ -215,9 +215,9 @@ Proof in Appendix, page \pageref{proof3}.
 ### Proof of @lem-var
 \label{proof3}
 $$
-\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})
-= \Var(\bm{M}\hat{\bm{z}}_{t+h} - \bm{M}\bm{z}_{t+h}) \\
-= \bm{M}\Var(\hat{\bm{z}}_{t+h} - \bm{z}_{t+h})\bm{M}' \\
+\Var(\bm{z}_{t+h} - \tilde{\bm{z}}_{t+h})
+= \Var(\bm{M}\bm{z}_{t+h} - \bm{M}\hat{\bm{z}}_{t+h}) \\
+= \bm{M}\Var(\bm{z}_{t+h} - \hat{\bm{z}}_{t+h})\bm{M}' \\
 = \bm{M}\bm{W}_h\bm{M}'.
 $$
 If we simplify it further, we have
@@ -233,7 +233,7 @@ $$
 &= \bm{M}\bm{W}_h.
 \end{aligned}
 $$
-To get $\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})$, we just need to recognise that it is the first $m\times m$ leading principal submatrix of $\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$.
+To get $\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})$, we just need to recognise that it is the first $m\times m$ leading principal submatrix of $\Var(\tilde{\bm{z}}_{t+h} - \bm{z}_{t+h})$.
 :::
 
 @lem-var is a well-known result in the forecast reconciliation literature [e.g., @DiGir2023].
@@ -263,7 +263,7 @@ Proof in Appendix, page \pageref{proof4}.
 ### Proof of @thm-psdvar
 \label{proof4}
 Trivially,
-$\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ are positive semi-definite. Note that $\Var(\hat{\bm{y}}_{t+h} - \bm{z}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{z}_{t+h})$ is the leading principal submatrix of $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$, and the leading principal submatrix of a positive semi-definite matrix is positive semi-definite.
+$\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$ and $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ are positive semi-definite. Note that $\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})$ is the leading principal submatrix of $\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h$, and the leading principal submatrix of a positive semi-definite matrix is positive semi-definite.
 :::
 
 @thm-psdvar is why FLAP works. Note when $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'$ is semi-definite, each of its diagonal elements, the reduction in forecast error variance for each series, is non-nagative. It implies that the forecast error variance can be reduced by simply forecasting the components (the artificially constructed linear combinations of the original data), and mapping the forecasts using matrix $\bm{M}$. For the improvement to be zero, the trace must be zero. This implies that $\bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}' = \bm{O}_{m\times m}$, as this is a positive semi-definite matrix, something rarely observed in practice. See @thm-pos-condition for more discussion.
@@ -360,7 +360,7 @@ $$ {#eq-Cstar}
 where $\overline{\bm{C}}$ contains the first $p$ rows of $\bm{C}^*$ and $\underline{\bm{C}}$ contains the remaining $q$ rows of $\bm{C}^*$,
 the forecast error variance matrix
 $$
-\Var(\hat{\bm{z}}_{t+h}^* - \bm{z}_{t+h}^*) = \bm{W}_h^* = \begin{bmatrix}\bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c,h}^*\end{bmatrix}.
+\Var(\bm{z}_{t+h}^* - \hat{\bm{z}}_{t+h}^*) = \bm{W}_h^* = \begin{bmatrix}\bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c,h}^*\end{bmatrix}.
 $$
 where $\hat{\bm{z}}_{t+h}^*$ is the $h$-step-ahead base forecasts of $\bm{z}_{t}^*$:
 $$
@@ -471,23 +471,23 @@ $$
 $$
 This means adding additional components without imposing the corresponding constraints will yield the same projected forecasts as if these additional components are not added, which implies that the forecast error variance stays the same:
 $$
-\Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}) = \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
+\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}^+) = \Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) = \bm{J}\bm{M}\bm{W}_h\bm{J}'.
 $$ {#eq-acnc}
 <!-- additional components no constraints -->
 This finishes the proof of the first statement. Now we move on to proving the second statement. We have the forecast error variance matrices
 $$
 \begin{aligned}
-\Var(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}^*) & = \bm{M}^{+}\bm{W}_h^*
+\Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^+) & = \bm{M}^{+}\bm{W}_h^*
     = (\bm{I}_{m+p+q} -\bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^* \\
 \text{and}\qquad\qquad
-\Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}^*) & = \bm{M}^*\bm{W}_h^*
+\Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^*) & = \bm{M}^*\bm{W}_h^*
     = (\bm{I}_{m+p+q} - \bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^*)\bm{W}_h^*.
 \end{aligned}
 $$
 Taking the difference, we have
 $$
 \begin{aligned}
-\Var(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}^*) - \Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}^*)
+\Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^+) - \Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^*)
 & = (\bm{W}_h^*\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -
       \bm{W}_h^*\overline{\bm{C}}'(\overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}')^{-1}\overline{\bm{C}})\bm{W}_h^* \\
 & = \bm{W}_h^*(\bm{C}^{*\prime}(\bm{C}^*\bm{W}_h^*\bm{C}^{*\prime})^{-1}\bm{C}^* -
@@ -608,7 +608,7 @@ Thus,
 Therefore,
 $$
 \begin{aligned}
-\Var(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}^*) - \Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}^*)
+\Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^+) - \Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^*)
 \hspace*{-4cm} \\
 & =
 \bm{W}_h^*(
@@ -634,14 +634,14 @@ is positive semi-definite. This concludes the proof of the second statement.
 Combining the results above, we have
 $$
 \begin{aligned}
-\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) -
-\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h})
+\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) -
+\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}^*)
 & =
-\Var(\tilde{\bm{y}}_{t+h}^+ - \bm{y}_{t+h}) -
-\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}) \\
+\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}^+) -
+\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}^*) \\
 &=
-\bm{J}^*\Var(\tilde{\bm{z}}_{t+h}^+ - \bm{z}_{t+h}^*)\bm{J}^{*\prime} -
-\bm{J}^*\Var(\tilde{\bm{z}}_{t+h}^* - \bm{z}_{t+h}^*)\bm{J}^{*\prime} \\
+\bm{J}^*\Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^+)\bm{J}^{*\prime} -
+\bm{J}^*\Var(\bm{z}_{t+h}^* - \tilde{\bm{z}}_{t+h}^*)\bm{J}^{*\prime} \\
 &=
 \bm{J}^*
 \bm{W}_h^*
@@ -656,12 +656,12 @@ $$ {#eq-addcom}
 being positive semi-definite.
 Finally, we have
 \begin{multline*}
-(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h}))
+(\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}^*))
 -
-(\Var(\hat{\bm{y}}_{t+h} - \bm{y}_{t+h}) -\Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h})) \\
+(\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})) \\
 =
-    \Var(\tilde{\bm{y}}_{t+h} - \bm{y}_{t+h}) -
-    \Var(\tilde{\bm{y}}_{t+h}^* - \bm{y}_{t+h})
+    \Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) -
+    \Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}^*)
 \end{multline*}
 being a positive semi-definite matrix where the diagonal terms are non-negative, whose trace, therefore, is non-negative. This means using a larger number of components in the mapping achieves lower or equal forecast error variances. In other words, the reduction in forecast error variance of each series is non-decreasing as more components are added, giving @thm-monotone.
 :::
