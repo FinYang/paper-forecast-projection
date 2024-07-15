@@ -63,6 +63,7 @@ header-includes:
   - \def\Var{\operatorname{Var}}
   - \def\E{\operatorname{E}}
   - \def\tr{\operatorname{tr}}
+  - \nosectionappendix
 format: wp-pdf
 ---
 
@@ -111,6 +112,10 @@ In the sense that forecast accuracy can be improved without any new information,
 <!-- Another approach to improve forecast accuracy is forecast combination. Point forecast combinations usually involve combining multiple forecasts of the same series from different models. See @WanEtAl2023 for a recent comprehensive review. Our FLAP method differs from forecast combination in (a) the forecasts we combine, and (b) in how we combine them. First, rather than combine multiple forecasts of a single series, we combine single forecasts of many different linear combinations of all observed series. Second, our combinations are obtained via projections, and so the final forecasts of a particular series are linear combinations of all series in the collection, including the observed series and all constructed components. Our approach can be used in conjunction with standard forecast combination, as the base forecasts can be obtained from any combination of forecasts. -->
 
 The remainder of the paper is structured as follows. In @sec-method, we propose the FLAP method, and highlight its theoretical properties and associated estimation methods. In @sec-simulation, we present a simulation example demonstrating its performance and discuss the implications for sources of uncertainty. @sec-empirical-applications examines the performance of FLAP in two empirical applications: forecasting Australian domestic tourism and forecasting macroeconomic variables in the FRED-MD data set. @sec-conclusion concludes with some thoughts on future research directions. The methods introduced in this paper are implemented in the `flap` package for R [@flap]. This paper is fully reproducible with code and documentation provided at [https://github.com/FinYang/paper-forecast-projection](https://github.com/FinYang/paper-forecast-projection).
+
+::: {.toappendix}
+# Appendix {.appendix}
+:::
 
 # Forecast Linear Augmented Projection (FLAP) {#sec-method}
 
@@ -1172,3 +1177,5 @@ Finally, while FLAP is motivated by the forecast reconciliation literature, our 
 We thank Daniele Girolimetto for contributing to the initial proof of @thm-monotone in his unpublished work.
 
 # References {.unnumbered}
+
+
