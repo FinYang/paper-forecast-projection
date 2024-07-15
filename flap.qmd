@@ -702,16 +702,16 @@ $$
 -\bm{\phi}_1 & 1
 \end{bmatrix}
 \begin{bmatrix}
-\bm{W}_{z,h} & \bm{w}'_{c_1z,h} \\
-\bm{w}_{c_1z,h} & \bm{W}_{c_1,h}
+\bm{W}_{y,h} & \bm{w}'_{c_1y,h} \\
+\bm{w}_{c_1y,h} & \bm{W}_{c_1,h}
 \end{bmatrix}
 \begin{bmatrix}
 \bm{I}_m\\ 0
 \end{bmatrix} \\
-=& -\bm{\phi}_1\bm{W}_{z,h} + \bm{w}_{c_1z,h}.
+=& -\bm{\phi}_1\bm{W}_{y,h} + \bm{w}_{c_1y,h}.
 \end{aligned}
 $$
-@eq-trdvar1 is obviously non-negative. For it to be larger than $0$, we need $\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' \neq 0$, which gives $\bm{\phi}_1\bm{W}_{z,h} \neq \bm{w}_{c_1z,h}$.
+@eq-trdvar1 is obviously non-negative. For it to be larger than $0$, we need $\bm{\psi}_1\bm{W}_h^{(1)}\bm{J}_{m,1}' \neq 0$, which gives $\bm{\phi}_1\bm{W}_{y,h} \neq \bm{w}_{c_1y,h}$.
 
 When it comes to adding the $i$th component on top of the first $i-1$ components, we define
 $$
@@ -753,9 +753,9 @@ $$
 $$
 Similar to before, we would want $\bm{\psi}_i\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}' \neq \bm{0}$. Note that $\bm{\psi}_i$ concerns the first $m$ rows and the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, and $\bm{J}_{m,i}'$ concerns the first $m$ columns. Combined with the implication from @eq-acnc that the $m\times m$ leading principal submatrix in equation $\bm{J}_{m,i}\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}'=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the same, we suppress the straightforward yet tiresome details, and obtain
 $$
-\bm{\phi}_i\bm{W}_{\tilde{z},h}^{(i-1)} \neq \big[\bm{0}_{1\times m+i-1} ~~~ 1 \big]\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}',
+\bm{\phi}_i\bm{W}_{\tilde{y},h}^{(i-1)} \neq \big[\bm{0}_{1\times m+i-1} ~~~ 1 \big]\bm{M}^{+}_i\bm{W}_h^{(i)}\bm{J}_{m,i}',
 $$
-where $\bm{W}_{\tilde{z},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the projected forecast error variance of the original series using the first $i-1$ components, and the right hand side of the inequality is simply a one-row matrix consisting of the first $m$ elements in the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, which can be denoted as $\bm{w}_{\tilde{c}_i\tilde{z},h}^{(i-1)}$ and interpreted as the covariance between the projected forecast of the original series using the first $i-1$ components, and the projected forecast of the $i$th component using the first $i-1$ components.
+where $\bm{W}_{\tilde{y},h}^{(i-1)}=\bm{J}_{m,i-1}\bm{M}_{i-1}\bm{W}_h^{(i-1)}\bm{J}_{m,i-1}'$ is the projected forecast error variance of the original series using the first $i-1$ components, and the right hand side of the inequality is simply a one-row matrix consisting of the first $m$ elements in the last row of $\bm{M}^{+}_i\bm{W}_h^{(i)}$, which can be denoted as $\bm{w}_{\tilde{c}_i\tilde{y},h}^{(i-1)}$ and interpreted as the covariance between the projected forecast of the original series using the first $i-1$ components, and the projected forecast of the $i$th component using the first $i-1$ components.
 :::
 
 The condition of @eq-pcon demonstrates that for a new component to be beneficial, the information introduced by this new component, reflected in the error covariance, cannot be a linear combination of already existing information.
