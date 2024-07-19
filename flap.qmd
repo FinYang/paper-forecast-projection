@@ -387,7 +387,7 @@ $$
       \bm{W}_h & \bm{W}_{yc, h}^*\\ \bm{W}_{cy, h}^* & \bm{W}_{c, h}^*
     \end{bmatrix}
     \begin{bmatrix}
-      \bm{C}'\\ \underset{q\times p}{\bm{0}} \\
+      \bm{C}'\\ \underset{q\times p}{\bm{O}} \\
     \end{bmatrix} \\
  = \begin{bmatrix}
       \bm{W}_h\bm{C}' \\
@@ -398,7 +398,7 @@ and
 $$
   \overline{\bm{C}}\bm{W}_h^*\overline{\bm{C}}'
  = \begin{bmatrix}
-      \bm{C} & \underset{p\times q}{\bm{0}} \\
+      \bm{C} & \underset{p\times q}{\bm{O}} \\
     \end{bmatrix}
     \begin{bmatrix}
       \bm{W}_h\bm{C}' \\
@@ -417,7 +417,7 @@ $$
     \end{bmatrix}
     (\bm{C}\bm{W}_h\bm{C}')^{-1}
     \begin{bmatrix}
-      \bm{C} & \underset{p\times q}{\bm{0}} \\
+      \bm{C} & \underset{p\times q}{\bm{O}} \\
     \end{bmatrix}\\
 %& = \bm{I}_{m+p+q} -
 %    \begin{bmatrix}
@@ -425,12 +425,12 @@ $$
 %      \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}
 %    \end{bmatrix}
 %    \begin{bmatrix}
-%      \bm{C} & \underset{p\times q}{\bm{0}} \\
+%      \bm{C} & \underset{p\times q}{\bm{O}} \\
 %    \end{bmatrix} \\
 & = \bm{I}_{m+p+q} -
     \begin{bmatrix}
-      \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0} \\
-      \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{0}
+      \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{O} \\
+      \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C} & \bm{O}
     \end{bmatrix},
 \end{aligned}
 $$
@@ -452,7 +452,7 @@ $$
 %      \hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{z}}_{t+h}
 %    \end{bmatrix} \\
 & = \begin{bmatrix}
-      (\bm{I}_{n+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\hat{\bm{z}}_{t+h}\\
+      (\bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C})\hat{\bm{z}}_{t+h}\\
       \hat{\bm{c}}_{t+h}^* - \bm{W}_{cy, h}^*\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\hat{\bm{z}}_{t+h}
     \end{bmatrix} \\
 & = \begin{bmatrix}
