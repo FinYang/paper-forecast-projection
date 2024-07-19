@@ -33,8 +33,8 @@ author:
         country: Australia
         postal-code: 2050
 pdf-engine: pdflatex
-cite-method: biblatex
-biblio-style: authoryear-comp
+cite-method: citeproc
+csl: american-statistical-association-modified.csl
 bibliography:
   - references-key.bib
   - references-pkg.bib
