@@ -41,7 +41,7 @@ csl: american-statistical-association-modified.csl
 bibliography:
   - references-key.bib
   - references-pkg.bib
-blind: true
+blind: false
 cover: false
 toc: false
 keep-tex: true
