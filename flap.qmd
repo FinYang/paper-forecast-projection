@@ -32,13 +32,16 @@ author:
         city: Camperdown NSW
         country: Australia
         postal-code: 2050
+keywords: [Aggregation, Australian tourism, Macroeconomic variable, Forecast combinations, Post-forecast adjustment]
+linestretch: 1.9
+fontsize: 12pt
 pdf-engine: pdflatex
 cite-method: citeproc
 csl: american-statistical-association-modified.csl
 bibliography:
   - references-key.bib
   - references-pkg.bib
-blind: false
+blind: true
 cover: false
 toc: false
 keep-tex: true
@@ -64,6 +67,7 @@ header-includes:
   - \def\E{\operatorname{E}}
   - \def\tr{\operatorname{tr}}
   - \nosectionappendix
+  - \setlength{\parskip}{0pt plus 1pt}
 format: wp-pdf
 ---
 
