@@ -32,8 +32,8 @@ author:
         city: Camperdown NSW
         country: Australia
         postal-code: 2050
-keywords: [Aggregation, Australian tourism, Macroeconomic variable, Forecast combinations, Post-forecast adjustment]
-linestretch: 1.9
+keywords: [Forecast combinations, High-dimensional time series, Components, Forecast reconciliation]
+linestretch: 1.8
 fontsize: 12pt
 pdf-engine: pdflatex
 cite-method: citeproc
@@ -60,6 +60,11 @@ filters:
   - latex-environment
   - abstract-section
 environments: toappendix
+geometry:
+  - top=2cm
+  - bottom=2cm
+  - left=2cm
+  - right=2cm
 header-includes:
   - \usepackage{todonotes}
   - \usepackage[bibliography=common]{apxproof}
@@ -958,7 +963,7 @@ $$
 \bm{G}^* = (\bm{S}'\bm{W}_h^{-1}\bm{S})^{-1}\bm{S}'\bm{W}_h^{-1}.
 $$
 
-To see how @eq-obj can be split into separate problems, recognise
+To see how @eq-obj can be split into separate problems, recognize
 $$
 \tr(\bm{G}\bm{W}_h\bm{G}') = \sum^m_{i=1} \bm{g}_i'\bm{W}_h\bm{g}_i,
 $$
@@ -1030,7 +1035,7 @@ where $\hat{\bm{F}}_t$ is the vector of $k$ estimated factors, and $\hat{y}_t$ i
 We use several sets of weights to construct linear components for the FLAP method. The types of components are listed in @tbl-comp. Principal components from PCA are established using the `prcomp()` function in the `stats` package [@R]. We generate random components using weights simulated from a standard normal (Norm) distribution and a uniform (Unif) distribution with range $(-1, 1)$. We normalise the weights of all randomly generated components into unit vectors to ensure numerically stable computation, with $\bm{\phi}_i/\sqrt{\sum_j(\phi_{ij}^2)}$ where $\phi_{ij}$ is the $j$th value in the weight vector of the $i$th component. The total number of components $p$ is selected to be either $m=70$ or $300$.
 
 | Component | Description |
-| - | ----- |
+| - | ------ |
 | PCA | Principal components from PCA. |
 | Norm | The weights of all components are simulated from a standard normal distribution. |
 | Unif | The weights of all components are simulated from a uniform distribution |
@@ -1143,9 +1148,9 @@ Choosing the number of components is a trade-off between the increasing estimati
 ```{r fred-md}
 ```
 
-The FRED-MD [@McCNg2016] is a popular monthly data set of macroeconomic variables, and shares similar properties with the @StoWat2002 data. We downloaded and transformed the data using the `fbi` package [@fbi]. The period we use for this exercise is from January 1959 to September 2023, containing $777$ observations. Following @McCNg2016, we replace observations that deviate from the sample median by more than 10 interquartile ranges (which are recognised as outliers), with missing values. We then drop any series with more than $5$% observations missing. This results in $m=122$ series. We fill in the missing values using the expectation-maximization (EM) algorithm described in @StoWat2002a with $8$ factors. The number $8$ is identified by @McCNg2016, albeit with a different time span.
+The FRED-MD [@McCNg2016] is a popular monthly data set of macroeconomic variables, and shares similar properties with the @StoWat2002 data. We downloaded and transformed the data using the `fbi` package [@fbi]. The period we use for this exercise is from January 1959 to September 2023, containing $777$ observations. Following @McCNg2016, we replace observations that deviate from the sample median by more than 10 interquartile ranges (which are recognized as outliers), with missing values. We then drop any series with more than $5$% observations missing. This results in $m=122$ series. We fill in the missing values using the expectation-maximization (EM) algorithm described in @StoWat2002a with $8$ factors. The number $8$ is identified by @McCNg2016, albeit with a different time span.
 
-In order to relate to the theoretical forecast error variance reduction, we use MSE as the error measure, instead of other scaled or percentage error measures. To reliably calculate MSE over series with different scales, we demean the series and scale them to have variance $1$. The MSEs are calculated on this standardised scale without back-transformation.
+In order to relate to the theoretical forecast error variance reduction, we use MSE as the error measure, instead of other scaled or percentage error measures. To reliably calculate MSE over series with different scales, we demean the series and scale them to have variance $1$. The MSEs are calculated on this standardized scale without back-transformation.
 
 We evaluate the performance of forecasts using time series cross-validation. We start with $300$ observations in the first training set and the following $12$ observations as the test set. We repeat the exercise by expanding the training set increasing by $1$ observation at a time. This provides us with $466$ forecasts for each of the forecast horizons from $h=1$ to $12$ for evaluation.
 
