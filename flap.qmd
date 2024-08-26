@@ -59,6 +59,7 @@ editor_options:
 filters:
   - latex-environment
   - abstract-section
+  - blindable-div
 environments: toappendix
 geometry:
   - top=2cm
@@ -1182,9 +1183,13 @@ Component construction should be studied together with the selection of the fore
 
 Finally, while FLAP is motivated by the forecast reconciliation literature, our focus here is very much on multivariate time series with no constraints. However, it would be possible to use both forecast reconciliation and forecast projection together. This may be particularly useful when there are relationships between series that are not captured in the known hierarchical structure.
 
+::: {.blindable}
+
 # Acknowledgements {.unnumbered}
 
 We thank Daniele Girolimetto for contributing to the initial proof of @thm-monotone in his unpublished work.
+
+:::
 
 # Supplementary materials {.unnumbered}
 
