@@ -1,6 +1,6 @@
 ## ---- path ----
 
-current_path <- function(...){
+current_path <- function(...) {
   path <- file.path(...)
   normalizePath(path)
 }
@@ -21,7 +21,7 @@ cb_palette_black <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0
 # Singular component or PCA
 SC <- FALSE
 
-if(SC) {
+if (SC) {
   pca_name <- "PCA_normal"
   comp <- "SC"
 } else {
@@ -41,17 +41,25 @@ m <- 122
 ## ---- fig-fred-md-line ----
 mse <- qs::qread(pa_fredmd("mse.qs"))
 plot_mse <- mse %>%
-  filter(!model %in% "ets",
-         !grepl("ets", Phi),
-         h %in% c(1, 6, 12)) %>%
-  ggplot(aes(x = p, y = value,
-             colour = model,
-             linetype = paste(proj, Phi, sep = "."))) +
+  filter(
+    !model %in% "ets",
+    !grepl("ets", Phi),
+    h %in% c(1, 6, 12)
+  ) %>%
+  ggplot(aes(
+    x = p, y = value,
+    colour = model,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
   geom_vline(xintercept = m) +
-  geom_hline(data = \(df) filter(df, !proj),
-             aes(yintercept = value,
-                 colour = model,
-                 linetype = paste(proj, Phi, sep = "."))) +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      colour = model,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
   geom_line() +
   # facet_wrap("h", scales = "free", labeller = label_both) +
   facet_grid(rows = "h", scales = "free", labeller = label_both) +
@@ -67,15 +75,20 @@ plot_mse <- mse %>%
       !!sym(paste0("TRUE.", pca_name)) := paste0(comp, "+Norm."),
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
-    )) +
+    )
+  ) +
   scale_color_manual(
     name = "Model",
     values = cb_palette_grey[c(7, 6)],
     labels = c(
       "arima" = "ARIMA",
-      "dfm" = "DFM")) +
-  theme(plot.background = element_blank(),
-        legend.background = element_blank()) +
+      "dfm" = "DFM"
+    )
+  ) +
+  theme(
+    plot.background = element_blank(),
+    legend.background = element_blank()
+  ) +
   scale_x_continuous(expand = expansion(mult = 0))
 plot_mse
 ## ---- fig-fred-md-mcb-series ----
@@ -118,27 +131,30 @@ mse_series_mat_ls <- lst(!!!syms(names(name_vec))) %>%
 # tsutils::nemenyi(mse_series_mat_ls[[1]], plottype = "vmcb")
 
 
-mcb_df_ls <-  mse_series_mat_ls %>%
+mcb_df_ls <- mse_series_mat_ls %>%
   lapply(tsutils::nemenyi, plottype = "none") %>%
   lapply(\(x) as.data.frame(x) %>%
-           mutate(name = name_vec[name]) %>%
-           mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
-           mutate(col =
-                    (u[[which.min(value)]] <=u &
-                       u[[which.min(value)]] >=l) |
-                    (u[[which.min(value)]] >=u &
-                       l[[which.min(value)]] <=u)
-           ))
+    mutate(name = name_vec[name]) %>%
+    mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
+    mutate(
+      col =
+        (u[[which.min(value)]] <= u &
+          u[[which.min(value)]] >= l) |
+          (u[[which.min(value)]] >= u &
+            l[[which.min(value)]] <= u)
+    ))
 
 plot_mcb_series <- mcb_df_ls %>%
   bind_rows(.id = "h") %>%
   mutate(h = as.integer(h)) %>%
   filter(h %in% c(1, 6, 12)) %>%
-  mutate(name = factor(name,unique(name), ordered = TRUE)) %>%
+  mutate(name = factor(name, unique(name), ordered = TRUE)) %>%
   group_by(h) %>%
   plot_mcb("Benchmark") +
-  facet_wrap("h", scales = "free", labeller = label_both, ncol = 1,
-             strip.position = "right")
+  facet_wrap("h",
+    scales = "free", labeller = label_both, ncol = 1,
+    strip.position = "right"
+  )
 plot_mcb_series
 
 ## ---- visnights ----
@@ -150,12 +166,18 @@ p <- 200
 mse <- qs::qread(pa_visnights("mse.qs"))
 plot_mse <- mse %>%
   filter(h %in% c(1, 6, 12)) %>%
-  ggplot(aes(x = p, y = value,
-             linetype = paste(proj, Phi, sep = "."))) +
+  ggplot(aes(
+    x = p, y = value,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
   geom_vline(xintercept = m) +
-  geom_hline(data = \(df) filter(df, !proj),
-             aes(yintercept = value,
-                 linetype = paste(proj, Phi, sep = "."))) +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
   geom_line() +
   # facet_wrap("h", scales = "free", labeller = label_both) +
   facet_grid(rows = "h", scales = "free", labeller = label_both) +
@@ -171,9 +193,12 @@ plot_mse <- mse %>%
       !!sym(paste0("TRUE.", pca_name)) := paste0(comp, "+Norm."),
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
-    )) +
-  theme(plot.background = element_blank(),
-        legend.background = element_blank()) +
+    )
+  ) +
+  theme(
+    plot.background = element_blank(),
+    legend.background = element_blank()
+  ) +
   scale_x_continuous(expand = expansion(mult = 0))
 plot_mse
 ## ---- fig-visnights-mcb-series ----
@@ -212,17 +237,18 @@ mse_series_mat_ls <- lst(!!!syms(names(name_vec))) %>%
 # tsutils::nemenyi(mse_series_mat_ls[[1]], plottype = "vmcb")
 
 
-mcb_df_ls <-  mse_series_mat_ls %>%
+mcb_df_ls <- mse_series_mat_ls %>%
   lapply(tsutils::nemenyi, plottype = "none") %>%
   lapply(\(x) as.data.frame(x) %>%
-           mutate(name = name_vec[name]) %>%
-           mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
-           mutate(col =
-                    (u[[which.min(value)]] <=u &
-                       u[[which.min(value)]] >=l) |
-                    (u[[which.min(value)]] >=u &
-                       l[[which.min(value)]] <=u)
-           ))
+    mutate(name = name_vec[name]) %>%
+    mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
+    mutate(
+      col =
+        (u[[which.min(value)]] <= u &
+          u[[which.min(value)]] >= l) |
+          (u[[which.min(value)]] >= u &
+            l[[which.min(value)]] <= u)
+    ))
 
 plot_mcb_series <- mcb_df_ls %>%
   imap(\(df, i) mutate(df, name_unique = paste(name, i))) %>%
@@ -232,8 +258,10 @@ plot_mcb_series <- mcb_df_ls %>%
   mutate(name = factor(name_unique, unique(name_unique), ordered = TRUE)) %>%
   group_by(h) %>%
   plot_mcb("Benchmark") +
-  facet_wrap("h", scales = "free", labeller = label_both, ncol = 1,
-             strip.position = "right") +
+  facet_wrap("h",
+    scales = "free", labeller = label_both, ncol = 1,
+    strip.position = "right"
+  ) +
   scale_y_discrete(labels = \(x) gsub("[[:space:]][[:digit:]]{1,2}$", "", x))
 plot_mcb_series
 
@@ -245,17 +273,25 @@ p <- 300
 ## ---- fig-simulation-line ----
 mse <- qs::qread(pa_simulation("mse.qs"))
 plot_mse <- mse %>%
-  filter(model %in% c("arima", "dfm", "var", "true"),
-         h %in% c(1, 6, 12)) %>%
+  filter(
+    model %in% c("arima", "dfm", "var", "true"),
+    h %in% c(1, 6, 12)
+  ) %>%
   # {print(distinct(., model, Phi))}
-  ggplot(aes(x = p, y = value,
-             colour = model,
-             linetype = paste(proj, Phi, sep = ".")))+
+  ggplot(aes(
+    x = p, y = value,
+    colour = model,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
   geom_vline(xintercept = m) +
-  geom_hline(data = \(df) filter(df, !proj),
-             aes(yintercept = value,
-                 colour = model,
-                 linetype = paste(proj, Phi, sep = "."))) +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      colour = model,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
   geom_line() +
   # facet_wrap("h", scales = "free", labeller = label_both) +
   facet_grid(rows = "h", labeller = label_both) +
@@ -271,7 +307,8 @@ plot_mse <- mse %>%
       !!sym(paste0("TRUE.", pca_name)) := paste0(comp, "+Norm."),
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
-    )) +
+    )
+  ) +
   scale_color_manual(
     name = "Model",
     values = cb_palette_grey[c(7, 6, 4, 2)],
@@ -279,9 +316,13 @@ plot_mse <- mse %>%
       "arima" = "ARIMA",
       "dfm" = "DFM",
       "true" = "VAR - DGP",
-      "var" = "VAR - Est.")) +
-  theme(plot.background = element_blank(),
-        legend.background = element_blank()) +
+      "var" = "VAR - Est."
+    )
+  ) +
+  theme(
+    plot.background = element_blank(),
+    legend.background = element_blank()
+  ) +
   scale_x_continuous(expand = expansion(mult = 0))
 plot_mse
 ## ---- fig-simulation-mcb-series ----
@@ -294,7 +335,7 @@ mse_var_series <- qs::qread(pa_simulation("mse_var_series.qs"))
 mse_proj_arima_normal_series <- qs::qread(pa_simulation("mse_proj_arima_normal_series.qs"))
 mse_proj_arima_ortho_normal_series <- qs::qread(pa_simulation("mse_proj_arima_ortho_normal_series.qs"))
 mse_proj_arima_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_uniform_series.qs"))
-if(SC) {
+if (SC) {
   mse_proj_arima_series <- qs::qread(pa_simulation("mse_proj_arima_series.qs"))
   mse_proj_dfm_series <- qs::qread(pa_simulation("mse_proj_dfm_series.qs"))
   mse_proj_arima_pca_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_pca_uniform_series.qs"))
@@ -342,28 +383,31 @@ mse_series_mat_ls <- lst(!!!syms(names(name_vec))) %>%
 # tsutils::nemenyi(mse_series_mat_ls[[1]], plottype = "vmcb")
 
 
-mcb_df_ls <-  mse_series_mat_ls %>%
+mcb_df_ls <- mse_series_mat_ls %>%
   lapply(tsutils::nemenyi, plottype = "none") %>%
   lapply(\(x) as.data.frame(x) %>%
-           mutate(name = name_vec[name]) %>%
-           mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
-           mutate(col =
-                    (u[[which.min(value)]] <=u &
-                       u[[which.min(value)]] >=l) |
-                    (u[[which.min(value)]] >=u &
-                       l[[which.min(value)]] <=u)
-           ))
+    mutate(name = name_vec[name]) %>%
+    mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
+    mutate(
+      col =
+        (u[[which.min(value)]] <= u &
+          u[[which.min(value)]] >= l) |
+          (u[[which.min(value)]] >= u &
+            l[[which.min(value)]] <= u)
+    ))
 
 plot_mcb_series <- mcb_df_ls %>%
   bind_rows(.id = "h") %>%
   mutate(h = as.integer(h)) %>%
   filter(h %in% c(1, 6, 12)) %>%
   mutate(name = paste0(sprintf("%002d", h), name)) %>%
-  mutate(name = factor(name,unique(name), ordered = TRUE)) %>%
+  mutate(name = factor(name, unique(name), ordered = TRUE)) %>%
   group_by(h) %>%
   plot_mcb("Benchmark") +
-  facet_wrap("h", scales = "free", labeller = label_both, ncol = 1,
-             strip.position = "right") +
+  facet_wrap("h",
+    scales = "free", labeller = label_both, ncol = 1,
+    strip.position = "right"
+  ) +
   scale_y_discrete(labels = \(x) substr(x, 3, 1e4))
 plot_mcb_series
 

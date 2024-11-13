@@ -8,6 +8,8 @@
 # targets::tar_make()
 # targets::tar_make_clustermq(workers = 2) # nolint
 setwd("~/bw51/tourism/projection")
-targets::tar_make_future(workers = 240,
-                         reporter = "timestamp_positives") # nolint
+targets::tar_make_future(
+  workers = 240,
+  reporter = "timestamp_positives"
+) # nolint
 source("output.R")

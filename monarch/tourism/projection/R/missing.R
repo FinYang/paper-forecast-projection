@@ -15,9 +15,8 @@ em_fill_df <- function(df) {
 # American Statistical Association 20 (2): 147–62.
 # Appendix A A
 em_fill <- function(mat, p = 8, maxit = 50) {
-
   err <- 999
-  for(i in seq_len(maxit)) {
+  for (i in seq_len(maxit)) {
     vec_mean <- colMeans(mat, na.rm = TRUE)
     vec_sd <- apply(mat, 2, sd, na.rm = TRUE)
     mat <- sweep(mat, 2, vec_mean)
@@ -29,7 +28,7 @@ em_fill <- function(mat, p = 8, maxit = 50) {
     lambda <- pca$rotation[, seq_len(p)] # * sqrt(nrow(mat))
     f <- pca$x[, seq_len(p)]
     pred_mat <- tcrossprod(f, lambda)
-    if(i > 1){
+    if (i > 1) {
       dif <- pred_mat - last_mat
       err <- crossprod(c(dif)) / crossprod(c(last_mat))
     }
@@ -38,7 +37,7 @@ em_fill <- function(mat, p = 8, maxit = 50) {
     mat[miss_mat] <- pred_mat[miss_mat]
     mat <- sweep(mat, 2, vec_sd, FUN = "*")
     mat <- sweep(mat, 2, vec_mean, FUN = "+")
-    if(err < 1e-6) break
+    if (err < 1e-6) break
   }
   mat
 }

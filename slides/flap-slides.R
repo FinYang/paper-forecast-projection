@@ -6,7 +6,8 @@ cb_palette_black <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0
 theme_set(theme(
   plot.background = element_blank(),
   legend.background = element_blank(),
-  text = element_text(size = 21)))
+  text = element_text(size = 21)
+))
 ## ---- data ----
 visnights <- read_csv("../data-raw/visnights_monthly.csv") %>%
   mutate(Month = yearmonth(Month)) %>%
@@ -34,7 +35,7 @@ p_syd_mel <- visnights %>%
   ggplot() +
   geom_line(aes(x = Month, y = Nights, colour = Region)) +
   # facet_grid("Region", scales = "free") +
-  scale_y_log10()  +
+  scale_y_log10() +
   theme(legend.position = "bottom") +
   scale_color_manual(
     values = cb_palette_grey[c(6, 7)]
@@ -63,8 +64,9 @@ visnights_wide %>%
   getElement("x") %>%
   bind_cols(col_month, .) %>%
   pivot_longer(-Month,
-               names_to = "Component",
-               values_to = "Value") %>%
+    names_to = "Component",
+    values_to = "Value"
+  ) %>%
   filter(Component %in% unique(Component)[seq_len(4)]) %>%
   ggplot() +
   geom_line(aes(x = Month, y = Value)) +
@@ -83,21 +85,25 @@ n_comp <- length(proj_ets_pca_normal)
 region_idx <- match(regions, visnights$Region)
 last_periods <- visnights %>%
   distinct(Month) %>%
-  slice_tail(n=12) %>%
+  slice_tail(n = 12) %>%
   pull(Month)
 
 proj_fc <- proj_ets_pca_normal %>%
-  lapply(\(x) x[,region_idx]) %>%
+  lapply(\(x) x[, region_idx]) %>%
   do.call(rbind, .) %>%
   `colnames<-`(regions) %>%
   as_tibble() %>%
-  mutate(Month = rep(last_periods, n_comp),
-         p = rep(seq_len(n_comp), each = 12))
-fc <- fc_ets[,region_idx] %>%
-`colnames<-`(regions) %>%
+  mutate(
+    Month = rep(last_periods, n_comp),
+    p = rep(seq_len(n_comp), each = 12)
+  )
+fc <- fc_ets[, region_idx] %>%
+  `colnames<-`(regions) %>%
   as_tibble() %>%
-  mutate(Month = last_periods,
-         p = 0)
+  mutate(
+    Month = last_periods,
+    p = 0
+  )
 fcs <- bind_rows(fc, proj_fc) %>%
   pivot_longer(all_of(regions), names_to = "Region", values_to = "Nights")
 
@@ -108,23 +114,33 @@ visnights %>%
   ungroup() %>%
   bind_rows(fcs) %>%
   ggplot() +
-  geom_line(aes(x = Month, y = Nights,
-                colour = p, group = p)) +
+  geom_line(aes(
+    x = Month, y = Nights,
+    colour = p, group = p
+  )) +
   facet_grid("Region", scales = "free") +
-  scale_colour_gradient(low = "#56B1F7",
-                        high = "#132B43")
+  scale_colour_gradient(
+    low = "#56B1F7",
+    high = "#132B43"
+  )
 
 ## ---- visnights ----
 m <- 77
 qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
   filter(h %in% c(1, 6, 12)) %>%
-  ggplot(aes(x = p, y = value,
-             linetype = paste(proj, Phi, sep = "."))) +
+  ggplot(aes(
+    x = p, y = value,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
   geom_vline(xintercept = m) +
   geom_line() +
-  geom_hline(data = \(df) filter(df, !proj),
-             aes(yintercept = value,
-                 linetype = paste(proj, Phi, sep = "."))) +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
   # facet_wrap("h", scales = "free", labeller = label_both) +
   facet_grid(rows = "h", scales = "free", labeller = label_both) +
   ylab("MSE") +
@@ -139,22 +155,30 @@ qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
       "TRUE.PCA_normal" = "PCA+Norm.",
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
-    ))
+    )
+  )
 
 ## ---- fred-md ----
 m <- 122
 qs::qread("../monarch/fred-md/projection/output/mse.qs") %>%
   filter(
-    !model %in% c("ets","arima"),
+    !model %in% c("ets", "arima"),
     !grepl("ets", Phi),
-    h %in% c(1, 6, 12)) %>%
-  ggplot(aes(x = p, y = value,
-             linetype = paste(proj, Phi, sep = "."))) +
+    h %in% c(1, 6, 12)
+  ) %>%
+  ggplot(aes(
+    x = p, y = value,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
   geom_vline(xintercept = m) +
   geom_line() +
-  geom_hline(data = \(df) filter(df, !proj),
-             aes(yintercept = value,
-                 linetype = paste(proj, Phi, sep = "."))) +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
   # facet_wrap("h", scales = "free", labeller = label_both) +
   facet_grid(rows = "h", scales = "free", labeller = label_both) +
   ylab("MSE") +
@@ -169,30 +193,40 @@ qs::qread("../monarch/fred-md/projection/output/mse.qs") %>%
       "TRUE.PCA_normal" = "PCA+Norm.",
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
-    ))
+    )
+  )
 
 ## ---- simulation ----
 
 m <- 70
 
-pa_simulation <- function(...)
+pa_simulation <- function(...) {
   file.path("../monarch/simulation/projection/output/", ...)
+}
 mse <- qs::qread(pa_simulation("mse.qs"))
 
 mse %>%
-  filter(model %in% c("arima", "dfm", "var", "true"),
-         Phi %in% c("PCA_normal") | is.na(Phi),
-         h %in% c(1, 6)) %>%
+  filter(
+    model %in% c("arima", "dfm", "var", "true"),
+    Phi %in% c("PCA_normal") | is.na(Phi),
+    h %in% c(1, 6)
+  ) %>%
   # {print(distinct(., model, Phi))}
-  ggplot(aes(x = p, y = value,
-             colour = model,
-             linetype = paste(proj, Phi, sep = ".")))+
+  ggplot(aes(
+    x = p, y = value,
+    colour = model,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
   geom_vline(xintercept = m) +
   geom_line() +
-  geom_hline(data = \(df) filter(df, !proj),
-             aes(yintercept = value,
-                 colour = model,
-                 linetype = paste(proj, Phi, sep = "."))) +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      colour = model,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
   # facet_wrap("h", scales = "free", labeller = label_both) +
   facet_grid(rows = "h", scales = "free", labeller = label_both) +
   ylab("MSE") +
@@ -207,7 +241,8 @@ mse %>%
       "TRUE.PCA_normal" = "PCA+Norm.",
       "FALSE.NA" = "No Proj.",
       "TRUE.normal" = "Norm."
-    )) +
+    )
+  ) +
   scale_color_manual(
     name = "Model",
     values = cb_palette_grey[c(7, 6, 4, 2)],
@@ -215,5 +250,6 @@ mse %>%
       "arima" = "ARIMA",
       "dfm" = "DFM",
       "true" = "VAR - DGP",
-      "var" = "VAR - Est."))
-
+      "var" = "VAR - Est."
+    )
+  )

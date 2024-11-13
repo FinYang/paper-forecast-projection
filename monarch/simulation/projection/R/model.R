@@ -2,8 +2,10 @@ arima <- function(mat, .h) {
   fit_ls <- mat %>%
     apply(2, \(x) forecast::auto.arima(x), simplify = FALSE)
   out <- fit_ls %>%
-    lapply(\(fit) list(fc = forecast(fit, h = .h)$mean,
-                       res = lapply(seq_len(.h), \(.h) residuals_fast(fit, type = "response", h = .h))))
+    lapply(\(fit) list(
+      fc = forecast(fit, h = .h)$mean,
+      res = lapply(seq_len(.h), \(.h) residuals_fast(fit, type = "response", h = .h))
+    ))
   out
 }
 
@@ -11,10 +13,11 @@ arima2 <- function(mat, .h) {
   fit_ls <- mat %>%
     apply(2, \(x) forecast::auto.arima(x), simplify = FALSE)
   out <- fit_ls %>%
-    lapply(\(fit) list(fc = forecast(fit, h = .h)$mean,
-                       fitted =lapply(seq_len(.h), \(.h) fitted_fast(fit, h = .h))
-                       ) %>%
-             c(list(res = lapply(.$fitted, \(fits)getResponse(fit) - fits))))
+    lapply(\(fit) list(
+      fc = forecast(fit, h = .h)$mean,
+      fitted = lapply(seq_len(.h), \(.h) fitted_fast(fit, h = .h))
+    ) %>%
+      c(list(res = lapply(.$fitted, \(fits)getResponse(fit) - fits))))
   out
 }
 
@@ -44,52 +47,52 @@ get_fitted <- function(obj) {
 }
 
 residuals_fast <- function(object, h = 1, ...) {
-  if(h == 1){
+  if (h == 1) {
     return(object$residuals)
   }
-  y <- object$fitted+residuals(object, "innovation")
+  y <- object$fitted + residuals(object, "innovation")
   yx <- residuals(object, "regression")
   # Get fitted model
   mod <- object$model
   # Reset model to initial state
-  mod <-  stats::makeARIMA(mod$phi, mod$theta, mod$Delta)
+  mod <- stats::makeARIMA(mod$phi, mod$theta, mod$Delta)
   # Calculate regression component
-  xm <- y-yx
+  xm <- y - yx
   # mod_seq <- mod
   fits <- rep_len(NA_real_, length(y))
 
   start <- length(mod$Delta) + 1
   end <- length(yx) - h
-  idx <- if(start > end) integer(0L) else start:end
-  for(i in idx) {
+  idx <- if (start > end) integer(0L) else start:end
+  for (i in idx) {
     fc_mod <- attr(stats::KalmanRun(yx[seq_len(i)], mod, update = TRUE), "mod")
-    fits[i + h] <- stats::KalmanForecast(h, fc_mod)$pred[h] + xm[i+h]
+    fits[i + h] <- stats::KalmanForecast(h, fc_mod)$pred[h] + xm[i + h]
   }
   tsp(fits) <- tsp(object$x)
   getResponse(object) - fits
 }
 
 fitted_fast <- function(object, h = 1, ...) {
-  if(h == 1){
+  if (h == 1) {
     return(object$fitted)
   }
-  y <- object$fitted+residuals(object, "innovation")
+  y <- object$fitted + residuals(object, "innovation")
   yx <- residuals(object, "regression")
   # Get fitted model
   mod <- object$model
   # Reset model to initial state
-  mod <-  stats::makeARIMA(mod$phi, mod$theta, mod$Delta)
+  mod <- stats::makeARIMA(mod$phi, mod$theta, mod$Delta)
   # Calculate regression component
-  xm <- y-yx
+  xm <- y - yx
   # mod_seq <- mod
   fits <- rep_len(NA_real_, length(y))
 
   start <- length(mod$Delta) + 1
   end <- length(yx) - h
-  idx <- if(start > end) integer(0L) else start:end
-  for(i in idx) {
+  idx <- if (start > end) integer(0L) else start:end
+  for (i in idx) {
     fc_mod <- attr(stats::KalmanRun(yx[seq_len(i)], mod, update = TRUE), "mod")
-    fits[i + h] <- stats::KalmanForecast(h, fc_mod)$pred[h] + xm[i+h]
+    fits[i + h] <- stats::KalmanForecast(h, fc_mod)$pred[h] + xm[i + h]
   }
   tsp(fits) <- tsp(object$x)
   fits

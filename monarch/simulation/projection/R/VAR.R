@@ -18,16 +18,15 @@
 #   all.equal(fc)
 
 var_est <- function(mat, .n_lag, .forecast_h) {
-
   obj <- lineVar(mat, lag = .n_lag)
   fc <- predict(obj, tail(mat, .n_lag), n.ahead = .forecast_h)
   # fitted(obj)
   # head(residuals(obj))
-  resid <- vector("list", nrow(mat)-.n_lag)
+  resid <- vector("list", nrow(mat) - .n_lag)
   mat_na <- rbind(mat, matrix(NA, nrow = .forecast_h, ncol = NCOL(mat)))
-  for(i in seq(1, nrow(mat)-.n_lag)){
+  for (i in seq(1, nrow(mat) - .n_lag)) {
     resid[[i]] <- mat_na[seq(i + .n_lag, length.out = .forecast_h), ] -
-      predict(obj, mat[seq(i, length.out = .n_lag),], n.ahead = .forecast_h)
+      predict(obj, mat[seq(i, length.out = .n_lag), ], n.ahead = .forecast_h)
   }
   res <- resid %>%
     list2array() %>%
@@ -36,14 +35,17 @@ var_est <- function(mat, .n_lag, .forecast_h) {
     map2(
       seq_along(.),
       \(x, i) {
-        nrow_na <- i-1
-        if(nrow_na == 0) return(x)
-        rbind(matrix(nrow = nrow_na, ncol = ncol(x)),
-              head(x, -nrow_na))
+        nrow_na <- i - 1
+        if (nrow_na == 0) {
+          return(x)
+        }
+        rbind(
+          matrix(nrow = nrow_na, ncol = ncol(x)),
+          head(x, -nrow_na)
+        )
       }
     ) %>%
     lapply(\(x) rbind(matrix(nrow = .n_lag, ncol = ncol(x)), x))
   # all.equal(res[[1]][-seq_len(.n_lag),], residuals(obj))
   list(fc = fc, res = res)
-
 }
