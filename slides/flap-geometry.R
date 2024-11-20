@@ -42,9 +42,9 @@ project <- function(p, l, W = diag(2)) {
 }
 
 # colours
-col_hat <- "blue"
-col_til <- "red"
-col_proj <- "blue"
+col_hat <- "#0063a7"
+col_til <- "#cc5900"
+col_proj <- "#0063a7"
 
 
 insert_figure <- function(file) {
@@ -247,7 +247,6 @@ line(c(3, -0.8), c(3, 6), lty = "dashed", col = col_hat)
 line(y, c, lty = "dashed")
 
 arrow(chat, ctil, col = col_proj)
-arrow(ctil, ytil, col = col_til)
 
 
 
