@@ -20,6 +20,8 @@ format:
     colortheme: monashwhite
 header-includes:
   - \usepackage{bm}
+  - \usepackage{amsfonts}
+  - \usepackage{tikz}
   - \usepackage[makeroom]{cancel}
   - \widowpenalties 1 150
   - \def\Var{\operatorname{Var}}
@@ -175,18 +177,6 @@ $$
 ```
 
 
-## Unbiasedness
-
-\begin{alertblock}{Unbiasedness}
-If the base forecasts are unbiased, then the FLAP forecasts are also unbiased.
-\end{alertblock}
-
-### Projection matrix
-
-1. The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}\bm{z}_t=\bm{0}$ is satisfied.
-1. The projected forecast $\tilde{\bm{z}}_{t+h}$ satisfies the constraint $\bm{C}\tilde{\bm{z}}_{t+h}=\bm{0}$.
-1. For $\bm{z}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{z}_{t+h} = \bm{z}_{t+h}$ 
-
 
 ## Nonnegative variance reduction
 
@@ -197,6 +187,112 @@ $$
 &= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 \end{aligned}
 $$
+
+
+## Projection matrix
+
+\begin{alertblock}{Projection matrix}
+The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}\bm{z}_t=\bm{0}$ is satisfied.
+\end{alertblock}
+
+### Properties
+
+1. The projected forecast $\tilde{\bm{z}}_{t+h}$ satisfies the constraint $\bm{C}\tilde{\bm{z}}_{t+h}=\bm{0}$.
+1. For $\bm{z}_{t+h}$ that already satisfies the constraint, the projection does not change its value: $\bm{M}\bm{z}_{t+h} = \bm{z}_{t+h}$ 
+1. If the base forecasts are unbiased, then the FLAP forecasts are also unbiased.
+
+## Geometry of FLAP
+
+```{r geometry}
+#| cache: false
+knitr::read_chunk("flap-geometry.R")
+```
+
+```{r geometry-load}
+#| cache: false
+```
+
+
+```{r ortho-1}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+
+## Geometry of FLAP
+```{r ortho-2}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+
+## Geometry of FLAP
+```{r ortho-3}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+
+## Geometry of FLAP
+```{r ortho-4}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+
+## Geometry of FLAP
+```{r ortho-5}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+## Geometry of FLAP
+```{r obliq-1}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+## Geometry of FLAP
+```{r obliq-2}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+## Geometry of FLAP
+```{r obliq-3}
+#| cache: false
+#| output: false
+```
+```{r geom-out}
+#| cache: false
+#| output: asis
+```
+
+
+
+
+
 
 ## Example $\bm{W}_h = \bm{I}_{m+p}$
 
@@ -232,11 +328,10 @@ For the first component to have a guaranteed reduction of forecast error varianc
 $$
 \bm{\phi}_1\bm{W}_{y,h}\neq\bm{w}_{c_1y,h},
 $$
-<!-- where $\bm{\phi}_1$ is the weight vector of the first component, $\bm{W}_{z,h} = \Var(\hat{\bm{z}_{t+h}})$, and $\bm{w}_{c_1z,h}$ is the forecast covariance between the first component and the original series. -->
 
 * $\bm{\phi}_1$ is the weight vector of the first component
 * $\bm{W}_{y,h} = \Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h})$ 
-* $\bm{w}_{c_1y,h}$ is the forecast covariance between the first component and the original series.
+* $\bm{w}_{c_1y,h}$ is the forecast error covariance between the first component and the original series.
 
 
 ## Monotonicity
@@ -273,7 +368,7 @@ where $\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix} = \big[\bm{s}_1
 1. The forecast error variance __monotonically__ decreases with increasing number of components
 1. The forecast projection is __optimal__ to achieve minimum forecast error variance of each series
 
-## Estimation
+## In practice, we need to
 
 $$
 \tilde{\bm{y}}_{t+h} = \bm{J}\tilde{\bm{z}}_{t+h} = \bm{J}\bm{M}\hat{\bm{z}}_{t+h}
@@ -293,8 +388,8 @@ $$
 \end{aligned}
 $$
 
-* Estimation of $\bm{W}_h$
-* Construction of $\bm{\Phi}$
+* Estimate $\bm{W}_h$
+* Construct $\bm{\Phi}$
 
 
 ## Estimation of $\bm{W}_h$
@@ -348,13 +443,13 @@ Generating values from a random distribution and normalising them to unit vector
 
 ```{r simulation}
 ```
-
+<!-- 
 ## Future research directions
 
 * Investigate why PCA performs better than random weights
 * Find other components that are better than PCA
 * Find optimal components by minimising forecast error variance with respect to $\bm{\Phi}$
-* Use forecast projection and forecast reconciliation together
+* Use forecast projection and forecast reconciliation together -->
 
 ## R Package `flap`
 
@@ -370,15 +465,18 @@ or the development version from Github
 remotes::install_github("FinYang/flap")
 ```
 
-## Contact
+## Working paper and contact
 
-- Email: Fin.Yang@monash.edu
-- https://yangzhuoranyang.com
+- [yangzhuoranyang.com/publication/flap/](https://yangzhuoranyang.com/publication/flap/)
+
 ```{r}
 #| fig-align: center
-#| out-width: 220px
+#| out-width: 180px
 knitr::include_graphics("qr-code.png")
 ```
+
+- Email: [Fin.Yang@monash.edu](mailto:Fin.Yang@monash.edu)
+- [yangzhuoranyang.com](https://yangzhuoranyang.com)
 
 ## References {.allowframebreaks}
 

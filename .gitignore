@@ -16,3 +16,4 @@ nul
 _ul
 .quarto/*
 paper-forecast-projection.Rproj
+.DS_Store
