@@ -129,7 +129,7 @@ m <- 77
 qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
   filter(
     h %in% c(1, 6, 12),
-    model == "ets_h"
+    model != "ets_h"
   ) %>%
   ggplot(aes(
     x = p, y = value,
