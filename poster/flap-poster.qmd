@@ -1,0 +1,299 @@
+---
+title: |
+  \textcolor{red}{F}orecast\
+  \textcolor{red}{L}inear\
+  \textcolor{red}{A}ugmented\
+  \textcolor{red}{P}rojection
+subtitle: "A free lunch to reduce forecast error variance" 
+author: "Yangzhuoran Fin Yang • George Athanasopoulos • Rob&nbsp;J Hyndman • Anastasios Panagiotelis"
+bibliography:
+  - ../references-key.bib
+  - ../references-pkg.bib
+format:
+  pdf:
+    pdf-engine: lualatex
+    template: _template.tex
+    keep-tex: true
+flowfram: draft
+filters:
+  - frame.lua
+environments: [outcome, properties, intuition, package, contact, geometry, application, job, qr]
+execute: 
+  cache: true
+  echo: false
+header-includes:
+  - \usepackage{bm}
+  - \usepackage{amsfonts}
+  - \usepackage{amsmath}
+  - \usepackage{tikz}
+  - \usepackage{fontawesome}
+  - \usepackage{svg}
+  - \usepackage{blindtext}
+  - \usepackage{multicol}
+  - \usepackage[makeroom]{cancel}
+  - \widowpenalties 1 150
+  - \def\Var{\operatorname{Var}}
+  - \def\E{\operatorname{E}}
+  - \def\tr{\operatorname{tr}}
+---
+
+```{r setup}
+#| cache: false
+#| include: false
+knitr::read_chunk("flap-poster.R")
+```
+```{r library}
+#| cache: false
+#| include: false
+```
+```{r layout}
+#| include: false
+#| cache: false
+source('_get-layout.R') # grab frame size information
+# chunk options use inches
+layout <- mutate(layout, across(c(width, height), \(x) x/25.4))
+l <- split(layout, seq_len(nrow(layout)))
+names(l) <- layout$id
+```
+
+```{r data}
+#| include: false
+```
+
+
+::: intuition
+```{r p_hist}
+#| fig-width: !expr 'l$intuition$width'
+#| fig-height: !expr 'l$intuition$width * 3/4'
+#| cache: false
+```
+
+\begin{multicols*}{2}
+
+We have multivariate time series:
+
+\begin{itemize}
+\tightlist
+\item
+  which share similar patterns;
+\item
+  with a better signal-noise ratio in the linear combination
+\end{itemize}
+
+\columnbreak
+Can we find components that:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  are easier to forecast;
+\item
+  can capture possible common signals;
+\item
+  \textbf{can improve forecast of original series}.
+\end{enumerate}
+\end{multicols*}
+
+:::
+
+::: outcome
+# Implementation {.unnumbered}
+
+
+Let $\bm{y}_t\in\bm{R}^m$ be a vector of $m$ observed time series we are interested in forecasting. The FLAP method involves three steps:
+
+1. \textbf{Form components.} Form $\bm{c}_t = \bm{\Phi}\bm{y}_t\in\bm{R}^p$, a vector of $p$ linear combinations of $\bm{y}_t$ at time $t$, where $\bm{\Phi}\in\bm{R}^{p\times m}$. We call $\bm{c}_t$ the components of $\bm{y}_t$ and the component weights $\bm{\Phi}$ are known in the sense that they are chosen by the user of FLAP. Let $\bm{z}_{t} = \big[\bm{y}_t', \bm{c}'_{t}\big]'$ be the concatenation of series $\bm{y}_t$ and components $\bm{c}_{t}$. 
+$\bm{z}_{t}$ will be constrained in the sense that $\bm{C}\bm{z}_t= \bm{c}_{t} - \bm{\Phi}\bm{y}_t = \bm{0}$ for any $t$ where $\bm{C} = \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]$ is referred to as the constraint matrix.
+
+2. \textbf{Generate forecasts.} Denote as $\hat{\bm{z}}_{t+h}$ the $h$-step-ahead base forecast of $\bm{z}_{t}$. The method used to generate forecasts is again selected by the user, and \textbf{any} prediction method can be used. 
+<!-- This can be univariate or multivariate.  -->
+<!-- In the setting where $\bm{z}_t$ are not time series but cross sectional data, any prediction method can be used. In general, the constraints that hold for $\bm{z}_t$ will not hold for $\hat{\bm{z}}_{t+h}$, i.e $\bm{C}\hat{\bm{z}}_{t+h}\neq \bm{0}$ -->
+
+
+```{r series}
+#| fig-width: !expr 'l$outcome$width'
+#| fig-height: 8
+```
+
+
+3. \textbf{Project the base forecasts.} Let $\tilde{\bm{z}}_{t+h}$ be a set of projected forecasts such that,
+$$
+\tilde{\bm{z}}_{t+h} = \bm{M} \hat{\bm{z}}_{t+h}
+$$ {#eq-z_tilde}
+with projection matrix
+$$
+\bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
+$$ {#eq-M}
+where $\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) = \bm{W}_h$ is the forecast error covariance matrix. In practice a plug-in estimate can be used.
+
+```{r series-fc}
+#| fig-width: !expr 'l$outcome$width'
+#| fig-height: 5
+#| cache: false
+```
+
+
+:::
+
+::: properties
+# Theoritical Properties {.unnumbered}
+
+\begin{multicols*}{2}
+
+\textbf{Key results}
+\vspace{1mm}
+
+1. The forecast error variance is \textbf{reduced} with FLAP. The variance reduction matrix is positive semi-definite:
+$$
+\begin{aligned}
+\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) &-\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})\\ 
+&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+\end{aligned}
+$$
+
+2. The forecast error variance \textbf{monotonically} decreases with increasing number of components. The diagonal elements of
+$$
+\begin{aligned}
+\Var(\bm{y}_{t+h} &- \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) \\&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+\end{aligned}
+$$
+is non-decreasing as $p$ increases.
+
+3. The forecast projection is \textbf{optimal} to achieve minimum forecast error variance of each series.
+The projection is equivalent to the mapping
+$$
+\tilde{\bm{y}}_{t+h} = \bm{G}\hat{\bm{z}}_{t+h},
+$$
+where $\bm{G} = \big[\bm{g}_1 ~~ \bm{g}_2 ~~ \dots ~~ \bm{g}_m\big]' \in \mathbb{R}^{m\times (m+p)}$ is the solution to
+$$
+\underset{\bm{G}}{\arg\min}\ \bm{G}\bm{W}_h\bm{G}'
+\qquad \text{s.t. } \bm{G}\bm{S} = \bm{I}
+$$ 
+or
+$$
+\underset{\bm{g}_i}{\arg\min}\ \bm{g}_i'\bm{W}_h\bm{g}_i
+\qquad \text{s.t. } \bm{g}_i'\bm{s}_{j} = \bm{1}(i=j),
+$$
+where $\bm{S} = \begin{bmatrix}\bm{I}_m \\\bm{\Phi}\end{bmatrix} = \big[\bm{s}_1\cdots \bm{s}_m\big]$.
+
+
+\columnbreak 
+
+\textbf{Positive condition}
+
+For the first component to have a \textbf{guaranteed reduction of forecast error variance}, the following condition must be satisfied:
+$$
+\bm{\phi}_1\bm{W}_{y,h}\neq\bm{w}_{c_1y,h},
+$$
+where $\bm{\phi}_1$ is the weight vector of the first component,
+$\bm{W}_{y,h} = \Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h})$,
+and $\bm{w}_{c_1y,h}$ is the forecast error covariance between the first component and the original series.
+
+\textit{A new component reduces the error variance as long as the its forecast covariance with the original series cannot be expressed as a linear combination of the forecast covariance between the already existing time series, in which case it adds no information.}
+
+\vspace{1mm}
+\textbf{Example $\bm{W}_h = \bm{I}_{m+p}$}
+
+$$
+\begin{aligned}
+\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) &-\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})\\ 
+&= \bm{J}\bm{C}'(\bm{C}\bm{C}')^{-1}\bm{C}\bm{J}'\\
+&= \bm{\Phi}'
+(\bm{\Phi}\bm{\Phi}' + \bm{I})^{-1}
+\bm{\Phi}
+\end{aligned}
+$$
+
+Let $\bm{\Phi}$ consist of orthogonal unit vectors:
+$$
+\begin{aligned}
+\bm{\Phi}\bm{\Phi}' &= \bm{I}_p\text{ when } p\le m\\
+\bm{\Phi}'\bm{\Phi} &= \bm{I}_m\text{ when } p= m.
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\tr(\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) &-\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})) \\
+&=\frac{1}{2}tr(\bm{\Phi}'\bm{\Phi})=\frac{1}{2}p
+\end{aligned}
+$$
+
+\end{multicols*}
+<!-- \columnbreak -->
+
+:::
+
+::: application
+
+# Applications {.unnumbered}
+
+We estimate $\bm{W}_h$ using a shrinkage estimator to ensure positive definitness and numerical stability.  
+We construct $\bm{\Phi}$ using principal component analysis (PCA) and simulations from random distributions.
+
+
+```{r application}
+#| fig-width: !expr 'l$application$width'
+#| fig-height: 5
+#| cache: false
+```
+
+:::
+::: package
+
+``` r
+## R package availabe on CRAN!
+## CRAN.R-project.org/package=flap
+install.packages("flap")
+```
+:::
+::: contact
+
+```{r}
+#| include: false
+#| eval: false
+# install.packages("rsvg")
+rsvg::rsvg_pdf("figs/bluesky.svg", "figs/bluesky.pdf")
+```
+
+\href{https://yangzhuoranyang.com}{\faicon{home} yangzhuoranyang.com}
+
+
+\href{https://github.com/finyang}{\faicon{github}  @FinYang}
+
+\href{https://bsky.app/profile/yangzhuoranyang.bsky.social}{\includegraphics[width=.9cm]{figs/bluesky} @yangzhuoranyang.bsky.social}
+
+\href{mailto:yangzhuoran.yang@monash.edu}{\faicon{envelope}  yangzhuoran.yang@monash.edu}
+
+:::
+::: job
+\null\hfill I am looking for a job!  \faicon{arrow-right}
+:::
+
+::: qr
+![QR code of the working paper](../slides/qr-code.png){width="`r l$qr$width`in" height="`r l$qr$height`in"}\
+:::
+
+::: geometry
+
+\textbf{Projection matrix}
+The matrix $\bm{M}$ is a projection onto the space where the constraint $\bm{C}\bm{z}_t=\bm{0}$ is satisfied.
+
+<!-- \begin{multicols*}{4}
+\end{multicols*} -->
+
+```{r}
+#| include: false
+source("flap-geometry.R")
+```
+\includegraphics[width=0.25\textwidth]{geometry/ortho}
+\includegraphics[width=0.25\textwidth]{geometry/obliq-1}
+\includegraphics[width=0.25\textwidth]{geometry/obliq-2}
+\includegraphics[width=0.25\textwidth]{geometry/obliq-3}
+
+
+:::
+
+ <!-- remove empty page with lualatex-->
+\let\clearpage\relax

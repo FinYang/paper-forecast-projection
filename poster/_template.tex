@@ -1,0 +1,123 @@
+% Adopted from https://github.com/baptiste/quarto-flowfram
+
+%!TeX program = xelatex
+%!TeX encoding = UTF-8 Unicode
+\documentclass[12pt]{article}
+\usepackage[paperwidth=841mm, paperheight=1189mm, margin=0mm]{geometry}
+\usepackage[]{microtype}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage[no-math]{fontspec}
+\defaultfontfeatures{Mapping=tex-text}
+% \usepackage{unicode-math}
+% \setmainfont[]{Minion 3}
+% \setmonofont[Scale=MatchLowercase]{Iosevka Type Slab}
+% \setmathfont{TeX Gyre DejaVu Math}[Scale=MatchLowercase]
+
+% since pandoc 3.2.1
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+% gpt suggests 36-48
+\usepackage{titlesec}
+\titleformat{\section}
+{\fontsize{36}{36} \addfontfeature{Color=643d35}\scshape\selectfont}
+{\fontsize{36}{36} \addfontfeature{Color=643d35}\scshape\selectfont\thesection}{2em}{}
+
+% macro
+\newcommand{\titlespecs}{\fontsize{200}{200}\addfontfeature{Color=643d35}\scshape\selectfont}
+\newcommand{\subtitlespecs}{\fontsize{80}{12}\itshape \selectfont }
+
+\newcommand{\authorspecs}{\fontsize{40}{40}\addfontfeature{Color=777777}\selectfont}
+% \newcommand{\datespecs}{\fontsize{8}{10}\addfontfeature{Color=643d35}\selectfont\flushright}
+% \newcommand{\imagespecs}{}
+
+% gpt suggests 24-32
+
+% Define the font size as a length
+\newlength{\mainfontsize}
+\setlength{\mainfontsize}{28pt}
+
+% Define the line spacing as a length
+\newlength{\mainlinespacing}
+\setlength{\mainlinespacing}{1.2\mainfontsize}
+
+\newcommand{\intuitionspecs}{\fontsize{\the\mainfontsize}{\the\mainfontsize}\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\outcomespecs}{\fontsize{\the\mainfontsize}{\the\mainlinespacing}\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\propertiesspecs}{\fontsize{\the\mainfontsize}{\the\mainlinespacing}\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\packagespecs}{\fontsize{\the\mainfontsize}{\the\mainlinespacing}\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\geometryspecs}{\fontsize{\the\mainfontsize}{\the\mainlinespacing}\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\applicationspecs}{\fontsize{\the\mainfontsize}{\the\mainlinespacing}\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\contactspecs}{\fontsize{\the\mainfontsize}{\the\mainlinespacing}\ttfamily\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\jobspecs}{\fontsize{40}{\the\mainlinespacing}\addfontfeature{Color=643d35}\selectfont}
+\newcommand{\qrspecs}{\fontsize{\the\mainfontsize}{\the\mainlinespacing}\addfontfeature{Color=643d35}\selectfont}
+
+
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+%%%%%%%%%%%%%%%% whence the frames %%%%%%%%%%%%%%%%%
+\usepackage[$flowfram$]{flowfram} %final
+\input{_layout.tex}
+\setallstaticframes{valign=t}
+\setstaticframe*{title}{valign=c}
+\setstaticframe*{author}{valign=c}
+
+% add dummy flow frames to please the package
+\newflowframe[1]{\textwidth}{0pt}{0pt}{0pt}
+\newflowframe[>1]{\textwidth}{\textheight}{0pt}{0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \usepackage{hyperref} % needed for hypertarget
+\usepackage[]{nohyperref}  % This makes hyperref commands do nothing without errors
+\usepackage{url}
+
+% pandoc stuff
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\tightlist{}
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+\begin{document}
+%
+\begin{staticcontents*}{title}
+  \titlespecs
+  $title$
+\end{staticcontents*}
+
+\begin{staticcontents*}{subtitle}
+  \subtitlespecs
+  $subtitle$
+\end{staticcontents*}
+
+\begin{staticcontents*}{author}
+  \authorspecs
+  $for(author)$
+  $author$
+  $endfor$
+\end{staticcontents*}
+
+% \begin{staticcontents*}{date}
+%   \datespecs
+%   $date$
+%   % \rotatebox{90}{}
+% \end{staticcontents*} % end-flip
+
+$body$
+
+\end{document}

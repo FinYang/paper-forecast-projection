@@ -1,0 +1,3 @@
+project:
+  title: "poster"
+  pre-render: _import-svg.R
