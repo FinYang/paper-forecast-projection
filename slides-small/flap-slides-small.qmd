@@ -1,0 +1,397 @@
+---
+title: "Forecast Linear Augmented Projection (FLAP): A free lunch to reduce forecast error variance"
+author: Yangzhuoran Fin Yang\newline George Athanasopoulos\newline Rob J Hyndman\newline Anastasios Panagiotelis
+titlegraphic: bg-13.png
+titlecolor: white
+toc: false
+keep-tex: true
+format: 
+  presentation-beamer:
+    pdf-engine: pdflatex
+    include-in-header: 
+      text: |
+        \usepackage[dvipsnames]{xcolor}
+        \usepackage{amsmath}
+        \usepackage{bm}
+        \def\Var{\operatorname{Var}}
+        \def\E{\operatorname{E}}
+        \def\tr{\operatorname{tr}}
+execute: 
+  eval: true
+  echo: false
+  cache: true
+titlefontsize: 20pt
+---
+
+
+```{r setup}
+#| cache: false
+knitr::read_chunk("../slides/flap-slides.R")
+```
+```{r library}
+#| cache: false
+```
+```{r data}
+#| cache: true
+```
+
+## Forecast Linear Augmented Projection (FLAP)
+
+```{=tex}
+{\Large Forecasting multiple time series?}
+
+{\LARGE \textcolor[HTML]{D55E00}{FLAP} can imporve your forecasts}
+
+```
+
+\pause
+
+### FLAP
+
+- Model-independent forecast adjustment 
+- Reduces forecast error variance
+- Doesn't need additional data 
+
+
+## Where does this come from
+
+```{r p_hist}
+syd_mel <- visnights %>%
+  filter(Region %in% c("Sydney", "Melbourne")) %>%
+  mutate(scale = "Regions")
+aus <- visnights %>%
+  group_by(Month) %>%
+  summarise(Nights = sum(Nights), .groups = "drop") %>%
+  mutate(
+    scale = "Australia",
+    Region = "Australia"
+  )
+df_hist <- bind_rows(syd_mel, aus) %>% 
+  mutate(scale = factor(scale, levels = c("Regions", "Australia")))
+df_hist %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = Nights, colour = Region)) +
+  # facet_grid("Region", scales = "free") +
+  scale_y_log10() +
+  theme(legend.position = "bottom") +
+  scale_color_manual(
+    values = `names<-`(
+      c(cb_palette_grey[c(6, 7)], "black"),
+      c("Melbourne", "Sydney", "Australia")
+    ),
+    limits = c("Melbourne", "Sydney")
+  ) +
+  facet_grid("scale", scales = "free") +
+  ggtitle("Number of nights spent by Australian visitors") +
+    theme(
+    legend.position = "right"
+  )
+```
+
+
+## How does FLAP work
+
+\vspace{-25pt}
+
+:::: {layout="[ 50,-2, 60 ]"}
+
+::: {#left}
+
+We have time series $\bm{y}_t\in \mathbb{R}^m$
+
+1. Form components $\bm{c}_t = \bm{\Phi}\bm{y}_t \in \mathbb{R}^p$
+
+2. Obtain forecasts $\hat{\bm{z}}_{t+h} = [\hat{\bm{y}}_{t+h}',\hat{\bm{c}}_{t+h}']'$
+
+3. Project: $\tilde{\bm{z}}_{t+h} = \bm{M} \hat{\bm{z}}_{t+h}$
+```{=tex}
+\vspace{-15pt}
+{\small
+$$
+\begin{aligned}
+\bm{M} &= \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\\
+\bm{C} &= \big[- \bm{\Phi} ~~~ \bm{I}_{p}\big]\\
+\bm{W}_h &= \Var(\bm{z}_{t+h} - \hat{\bm{z}}_{t+h})
+\end{aligned}
+$$
+}
+```
+
+:::
+::: {#right}
+
+
+```{r}
+#| out-width: 100%
+library(fable)
+regions <- c("Melbourne", "Central Highlands")
+
+visnights_hist <- visnights %>%
+  filter(Region %in% regions)
+
+
+# visnights_hist %>%
+#   ggplot() +
+#   geom_line(aes(x = Month, y = Nights)) +
+#   facet_grid("Region", scales = "free") +
+#   theme(
+#     axis.text.y = element_blank(),
+#     axis.ticks.y = element_blank()
+#   )
+
+source("../monarch/tourism/projection/R/component.R")
+visnights_wide <- visnights %>%
+  pivot_wider(names_from = Region, values_from = Nights)
+col_month <- select(visnights_wide, Month)
+components <- visnights_wide %>%
+  select(-Month) %>%
+  as.matrix() %>%
+  component() %>%
+  getElement("x") %>%
+  bind_cols(col_month, .) %>%
+  pivot_longer(-Month,
+    names_to = "Component",
+    values_to = "Value"
+  )
+components_hist <- components %>%
+  filter(Component %in% unique(Component)[seq_len(2)])
+
+
+hist_tsb <- bind_rows(
+  rename(visnights_hist,
+    Series = Region,
+    Value = Nights
+  ) %>%
+    mutate(type = "Series"),
+  rename(components_hist, Series = Component) %>%
+    mutate(type = "Components")
+) %>%
+  mutate(Series = factor(Series, levels = c(
+"Melbourne",
+    "PC1",
+    "Central Highlands",
+    "PC2"
+  ))) %>%
+  as_tsibble(index = Month, key = c(Series, type))
+
+mdl <- hist_tsb %>%
+  filter(year(Month) < 2019) %>%
+  model(ETS(Value))
+fbl <- mdl %>%
+  forecast(h = 12)
+hist_tsb %>%
+  filter(year(Month) >= 2015) %>%
+  autoplot(fbl, ., level = NULL, color = cb_palette_grey[[7]]) +
+  # facet_grid(Series ~ type, scales = "free_y")
+  facet_wrap(vars(Series),
+    scales = "free_y",
+    nrow = 2, ncol = 2,
+    strip.position = "right"
+  ) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.spacing = unit(.1, "lines"),
+    plot.margin = unit(c(0, 0, 0, 0), "null"),
+    text = element_text(size = 25)
+  ) +
+  ggtitle(
+    "History and Base Forecast",
+    subtitle = "LEFT: Visitor nights; RIGHT: Principal Components"
+  )
+
+```
+
+```{r}
+
+proj_ets_pca_normal <- qs::qread("../monarch/tourism/projection/output/proj_ets_pca_normal.qs")[[1]]
+fc_ets <- qs::qread("../monarch/tourism/projection/output/fc_ets.qs")[[1]]
+
+n_comp <- length(proj_ets_pca_normal)
+
+
+region_idx <- match(regions, visnights$Region)
+last_periods <- visnights %>%
+  distinct(Month) %>%
+  slice_tail(n = 12) %>%
+  pull(Month)
+
+proj_fc <- proj_ets_pca_normal %>%
+  lapply(\(x) x[, region_idx]) %>%
+  do.call(rbind, .) %>%
+  `colnames<-`(regions) %>%
+  as_tibble() %>%
+  mutate(
+    Month = rep(last_periods, n_comp),
+    p = rep(seq_len(n_comp), each = 12)
+  )
+fc <- fc_ets[, region_idx] %>%
+  `colnames<-`(regions) %>%
+  as_tibble() %>%
+  mutate(
+    Month = last_periods,
+    p = 0
+  )
+fcs <- bind_rows(fc, proj_fc) %>%
+  pivot_longer(all_of(regions), names_to = "Region", values_to = "Nights")
+
+visnights %>%
+  filter(Region %in% regions) %>%
+  group_by(Region) %>%
+  slice_tail(n = 36) %>%
+  ungroup() %>%
+  bind_rows(fcs) %>%
+  filter(Region %in% c("Canberra", "Central Highlands")) %>%
+  ggplot() +
+  geom_line(aes(
+    x = Month, y = Nights,
+    colour = p, group = p
+  )) +
+  facet_grid("Region", scales = "free") +
+  scale_colour_gradient(
+    low = "#56B1F7",
+    high = "#132B43",
+    breaks = c(0, 100, 200),
+    na.value = "black"
+  ) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.spacing = unit(.1, "lines"),
+    legend.position = "inside",
+    legend.position.inside = c(.1, .8),
+    legend.key.height = unit(4, "mm"),
+    text = element_text(size = 25)
+  ) +
+  ggtitle("FLAP forecasts with number of components p")
+
+```
+:::
+::::
+
+## Why should you consider it
+
+\vspace{-25pt}
+
+:::: {layout="[ 50,-2, 60 ]"}
+
+::: {#left}
+
+Theoretically, the forecast error variance of each series
+
+1. is __reduced__ with FLAP. 
+
+2. __monotonically__ decreases with increasing number of components. 
+
+3. is __optimally__ minimised among linear projections. 
+
+:::
+::: {#right}
+
+```{r}
+
+m <- 77
+qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
+  filter(
+    h %in% c(1, 12),
+    model != "ets_h",
+    Phi != "normal"
+  ) %>%
+  ggplot(aes(
+    x = p, y = value,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
+  geom_vline(xintercept = m) +
+  geom_line() +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
+  # facet_wrap("h", scales = "free", labeller = label_both) +
+  facet_grid(rows = "h", scales = "free", labeller = label_both) +
+  scale_linetype_manual(
+    name = "Component",
+    values = c(
+      "TRUE.PCA_normal" = "longdash",
+      "FALSE.NA" = "solid",
+      "TRUE.normal" = "dotdash"
+    ),
+    labels = c(
+      "TRUE.PCA_normal" = "PCA+Norm.",
+      "FALSE.NA" = "No Proj.",
+      "TRUE.normal" = "Norm."
+    )
+  ) +
+  theme(
+    # axis.text.y = element_blank(),
+    # axis.ticks.y = element_blank(),
+    axis.title.x = element_blank(),
+    panel.spacing = unit(.1, "lines"),
+    legend.position = "none",
+    legend.position.inside = c(.8, .8)
+  ) +
+  labs(
+    y = "MSE",
+    subtitle = "FLAP visitor nights ETS",
+    x = "Number of components p"
+  )
+```
+``` {r}
+m <- 122
+qs::qread("../monarch/fred-md/projection/output/mse.qs") %>%
+  filter(
+    !model %in% c("ets", "arima"),
+    !grepl("ets", Phi),
+    h %in% c(1, 12)
+  ) %>%
+  ggplot(aes(
+    x = p, y = value,
+    linetype = paste(proj, Phi, sep = ".")
+  )) +
+  geom_vline(xintercept = m) +
+  geom_line() +
+  geom_hline(
+    data = \(df) filter(df, !proj),
+    aes(
+      yintercept = value,
+      linetype = paste(proj, Phi, sep = ".")
+    )
+  ) +
+  # facet_wrap("h", scales = "free", labeller = label_both) +
+  facet_grid(rows = "h", scales = "free", labeller = label_both) +
+  scale_linetype_manual(
+    name = "Component",
+    values = c(
+      "TRUE.PCA_normal" = "longdash",
+      "FALSE.NA" = "solid",
+      "TRUE.normal" = "dotdash"
+    ),
+    labels = c(
+      "TRUE.PCA_normal" = "PCA+Norm.",
+      "FALSE.NA" = "No Proj.",
+      "TRUE.normal" = "Norm."
+    )
+  ) +
+  theme(
+    # axis.text.y = element_blank(),
+    # axis.ticks.y = element_blank(),
+    # axis.title.y = element_blank(),
+    # axis.title.x = element_blank(),
+    panel.spacing = unit(.1, "lines"),
+    legend.position = "none",
+    legend.position.inside = c(.8, .8)
+  ) +
+  labs(
+    y = "MSE",
+    subtitle = "FLAP FRED-MD DFM",
+    x = "Number of components p"
+  ) +
+  guides(linetype = "none")
+
+```
+
+:::
+::::

@@ -1,0 +1,38 @@
+\usetheme{Monash}
+
+$if(toc)$
+% Outline at start of each section
+\AtBeginSection[]{
+  \begin{frame}{Outline}\vspace*{0.7cm}
+    \tableofcontents[currentsection,hideallsubsections]
+  \end{frame}
+}
+$endif$
+
+% Monash title page
+% Modified
+% One can alter the font size by setting eg 'titlefontsize: 20pt' in the YAML header
+% modifed block location to fit title and authors
+% add logo
+\setbeamerfont{title}{series=\bfseries,parent=structure,size=\fontsize{$if(titlefontsize)$$titlefontsize$$else$22$endif$}{28}}
+\setbeamertemplate{title page}
+{\placefig{-0.01}{-0.01}{width=1.01\paperwidth,height=1.01\paperheight}{$titlegraphic$}
+  \placefig{0.6}{0.2}{width=4cm}{monash-stacked-reversed-white}
+  \begin{textblock}{12}(0.9,2)\usebeamerfont{title}
+    {\color{$titlecolor$}\raggedright\par\inserttitle}
+  \end{textblock}
+  \begin{textblock}{8.7}(0.9,5.6)
+    {\color{$titlecolor$}\raggedright{\insertauthor}\mbox{}\\[0.2cm]
+    \insertdate}
+\end{textblock}}
+
+% Find images
+% Modified
+% Find logo
+\graphicspath{{_extensions/presentation/_images/background/}{_extensions/quarto-monash/presentation/_images/background/}{figs/}{figures/}{images/}{img/}
+{_extensions/presentation/_images/logo/}{_extensions/quarto-monash/presentation/_images/logo/}}
+
+% Fix longtable undefined theHtable issue
+\makeatletter
+\@ifundefined{\theHtable}{\renewcommand{\theHtable}{\thetable}}{}
+\makeatother
