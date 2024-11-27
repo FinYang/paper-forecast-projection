@@ -10,9 +10,9 @@ options(
     tikzLatexPackages_opt,
     "\\usepackage{amsfonts}",
     "\\usepackage{bm}"
-  )
+  ),
+  tikzDocumentDeclaration = "\\documentclass[14pt]{extarticle}\n"
 )
-
 
 # functions
 point <- function(p, pch = 20, ...) {
@@ -66,7 +66,7 @@ insert_figure <- function(file) {
 height <- 2.5
 width <- 4
 window_ylim_max <- 9
-pos_1_offset <- 0.8
+pos_1_offset <- 0.4
 standalone <- TRUE
 compile <- TRUE
 

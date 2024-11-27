@@ -9,8 +9,8 @@ theme_set(
   theme_bw(base_size = 24) +
     theme(
       plot.background = element_blank(),
-      legend.background = element_blank(),
-      line
+      panel.background = element_rect(fill = "#faf8f6"),
+      legend.background = element_blank()
     )
 )
 ## ---- data ----

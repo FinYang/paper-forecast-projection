@@ -1,9 +1,9 @@
 ---
 title: |
-  \textcolor{red}{F}orecast\
-  \textcolor{red}{L}inear\
-  \textcolor{red}{A}ugmented\
-  \textcolor{red}{P}rojection
+  \textcolor{titlecolour}{F}orecast\
+  \textcolor{titlecolour}{L}inear\
+  \textcolor{titlecolour}{A}ugmented\
+  \textcolor{titlecolour}{P}rojection
 subtitle: "A free lunch to reduce forecast error variance" 
 author: "Yangzhuoran Fin Yang • George Athanasopoulos • Rob&nbsp;J Hyndman • Anastasios Panagiotelis"
 bibliography:
@@ -14,7 +14,7 @@ format:
     pdf-engine: lualatex
     template: _template.tex
     keep-tex: true
-flowfram: draft
+flowfram: final
 filters:
   - frame.lua
 environments: [outcome, properties, intuition, package, contact, geometry, application, job, qr]
@@ -22,15 +22,16 @@ execute:
   cache: true
   echo: false
 header-includes:
+  - \usepackage[dvipsnames]{xcolor}
+  - \definecolor{titlecolour}{HTML}{D55E00}
   - \usepackage{bm}
   - \usepackage{amsfonts}
   - \usepackage{amsmath}
-  - \usepackage{tikz}
   - \usepackage{fontawesome}
-  - \usepackage{svg}
-  - \usepackage{blindtext}
   - \usepackage{multicol}
   - \usepackage[makeroom]{cancel}
+  - \usepackage{wallpaper}
+  - \ULCornerWallPaper{1}{_background.pdf}
   - \widowpenalties 1 150
   - \def\Var{\operatorname{Var}}
   - \def\E{\operatorname{E}}
@@ -114,6 +115,7 @@ $\bm{z}_{t}$ will be constrained in the sense that $\bm{C}\bm{z}_t= \bm{c}_{t} -
 ```{r series}
 #| fig-width: !expr 'l$outcome$width'
 #| fig-height: 8
+#| cache: false
 ```
 
 
@@ -125,7 +127,7 @@ with projection matrix
 $$
 \bm{M} = \bm{I}_{m+p} - \bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C},
 $$ {#eq-M}
-where $\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) = \bm{W}_h$ is the forecast error covariance matrix. In practice a plug-in estimate can be used.
+where $\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) = \bm{W}_h$ is the forecast error covariance matrix. In practice a plug-in estimate can be used. 
 
 ```{r series-fc}
 #| fig-width: !expr 'l$outcome$width'
@@ -137,7 +139,7 @@ where $\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) = \bm{W}_h$ is the forecast error c
 :::
 
 ::: properties
-# Theoritical Properties {.unnumbered}
+# Theoretical Properties {.unnumbered}
 
 \begin{multicols*}{2}
 
@@ -145,18 +147,16 @@ where $\Var(\bm{z}_{t+h}-\hat{\bm{z}}_{t+h}) = \bm{W}_h$ is the forecast error c
 \vspace{1mm}
 
 1. The forecast error variance is \textbf{reduced} with FLAP. The variance reduction matrix is positive semi-definite:
-$$
+\begin{equation}\phantomsection\label{eq-var-reduction}{
 \begin{aligned}
-\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) &-\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})\\ 
-&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
+  \Var(\bm{y}_{t+h} &- \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) \\&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
 \end{aligned}
-$$
+}
+\end{equation}
 
-2. The forecast error variance \textbf{monotonically} decreases with increasing number of components. The diagonal elements of
+2. The forecast error variance \textbf{monotonically} decreases with increasing number of components. The value of each of the diagonal elements of 
 $$
-\begin{aligned}
-\Var(\bm{y}_{t+h} &- \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h}) \\&= \bm{J}\bm{W}_h\bm{C}'(\bm{C}\bm{W}_h\bm{C}')^{-1}\bm{C}\bm{W}_h\bm{J}'
-\end{aligned}
+\Var(\bm{y}_{t+h} - \hat{\bm{y}}_{t+h}) -\Var(\bm{y}_{t+h} - \tilde{\bm{y}}_{t+h})
 $$
 is non-decreasing as $p$ increases.
 
