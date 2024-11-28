@@ -20,7 +20,7 @@ execute:
   eval: true
   echo: false
   cache: true
-titlefontsize: 20pt
+titlefontsize: 18pt
 ---
 
 
@@ -44,50 +44,13 @@ knitr::read_chunk("../slides/flap-slides.R")
 
 ```
 
-\pause
 
 ### FLAP
 
 - Model-independent forecast adjustment 
+- Uses common signal shared across series
 - Reduces forecast error variance
 - Doesn't need additional data 
-
-
-## Where does this come from
-
-```{r p_hist}
-syd_mel <- visnights %>%
-  filter(Region %in% c("Sydney", "Melbourne")) %>%
-  mutate(scale = "Regions")
-aus <- visnights %>%
-  group_by(Month) %>%
-  summarise(Nights = sum(Nights), .groups = "drop") %>%
-  mutate(
-    scale = "Australia",
-    Region = "Australia"
-  )
-df_hist <- bind_rows(syd_mel, aus) %>% 
-  mutate(scale = factor(scale, levels = c("Regions", "Australia")))
-df_hist %>%
-  ggplot() +
-  geom_line(aes(x = Month, y = Nights, colour = Region)) +
-  # facet_grid("Region", scales = "free") +
-  scale_y_log10() +
-  theme(legend.position = "bottom") +
-  scale_color_manual(
-    values = `names<-`(
-      c(cb_palette_grey[c(6, 7)], "black"),
-      c("Melbourne", "Sydney", "Australia")
-    ),
-    limits = c("Melbourne", "Sydney")
-  ) +
-  facet_grid("scale", scales = "free") +
-  ggtitle("Number of nights spent by Australian visitors") +
-    theme(
-    legend.position = "right"
-  )
-```
-
 
 ## How does FLAP work
 
@@ -101,7 +64,7 @@ We have time series $\bm{y}_t\in \mathbb{R}^m$
 
 1. Form components $\bm{c}_t = \bm{\Phi}\bm{y}_t \in \mathbb{R}^p$
 
-2. Obtain forecasts $\hat{\bm{z}}_{t+h} = [\hat{\bm{y}}_{t+h}',\hat{\bm{c}}_{t+h}']'$
+2. Obtain base forecasts $\hat{\bm{z}}_{t+h} = [\hat{\bm{y}}_{t+h}',\hat{\bm{c}}_{t+h}']'$
 
 3. Project: $\tilde{\bm{z}}_{t+h} = \bm{M} \hat{\bm{z}}_{t+h}$
 ```{=tex}
@@ -331,7 +294,8 @@ qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
     axis.title.x = element_blank(),
     panel.spacing = unit(.1, "lines"),
     legend.position = "none",
-    legend.position.inside = c(.8, .8)
+    legend.position.inside = c(.8, .8),
+    text = element_text(size = 25)
   ) +
   labs(
     y = "MSE",
@@ -382,7 +346,8 @@ qs::qread("../monarch/fred-md/projection/output/mse.qs") %>%
     # axis.title.x = element_blank(),
     panel.spacing = unit(.1, "lines"),
     legend.position = "none",
-    legend.position.inside = c(.8, .8)
+    legend.position.inside = c(.8, .8),
+    text = element_text(size = 25)
   ) +
   labs(
     y = "MSE",
