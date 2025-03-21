@@ -207,7 +207,8 @@ $$
 $$
 :::
 
-The assumption of unbiasedness of the base forecasts is not unreasonable in practice, and where it does not hold, a bias correction method can be applied. Note this is not a requirement on model specification. We do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of FLAP manifests when the models are misspecified, as discussed in @sec-simulation.
+We do not assume that the base forecasts are unbiased. The forecast variance reduction described in this paper holds regardless of any bias in the base forecasts. However, when the base forecasts are unbiased, FLAP additionally preserves this property, offering unbiasedness as a supplementary benefit alongside the reduction in forecast variance.
+We do not assume the model producing the base forecast is correctly specified like in the DFM literature [e.g., @StoWat2002]. In fact, the power of FLAP manifests when the models are misspecified, as discussed in @sec-simulation.
 
 ::: {#lem-var}
 The forecast error covariance matrix of the component-augmented projected $h$-step-ahead forecasts $\tilde{\bm{z}}_{t+h}$ is
