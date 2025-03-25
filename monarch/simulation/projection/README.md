@@ -6,11 +6,16 @@ This folder contains the code using projection on MonARCH cluster using `targets
 Run `targets` from a job to submit jobs.
 
 Use code below to sync between local folder and server.
-```
+``` zsh
 # local to remote
-rsync -auv --chmod=ugo=rwX -e ssh monarch/simulation/projection finy@monarch-dtn2.erc.monash.edu:~/bw51/simulation/ --exclude data-raw --exclude output --exclude _targets --exclude local -h -h
+rsync -auv --chmod=ugo=rwX -e ssh monarch/simulation/projection finy@monarch-dtn.erc.monash.edu:~/bw51/simulation/ --exclude data-raw --exclude output --exclude _targets --exclude local -h -h
 # remote to local
-rsync -auv -e ssh finy@monarch-dtn2.erc.monash.edu:~/bw51/simulation/projection monarch/simulation/ --exclude _targets --exclude .future --exclude registry --exclude .RData --exclude error.err --exclude output.out -h -h
+rsync -auv -e ssh finy@monarch-dtn.erc.monash.edu:~/bw51/simulation/projection monarch/simulation/ --exclude _targets --exclude .future --exclude registry --exclude .RData --exclude error.err --exclude output.out -h -h
+```
+
+``` zsh
+smux new-session --partition=comp,short --time=1-00:00:00 --ntasks=1 --mem=10G -J i -o i.out -e i.err
+R
 ```
 
 To initialise on MonARCH, run
@@ -19,24 +24,6 @@ To initialise on MonARCH, run
 batchtools::makeRegistry()
 ```
 
-The directory structure on MonARCH is planned to be:
-
-```
-bw51
-  + simulation/prjection
-    + data (folder containing data the script needs to run)
-    + R (R functions)
-    + output (folder containing the output data)
-    + slurm_output (folder containing slurm output log files) 
-    + slurm_error (folder containing slurm error files) 
-    - _targets.R
-```
-
-Locally there are also files to prepare raw data and upload them to MonARCH
-
-```
-    + data-raw
-```
 
 Go to target deirectory
 
@@ -45,7 +32,7 @@ setwd("~/bw51/simulation/projection")
 ```
 
 Run
-```
+``` zsh
 sbatch ~/bw51/simulation/projection/job.sh
 ```
 ```R

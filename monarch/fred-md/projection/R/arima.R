@@ -19,6 +19,18 @@ arima_mat <- function(mat, .h, start, frequency) {
   out
 }
 
+# produce different res for each h
+arima <- function(mat, .h, start, frequency) {
+  fit_ls <- mat %>%
+    apply(2, \(x) forecast::auto.arima(ts(x, start = start, frequency = frequency)), simplify = FALSE)
+  out <- fit_ls %>%
+    lapply(\(fit) list(
+      fc = forecast(fit, h = .h)$mean,
+      res = lapply(seq_len(.h), \(.h) residuals_fast(fit, type = "response", h = .h))
+    ))
+  out
+}
+
 
 
 

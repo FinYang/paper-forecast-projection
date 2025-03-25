@@ -10,6 +10,15 @@ get_res <- function(obj) {
     do.call(cbind, .) %>%
     unname()
 }
+# use different res for each h
+get_res_h <- function(obj) {
+  obj %>%
+    lapply(getElement, "res") %>%
+    lapply(\(x) do.call(cbind, x)) %>%
+    list2array() %>%
+    aperm(c(1, 3, 2)) %>%
+    array2list()
+}
 
 list2array <- function(xlist) {
   d1 <- unique(vapply(xlist, NROW, numeric(1)))

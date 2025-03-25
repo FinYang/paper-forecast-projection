@@ -42,7 +42,7 @@ m <- 122
 mse <- qs::qread(pa_fredmd("mse.qs"))
 plot_mse <- mse %>%
   filter(
-    !model %in% "ets",
+    model %in% c("dfm", "arima"),
     !grepl("ets", Phi),
     h %in% c(1, 6, 12)
   ) %>%
@@ -165,7 +165,10 @@ p <- 200
 ## ---- fig-visnights-line ----
 mse <- qs::qread(pa_visnights("mse.qs"))
 plot_mse <- mse %>%
-  filter(h %in% c(1, 6, 12)) %>%
+  filter(
+    h %in% c(1, 6, 12),
+    model == "ets"
+  ) %>%
   ggplot(aes(
     x = p, y = value,
     linetype = paste(proj, Phi, sep = ".")

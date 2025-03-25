@@ -1,7 +1,7 @@
 # fc <- cbind(tar_read(fc_dfm, branches = 1)[[1]], tar_read(fc_arima_pca_normal, branches = 1)[[1]])
 # W <- tar_read(W_dfm_pca_normal, branches = 1)[[1]]
 # Phi <- tar_read(pca_normal, branches = 1)[[1]]$Phi
-#' Having different W for different h
+#' Having same W for different h
 project <- function(fc, W, Phi) {
   fc <- unname(fc)
   C_all <- cbind(-Phi, diag(nrow(Phi)))
@@ -21,13 +21,42 @@ project <- function(fc, W, Phi) {
   )
 }
 
+#' Having different W for different h
+project_h <- function(fc, W, Phi) {
+  C_all <- cbind(-Phi, diag(nrow(Phi)))
+  p_max <- nrow(Phi)
+  m <- ncol(fc) - nrow(Phi)
+  pbapply::pbmapply(
+    \(fc, W){
+      mapply(
+        \(p, W){
+          C <- block(C_all, p, m + p)
+          WtC <- tcrossprod(W, C)
+          bf <- c(fc[seq_len(m + p)])
+          (bf - tcrossprod(WtC, t(solve(C %*% WtC, C))) %*% bf)[seq_len(m), ]
+        },
+        p = seq_len(p_max),
+        W = W,
+        SIMPLIFY = FALSE
+      )
+    },
+    fc = asplit(fc, 1),
+    W = W,
+    SIMPLIFY = FALSE
+  ) %>%
+    lapply(\(x) do.call(cbind, x)) %>%
+    list2array() %>%
+    aperm(c(3, 1, 2)) %>%
+    array2list()
+}
+
 block <- function(mat, m, n = m) {
   mat[seq_len(m), seq_len(n), drop = FALSE]
 }
 
 # res_ori <- tar_read(res_dfm, branches = 1)[[1]][[1]]
 # res_com <- tar_read(res_arima_pca_normal, branches = 1)[[1]]
-#' Having different W for different h
+#' Having same W for different h
 get_W <- function(res_ori, res_com) {
   m <- NCOL(res_ori)
   p <- NCOL(res_com)
@@ -39,6 +68,31 @@ get_W <- function(res_ori, res_com) {
   )
 }
 
+#' Having different W for different h
+get_W_h <- function(res_ori, res_com) {
+  m <- NCOL(res_ori[[1]])
+  p <- NCOL(res_com[[1]])
+  mapply(
+    \(ro, rc) {
+      res <- cbind(ro, rc)
+      res <- res[!apply(res, 1, anyNA), ]
+      lapply(
+        seq_len(p),
+        \(pp){
+          out <- try(corpcor::cov.shrink(res[, seq_len(m + pp)], verbose = FALSE))
+          # # trying to avoid singularity issue with svd
+          while (class(out) == "try-error") {
+            out <- try(corpcor::cov.shrink((res <- res[-1, seq_len(m + pp)]), verbose = FALSE))
+          }
+          out
+        }
+      )
+    },
+    ro = res_ori,
+    rc = res_com,
+    SIMPLIFY = FALSE
+  )
+}
 
 
 project_switch <- function(fc, fc_comp1, fc_comp2,
