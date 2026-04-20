@@ -1,15 +1,20 @@
 ---
-title: "Forecast Linear Augmented Projection (FLAP): A free lunch to reduce forecast error variance"
+title: "Forecast Linear Augmented Projection (FLAP): A method to reduce forecast error variance"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 author:
   - name: Yangzhuoran Fin Yang
     affiliations:
+      - name: Maastricht University
+        department: Department of Data Analytics and Digitalisation
+        city: Maastricht
+        country: The Netherlands
+        postal-code: 6211 LK
       - name: Monash University
         department: Department of Econometrics & Business Statistics
         city: Clayton VIC
         country: Australia
         postal-code: 3800
-    email: Fin.Yang@monash.edu
+    email: Yangzhuoran.Yang@maastrichtuniversity.nl
     corresponding: true
   - name: George Athanasopoulos
     affiliations:
@@ -27,11 +32,11 @@ author:
         postal-code: 3800
   - name: Anastasios Panagiotelis
     affiliations:
-      - name: University of Sydney
-        department: Discipline of Business Analytics
-        city: Camperdown NSW
+      - name: Monash University
+        department: Department of Econometrics & Business Statistics
+        city: Clayton VIC
         country: Australia
-        postal-code: 2050
+        postal-code: 3800
 keywords: [Forecast combinations, High-dimensional time series, Components, Forecast reconciliation]
 linestretch: 1.8
 fontsize: 12pt
@@ -80,7 +85,7 @@ format: wp-pdf
 
 # Abstract
 
-We propose a novel forecast linear augmented projection (FLAP) method that can reduce the forecast error variance of any multivariate forecast. The method first constructs new component series which are linear combinations of the original series. Forecasts are then generated for both the original and component series. Finally, the full vector of forecasts is projected onto a linear subspace where the constraints implied by the combination weights hold. We show that the projection using the original forecast error covariance matrix will result in improved forecasts. Notably, the new forecast error variance of each series is non-increasing with the number of components, and mild conditions are established for which it is strictly decreasing. It is also shown that the proposed method achieves maximum forecast error variance reduction among linear projection methods. We demonstrate our proposed method with an estimated covariance matrix using simulations and two empirical applications based on Australian tourism and FRED-MD data. In all cases, forecasts are improved. Notably, using FLAP with Principal Component Analysis (PCA) to construct the new series leads to substantial forecast error variance reduction.
+We propose a novel forecast linear augmented projection (FLAP) method that can reduce the forecast error variance of any multivariate forecast. The method first constructs new component series that are linear combinations of the original series. Forecasts are then generated for both the original and component series. Finally, the full vector of forecasts is projected onto a linear subspace where the constraints implied by the combination weights hold. We show that the projection using the original forecast error covariance matrix will result in improved forecasts. Notably, the new forecast error variance of each series is non-increasing with the number of components, and mild conditions are established under which it is strictly decreasing. It is also shown that the proposed method achieves maximum forecast error variance reduction among linear projection methods. We demonstrate our proposed method with an estimated covariance matrix using simulations and two empirical applications based on Australian tourism and FRED-MD data. In all cases, forecasts are improved. Notably, using FLAP with Principal Component Analysis (PCA) to construct the new series leads to substantial forecast error variance reduction.
 
 ```{r setup}
 #| cache: false
@@ -1186,6 +1191,13 @@ Finally, while FLAP is motivated by the forecast reconciliation literature, our 
 
 ::: {.blindable}
 
+
+# Data availability statement {.unnumbered}
+
+The Australian Tourism Data Set used in this paper is publicly available at [https://github.com/FinYang/paper-forecast-projection](https://github.com/FinYang/paper-forecast-projection). The repository also contains the code required to reproduce the results in this paper.
+
+
+
 # Acknowledgements {.unnumbered}
 
 We thank Daniele Girolimetto for contributing to the initial proof of @thm-monotone in his unpublished work.
@@ -1195,5 +1207,6 @@ We thank Daniele Girolimetto for contributing to the initial proof of @thm-monot
 # Supplementary materials {.unnumbered}
 
 The online supplementary materials contain the appendices for the article.
+
 
 # References {.unnumbered}
