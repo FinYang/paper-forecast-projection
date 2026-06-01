@@ -1,3 +1,5 @@
+library(tidyverse)
+library(tsibble)
 visnights_region <- read_csv("data-raw/visnights_monthly.csv") %>%
   group_by(Month, Region) %>%
   summarise(Nights = sum(Nights), .groups = "drop") %>%
@@ -10,4 +12,7 @@ visnights_mat <- visnights_region %>%
   {
     `rownames<-`(as.matrix(select(., -Month)), as.character(.$Month))
   }
-qs::qsave(visnights_mat, "monarch/simulation/projection/data/visnights_mat.qs")
+qs2::qs_save(
+  visnights_mat,
+  "monarch/simulation/projection/data/visnights_mat.qs2"
+)
