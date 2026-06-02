@@ -219,20 +219,20 @@ list(
     pattern = map(out_arima),
     deployment = "main"
   ),
-  tar_target(
-    out_arima_h,
-    arima(sam_in, .h = .forecast_h, start = fred_start, frequency = fred_freq),
-    iteration = "list",
-    pattern = map(sam_in),
-    resources = future_ram(2)
-  ),
-  tar_target(
-    res_arima_h,
-    get_res_h(out_arima_h),
-    iteration = "list",
-    pattern = map(out_arima_h),
-    deployment = "main"
-  ),
+  # tar_target(
+  #   out_arima_h,
+  #   arima(sam_in, .h = .forecast_h, start = fred_start, frequency = fred_freq),
+  #   iteration = "list",
+  #   pattern = map(sam_in),
+  #   resources = future_ram(2)
+  # ),
+  # tar_target(
+  #   res_arima_h,
+  #   get_res_h(out_arima_h),
+  #   iteration = "list",
+  #   pattern = map(out_arima_h),
+  #   deployment = "main"
+  # ),
   tar_target(
     out_ets,
     ets_mat(
@@ -353,24 +353,24 @@ list(
     deployment = "main"
   ),
   # multiple h for res
-  tar_target(
-    out_arima_pcacentred_normal_h,
-    arima(
-      pcacentred_normal$x,
-      .h = .forecast_h,
-      start = fred_start,
-      frequency = fred_freq
-    ),
-    iteration = "list",
-    pattern = map(pcacentred_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    res_arima_pcacentred_normal_h,
-    get_res_h(out_arima_pcacentred_normal_h),
-    iteration = "list",
-    pattern = map(out_arima_pcacentred_normal_h)
-  ),
+  # tar_target(
+  #   out_arima_pcacentred_normal_h,
+  #   arima(
+  #     pcacentred_normal$x,
+  #     .h = .forecast_h,
+  #     start = fred_start,
+  #     frequency = fred_freq
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(pcacentred_normal),
+  #   resources = future_ram(4)
+  # ),
+  # tar_target(
+  #   res_arima_pcacentred_normal_h,
+  #   get_res_h(out_arima_pcacentred_normal_h),
+  #   iteration = "list",
+  #   pattern = map(out_arima_pcacentred_normal_h)
+  # ),
   tar_target(
     normal,
     component(sam_in, "normal", p = p),
@@ -404,24 +404,24 @@ list(
     pattern = map(out_arima_normal),
     deployment = "main"
   ),
-  tar_target(
-    out_arima_normal_h,
-    arima(
-      normal$x,
-      .h = .forecast_h,
-      start = fred_start,
-      frequency = fred_freq
-    ),
-    iteration = "list",
-    pattern = map(normal),
-    resources = future_ram(3)
-  ),
-  tar_target(
-    res_arima_normal_h,
-    get_res_h(out_arima_normal_h),
-    iteration = "list",
-    pattern = map(out_arima_normal_h)
-  ),
+  # tar_target(
+  #   out_arima_normal_h,
+  #   arima(
+  #     normal$x,
+  #     .h = .forecast_h,
+  #     start = fred_start,
+  #     frequency = fred_freq
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(normal),
+  #   resources = future_ram(3)
+  # ),
+  # tar_target(
+  #   res_arima_normal_h,
+  #   get_res_h(out_arima_normal_h),
+  #   iteration = "list",
+  #   pattern = map(out_arima_normal_h)
+  # ),
   tar_target(
     out_dfm,
     {
@@ -480,23 +480,23 @@ list(
     ),
     resources = future_ram(4)
   ),
-  tar_target(
-    proj_arima_pcacentred_normal_h,
-    project_h(
-      cbind(fc_arima, fc_arima_pcacentred_normal),
-      W = get_W_h(res_arima_h, res_arima_pcacentred_normal_h),
-      Phi = pcacentred_normal$Phi
-    ),
-    iteration = "list",
-    pattern = map(
-      fc_arima,
-      fc_arima_pcacentred_normal,
-      res_arima_h,
-      res_arima_pcacentred_normal_h,
-      pcacentred_normal
-    ),
-    resources = future_ram(8)
-  ),
+  # tar_target(
+  #   proj_arima_pcacentred_normal_h,
+  #   project_h(
+  #     cbind(fc_arima, fc_arima_pcacentred_normal),
+  #     W = get_W_h(res_arima_h, res_arima_pcacentred_normal_h),
+  #     Phi = pcacentred_normal$Phi
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(
+  #     fc_arima,
+  #     fc_arima_pcacentred_normal,
+  #     res_arima_h,
+  #     res_arima_pcacentred_normal_h,
+  #     pcacentred_normal
+  #   ),
+  #   resources = future_ram(8)
+  # ),
   tar_target(
     proj_ets_pca_normal,
     project(
@@ -548,23 +548,23 @@ list(
     ),
     resources = future_ram(4)
   ),
-  tar_target(
-    proj_dfm_pcacentred_normal_h,
-    project_h(
-      cbind(fc_dfm, fc_arima_pcacentred_normal),
-      W = get_W_h(res_dfm, res_arima_pcacentred_normal_h),
-      Phi = pcacentred_normal$Phi
-    ),
-    iteration = "list",
-    pattern = map(
-      fc_dfm,
-      fc_arima_pcacentred_normal,
-      res_dfm,
-      res_arima_pcacentred_normal_h,
-      pcacentred_normal
-    ),
-    resources = future_ram(8)
-  ),
+  # tar_target(
+  #   proj_dfm_pcacentred_normal_h,
+  #   project_h(
+  #     cbind(fc_dfm, fc_arima_pcacentred_normal),
+  #     W = get_W_h(res_dfm, res_arima_pcacentred_normal_h),
+  #     Phi = pcacentred_normal$Phi
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(
+  #     fc_dfm,
+  #     fc_arima_pcacentred_normal,
+  #     res_dfm,
+  #     res_arima_pcacentred_normal_h,
+  #     pcacentred_normal
+  #   ),
+  #   resources = future_ram(8)
+  # ),
   tar_target(
     proj_dfm_ets_pca_normal,
     project(
@@ -599,23 +599,23 @@ list(
     ),
     resources = future_ram(4)
   ),
-  tar_target(
-    proj_arima_normal_h,
-    project_h(
-      cbind(fc_arima, fc_arima_normal),
-      W = get_W_h(res_arima_h, res_arima_normal_h),
-      Phi = normal$Phi
-    ),
-    iteration = "list",
-    pattern = map(
-      fc_arima,
-      fc_arima_normal,
-      res_arima_h,
-      res_arima_normal_h,
-      normal
-    ),
-    resources = future_ram(8)
-  ),
+  # tar_target(
+  #   proj_arima_normal_h,
+  #   project_h(
+  #     cbind(fc_arima, fc_arima_normal),
+  #     W = get_W_h(res_arima_h, res_arima_normal_h),
+  #     Phi = normal$Phi
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(
+  #     fc_arima,
+  #     fc_arima_normal,
+  #     res_arima_h,
+  #     res_arima_normal_h,
+  #     normal
+  #   ),
+  #   resources = future_ram(8)
+  # ),
   tar_target(
     pca_normal_switch_from_sd,
     which(apply(pca_normal$x, 2, sd) < mean(apply(normal$x[, 1:100], 2, sd)))[[
@@ -829,12 +829,12 @@ list(
     iteration = "list",
     pattern = map(sam_out, proj_arima_pcacentred_normal)
   ),
-  tar_target(
-    se_proj_arima_pcacentred_normal_h,
-    lapply(proj_arima_pcacentred_normal_h, \(pa) (sam_out - pa)^2),
-    iteration = "list",
-    pattern = map(sam_out, proj_arima_pcacentred_normal_h)
-  ),
+  # tar_target(
+  #   se_proj_arima_pcacentred_normal_h,
+  #   lapply(proj_arima_pcacentred_normal_h, \(pa) (sam_out - pa)^2),
+  #   iteration = "list",
+  #   pattern = map(sam_out, proj_arima_pcacentred_normal_h)
+  # ),
   tar_target(
     se_proj_ets_pca_normal,
     lapply(proj_ets_pca_normal, \(pa) (sam_out - pa)^2),
@@ -853,12 +853,12 @@ list(
     iteration = "list",
     pattern = map(sam_out, proj_dfm_pcacentred_normal)
   ),
-  tar_target(
-    se_proj_dfm_pcacentred_normal_h,
-    lapply(proj_dfm_pcacentred_normal_h, \(pa) (sam_out - pa)^2),
-    iteration = "list",
-    pattern = map(sam_out, proj_dfm_pcacentred_normal_h)
-  ),
+  # tar_target(
+  #   se_proj_dfm_pcacentred_normal_h,
+  #   lapply(proj_dfm_pcacentred_normal_h, \(pa) (sam_out - pa)^2),
+  #   iteration = "list",
+  #   pattern = map(sam_out, proj_dfm_pcacentred_normal_h)
+  # ),
   tar_target(
     se_proj_dfm_ets_pca_normal,
     lapply(proj_dfm_ets_pca_normal, \(pa) (sam_out - pa)^2),
@@ -871,12 +871,12 @@ list(
     iteration = "list",
     pattern = map(sam_out, proj_arima_normal)
   ),
-  tar_target(
-    se_proj_arima_normal_h,
-    lapply(proj_arima_normal_h, \(pa) (sam_out - pa)^2),
-    iteration = "list",
-    pattern = map(sam_out, proj_arima_normal_h)
-  ),
+  # tar_target(
+  #   se_proj_arima_normal_h,
+  #   lapply(proj_arima_normal_h, \(pa) (sam_out - pa)^2),
+  #   iteration = "list",
+  #   pattern = map(sam_out, proj_arima_normal_h)
+  # ),
   tar_target(
     se_proj_arima_pca_normal_switch_sd,
     lapply(proj_arima_pca_normal_switch_sd, \(pa) (sam_out - pa)^2),
@@ -935,11 +935,11 @@ list(
     get_mse_proj(se_proj_arima_pcacentred_normal),
     resources = future_ram(5)
   ),
-  tar_target(
-    mse_proj_arima_pcacentred_normal_h,
-    get_mse_proj(se_proj_arima_pcacentred_normal_h),
-    resources = future_ram(5)
-  ),
+  # tar_target(
+  #   mse_proj_arima_pcacentred_normal_h,
+  #   get_mse_proj(se_proj_arima_pcacentred_normal_h),
+  #   resources = future_ram(5)
+  # ),
   tar_target(
     mse_proj_ets_pca_normal,
     get_mse_proj(se_proj_ets_pca_normal),
@@ -955,11 +955,11 @@ list(
     get_mse_proj(se_proj_dfm_pcacentred_normal),
     resources = future_ram(5)
   ),
-  tar_target(
-    mse_proj_dfm_pcacentred_normal_h,
-    get_mse_proj(se_proj_dfm_pcacentred_normal_h),
-    resources = future_ram(5)
-  ),
+  # tar_target(
+  #   mse_proj_dfm_pcacentred_normal_h,
+  #   get_mse_proj(se_proj_dfm_pcacentred_normal_h),
+  #   resources = future_ram(5)
+  # ),
   tar_target(
     mse_proj_dfm_ets_pca_normal,
     get_mse_proj(se_proj_dfm_ets_pca_normal),
@@ -970,11 +970,11 @@ list(
     get_mse_proj(se_proj_arima_normal),
     resources = future_ram(5)
   ),
-  tar_target(
-    mse_proj_arima_normal_h,
-    get_mse_proj(se_proj_arima_normal_h),
-    resources = future_ram(5)
-  ),
+  # tar_target(
+  #   mse_proj_arima_normal_h,
+  #   get_mse_proj(se_proj_arima_normal_h),
+  #   resources = future_ram(5)
+  # ),
   tar_target(
     mse_proj_arima_pca_normal_scale,
     get_mse_proj_scale(se_proj_arima_pca_normal, sd = fred_sd),
@@ -1128,22 +1128,22 @@ list(
         mutate(model = "arima", proj = TRUE, Phi = "PCA_normal"),
       get_df_mse_proj(mse_proj_arima_pcacentred_normal) %>%
         mutate(model = "arima", proj = TRUE, Phi = "PCAcentred_normal"),
-      get_df_mse_proj(mse_proj_arima_pcacentred_normal_h) %>%
-        mutate(model = "arima_h", proj = TRUE, Phi = "PCAcentred_normal"),
+      # get_df_mse_proj(mse_proj_arima_pcacentred_normal_h) %>%
+      #   mutate(model = "arima_h", proj = TRUE, Phi = "PCAcentred_normal"),
       get_df_mse_proj(mse_proj_ets_pca_normal) %>%
         mutate(model = "ets", proj = TRUE, Phi = "PCA_normal"),
       get_df_mse_proj(mse_proj_dfm_pca_normal) %>%
         mutate(model = "dfm", proj = TRUE, Phi = "PCA_normal"),
       get_df_mse_proj(mse_proj_dfm_pcacentred_normal) %>%
         mutate(model = "dfm", proj = TRUE, Phi = "PCAcentred_normal"),
-      get_df_mse_proj(mse_proj_dfm_pcacentred_normal_h) %>%
-        mutate(model = "dfm_h", proj = TRUE, Phi = "PCAcentred_normal"),
+      # get_df_mse_proj(mse_proj_dfm_pcacentred_normal_h) %>%
+      #   mutate(model = "dfm_h", proj = TRUE, Phi = "PCAcentred_normal"),
       get_df_mse_proj(mse_proj_dfm_ets_pca_normal) %>%
         mutate(model = "dfm", proj = TRUE, Phi = "PCA_normal-ets"),
       get_df_mse_proj(mse_proj_arima_normal) %>%
         mutate(model = "arima", proj = TRUE, Phi = "normal"),
-      get_df_mse_proj(mse_proj_arima_normal_h) %>%
-        mutate(model = "arima_h", proj = TRUE, Phi = "normal"),
+      # get_df_mse_proj(mse_proj_arima_normal_h) %>%
+      #   mutate(model = "arima_h", proj = TRUE, Phi = "normal"),
       get_df_mse_proj(mse_proj_arima_pca_normal_switch_sd) %>%
         mutate(model = "arima", proj = TRUE, Phi = "PCA_normal_switch_sd"),
       get_df_mse_proj(mse_proj_arima_pca_normal_switch_rms) %>%
