@@ -148,25 +148,25 @@ list(
     deployment = "main"
   ),
   # use different res for each h
-  tar_target(
-    out_ets_h,
-    ets_mat2(
-      sam_in,
-      .h = .forecast_h,
-      start = visnights_start,
-      frequency = visnights_freq
-    ),
-    iteration = "list",
-    pattern = map(sam_in),
-    resources = future_ram(2)
-  ),
-  tar_target(
-    res_ets_h,
-    get_res_h(out_ets_h),
-    iteration = "list",
-    pattern = map(out_ets_h),
-    deployment = "main"
-  ),
+  # tar_target(
+  #   out_ets_h,
+  #   ets_mat2(
+  #     sam_in,
+  #     .h = .forecast_h,
+  #     start = visnights_start,
+  #     frequency = visnights_freq
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(sam_in),
+  #   resources = future_ram(2)
+  # ),
+  # tar_target(
+  #   res_ets_h,
+  #   get_res_h(out_ets_h),
+  #   iteration = "list",
+  #   pattern = map(out_ets_h),
+  #   deployment = "main"
+  # ),
   # Singular component: not centred
   tar_target(
     pca_normal,
@@ -238,25 +238,25 @@ list(
     deployment = "main"
   ),
   #  use different res for each h
-  tar_target(
-    out_ets_pcacentred_normal_h,
-    ets_mat2(
-      pcacentred_normal$x,
-      .h = .forecast_h,
-      start = visnights_start,
-      frequency = visnights_freq
-    ),
-    iteration = "list",
-    pattern = map(pcacentred_normal),
-    resources = future_ram(3)
-  ),
-  tar_target(
-    res_ets_pcacentred_normal_h,
-    get_res_h(out_ets_pcacentred_normal_h),
-    iteration = "list",
-    pattern = map(out_ets_pcacentred_normal_h),
-    deployment = "main"
-  ),
+  # tar_target(
+  #   out_ets_pcacentred_normal_h,
+  #   ets_mat2(
+  #     pcacentred_normal$x,
+  #     .h = .forecast_h,
+  #     start = visnights_start,
+  #     frequency = visnights_freq
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(pcacentred_normal),
+  #   resources = future_ram(3)
+  # ),
+  # tar_target(
+  #   res_ets_pcacentred_normal_h,
+  #   get_res_h(out_ets_pcacentred_normal_h),
+  #   iteration = "list",
+  #   pattern = map(out_ets_pcacentred_normal_h),
+  #   deployment = "main"
+  # ),
   tar_target(
     normal,
     component(sam_in, "normal", p = p),
@@ -291,25 +291,25 @@ list(
     deployment = "main"
   ),
   #  use different res for each h
-  tar_target(
-    out_ets_normal_h,
-    ets_mat2(
-      normal$x,
-      .h = .forecast_h,
-      start = visnights_start,
-      frequency = visnights_freq
-    ),
-    iteration = "list",
-    pattern = map(normal),
-    resources = future_ram(3)
-  ),
-  tar_target(
-    res_ets_normal_h,
-    get_res_h(out_ets_normal_h),
-    iteration = "list",
-    pattern = map(out_ets_normal_h),
-    deployment = "main"
-  ),
+  # tar_target(
+  #   out_ets_normal_h,
+  #   ets_mat2(
+  #     normal$x,
+  #     .h = .forecast_h,
+  #     start = visnights_start,
+  #     frequency = visnights_freq
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(normal),
+  #   resources = future_ram(3)
+  # ),
+  # tar_target(
+  #   res_ets_normal_h,
+  #   get_res_h(out_ets_normal_h),
+  #   iteration = "list",
+  #   pattern = map(out_ets_normal_h),
+  #   deployment = "main"
+  # ),
   tar_target(
     uniform,
     component(sam_in, "uniform", p = p),
@@ -396,23 +396,23 @@ list(
     ),
     resources = future_ram(4)
   ),
-  tar_target(
-    proj_ets_pcacentred_normal_h,
-    project_2(
-      cbind(fc_ets, fc_ets_pcacentred_normal),
-      W = get_W2(res_ets_h, res_ets_pcacentred_normal_h),
-      Phi = pcacentred_normal$Phi
-    ),
-    iteration = "list",
-    pattern = map(
-      fc_ets,
-      fc_ets_pcacentred_normal,
-      res_ets_h,
-      res_ets_pcacentred_normal_h,
-      pcacentred_normal
-    ),
-    resources = future_ram(4)
-  ),
+  # tar_target(
+  #   proj_ets_pcacentred_normal_h,
+  #   project_2(
+  #     cbind(fc_ets, fc_ets_pcacentred_normal),
+  #     W = get_W2(res_ets_h, res_ets_pcacentred_normal_h),
+  #     Phi = pcacentred_normal$Phi
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(
+  #     fc_ets,
+  #     fc_ets_pcacentred_normal,
+  #     res_ets_h,
+  #     res_ets_pcacentred_normal_h,
+  #     pcacentred_normal
+  #   ),
+  #   resources = future_ram(4)
+  # ),
   # tar_target(proj_dfm_pca_normal,
   #            project(
   #              cbind(fc_dfm, fc_ets_pca_normal),
@@ -432,17 +432,17 @@ list(
     pattern = map(fc_ets, fc_ets_normal, res_ets, res_ets_normal, normal),
     resources = future_ram(4)
   ),
-  tar_target(
-    proj_ets_normal_h,
-    project_2(
-      cbind(fc_ets, fc_ets_normal),
-      W = get_W2(res_ets_h, res_ets_normal_h),
-      Phi = normal$Phi
-    ),
-    iteration = "list",
-    pattern = map(fc_ets, fc_ets_normal, res_ets_h, res_ets_normal_h, normal),
-    resources = future_ram(4)
-  ),
+  # tar_target(
+  #   proj_ets_normal_h,
+  #   project_2(
+  #     cbind(fc_ets, fc_ets_normal),
+  #     W = get_W2(res_ets_h, res_ets_normal_h),
+  #     Phi = normal$Phi
+  #   ),
+  #   iteration = "list",
+  #   pattern = map(fc_ets, fc_ets_normal, res_ets_h, res_ets_normal_h, normal),
+  #   resources = future_ram(4)
+  # ),
   tar_target(
     proj_ets_uniform,
     project(
@@ -581,13 +581,13 @@ list(
     pattern = map(sam_out, proj_ets_pcacentred_normal),
     deployment = "main"
   ),
-  tar_target(
-    se_proj_ets_pcacentred_normal_h,
-    lapply(proj_ets_pcacentred_normal_h, \(pa) (sam_out - pa)^2),
-    iteration = "list",
-    pattern = map(sam_out, proj_ets_pcacentred_normal_h),
-    deployment = "main"
-  ),
+  # tar_target(
+  #   se_proj_ets_pcacentred_normal_h,
+  #   lapply(proj_ets_pcacentred_normal_h, \(pa) (sam_out - pa)^2),
+  #   iteration = "list",
+  #   pattern = map(sam_out, proj_ets_pcacentred_normal_h),
+  #   deployment = "main"
+  # ),
   # tar_target(se_proj_dfm_pca_normal, lapply(proj_dfm_pca_normal, \(pa) (sam_out - pa)^2),
   #            iteration = "list",
   #            pattern = map(sam_out, proj_dfm_pca_normal),
@@ -599,13 +599,13 @@ list(
     pattern = map(sam_out, proj_ets_normal),
     deployment = "main"
   ),
-  tar_target(
-    se_proj_ets_normal_h,
-    lapply(proj_ets_normal_h, \(pa) (sam_out - pa)^2),
-    iteration = "list",
-    pattern = map(sam_out, proj_ets_normal_h),
-    deployment = "main"
-  ),
+  # tar_target(
+  #   se_proj_ets_normal_h,
+  #   lapply(proj_ets_normal_h, \(pa) (sam_out - pa)^2),
+  #   iteration = "list",
+  #   pattern = map(sam_out, proj_ets_normal_h),
+  #   deployment = "main"
+  # ),
   tar_target(
     se_proj_ets_uniform,
     lapply(proj_ets_uniform, \(pa) (sam_out - pa)^2),
@@ -646,11 +646,11 @@ list(
     get_mse_proj(se_proj_ets_pcacentred_normal),
     resources = future_ram(5)
   ),
-  tar_target(
-    mse_proj_ets_pcacentred_normal_h,
-    get_mse_proj(se_proj_ets_pcacentred_normal_h),
-    resources = future_ram(5)
-  ),
+  # tar_target(
+  #   mse_proj_ets_pcacentred_normal_h,
+  #   get_mse_proj(se_proj_ets_pcacentred_normal_h),
+  #   resources = future_ram(5)
+  # ),
   # tar_target(mse_proj_dfm_pca_normal, get_mse_proj(se_proj_dfm_pca_normal),
   #            resources = future_ram(5)),
   tar_target(
@@ -658,11 +658,11 @@ list(
     get_mse_proj(se_proj_ets_normal),
     resources = future_ram(5)
   ),
-  tar_target(
-    mse_proj_ets_normal_h,
-    get_mse_proj(se_proj_ets_normal_h),
-    resources = future_ram(5)
-  ),
+  # tar_target(
+  #   mse_proj_ets_normal_h,
+  #   get_mse_proj(se_proj_ets_normal_h),
+  #   resources = future_ram(5)
+  # ),
   tar_target(
     mse_proj_ets_uniform,
     get_mse_proj(se_proj_ets_uniform),
@@ -753,14 +753,14 @@ list(
         mutate(model = "ets", proj = TRUE, Phi = "PCA_normal"),
       get_df_mse_proj(mse_proj_ets_pcacentred_normal) %>%
         mutate(model = "ets", proj = TRUE, Phi = "PCAcentred_normal"),
-      get_df_mse_proj(mse_proj_ets_pcacentred_normal_h) %>%
-        mutate(model = "ets_h", proj = TRUE, Phi = "PCAcentred_normal"),
+      # get_df_mse_proj(mse_proj_ets_pcacentred_normal_h) %>%
+      #   mutate(model = "ets_h", proj = TRUE, Phi = "PCAcentred_normal"),
       # get_df_mse_proj(mse_proj_dfm_pca_normal) %>%
       #   mutate(model = "dfm", proj = TRUE, Phi = "PCA_normal"),
       get_df_mse_proj(mse_proj_ets_normal) %>%
         mutate(model = "ets", proj = TRUE, Phi = "normal"),
-      get_df_mse_proj(mse_proj_ets_normal_h) %>%
-        mutate(model = "ets_h", proj = TRUE, Phi = "normal"),
+      # get_df_mse_proj(mse_proj_ets_normal_h) %>%
+      #   mutate(model = "ets_h", proj = TRUE, Phi = "normal"),
       get_df_mse_proj(mse_proj_ets_uniform) %>%
         mutate(model = "ets", proj = TRUE, Phi = "uniform"),
       get_df_mse_proj(mse_proj_ets_pca_normal_switch_sd) %>%
