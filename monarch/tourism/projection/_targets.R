@@ -7,7 +7,7 @@
 library(targets)
 library(tarchetypes)
 library(future)
-library(future.batchtools)
+
 library(rlang)
 library(progressr)
 library(tidyverse)
@@ -23,46 +23,60 @@ tar_option_set(
   storage = "worker",
   retrieval = "worker",
   seed = 0,
-  error = "abridge",
-  resources = tar_resources(
-    future = tar_resources_future(
-      plan = future::tweak(
-        batchtools_slurm,
-        template = "future.tmpl",
-        resources = list(
-          ntasks = 1,
-          ncpus = 1,
-          walltime = 60 * 60 * 24, # seconds
-          memory = 1024 * 1 # megabytes
-        )
-      )
-    )
-  )
+  error = "trim"
 )
 
-# tar_make_clustermq() configuration (okay to leave alone):
-options(clustermq.scheduler = "slurm")
-options(clustermq.template = "clustermq.tmpl")
+future_mode <- "local"
+# future_mode <- "slurm"
 
-options(future.batchtools.workers = 240)
+if (future_mode == "slurm") {
+  library(future.batchtools)
 
-# tar_make_future() configuration (okay to leave alone):
-future::plan(future.batchtools::batchtools_slurm, template = "future.tmpl")
-
-
-future_ram <- function(G = 1) {
-  tar_resources(
-    future = tar_resources_future(
-      plan = future::tweak(
-        batchtools_slurm,
-        template = "future.tmpl",
-        resources = list(
-          ncpus = 1,
-          memory = 1024 * G
+  tar_option_set(
+    resources = tar_resources(
+      future = tar_resources_future(
+        plan = future::tweak(
+          batchtools_slurm,
+          template = "future.tmpl",
+          resources = list(
+            ntasks = 1,
+            ncpus = 1,
+            walltime = 60 * 60 * 24, # seconds
+            memory = 1024 * 1 # megabytes
+          )
         )
       )
     )
   )
+  # tar_make_clustermq() configuration (okay to leave alone):
+  options(clustermq.scheduler = "slurm")
+  options(clustermq.template = "clustermq.tmpl")
+
+  options(future.batchtools.workers = 240)
+
+  # tar_make_future() configuration (okay to leave alone):
+  future::plan(future.batchtools::batchtools_slurm, template = "future.tmpl")
+
+  future_ram <- function(G = 1) {
+    tar_resources(
+      future = tar_resources_future(
+        plan = future::tweak(
+          batchtools_slurm,
+          template = "future.tmpl",
+          resources = list(
+            ncpus = 1,
+            memory = 1024 * G
+          )
+        )
+      )
+    )
+  }
+} else {
+  future::plan(future.callr::callr)
+
+  future_ram <- function(...) {
+    targets::tar_option_get("resources")
+  }
 }
 
 # Run the R scripts in the R/ folder with your custom functions:

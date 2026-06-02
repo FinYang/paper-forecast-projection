@@ -35,7 +35,6 @@ future_mode <- "local"
 
 if (future_mode == "slurm") {
   library(future.batchtools)
-  library(future.batchtools)
   tar_option_set(
     resources = tar_resources(
       future = tar_resources_future(
