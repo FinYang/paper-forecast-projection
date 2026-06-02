@@ -166,7 +166,8 @@ list(
       }
       fc
     },
-    pattern = map(sim_in)
+    pattern = map(sim_in),
+    deployment = "main"
   ),
   tar_target(
     res_true,
@@ -210,7 +211,8 @@ list(
   tar_target(
     out_var,
     var_est(sim_in, .n_lag, .forecast_h),
-    pattern = map(sim_in)
+    pattern = map(sim_in),
+    deployment = "main"
   ),
   tar_target(fc_var, out_var$fc, pattern = map(out_var), deployment = "main"),
   tar_target(res_var, out_var$res, pattern = map(out_var), deployment = "main"),
@@ -403,110 +405,6 @@ list(
     deployment = "main"
   ),
   tar_target(
-    W_arima,
-    get_W(res_arima, res_arima_pca),
-    pattern = map(res_arima, res_arima_pca),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_arima_pcacentred_normal,
-    get_W(res_arima, res_arima_pcacentred_normal),
-    pattern = map(res_arima, res_arima_pcacentred_normal),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_var,
-    get_W(res_var, res_arima_pca),
-    pattern = map(res_var, res_arima_pca),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_var_pcacentred_normal,
-    get_W(res_var, res_arima_pcacentred_normal),
-    pattern = map(res_var, res_arima_pcacentred_normal),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_arima_wls,
-    map2(
-      res_arima,
-      res_arima_pca,
-      \(a, b) {
-        vars <- apply(cbind(a, b), 2, var, na.rm = TRUE)
-        lapply(
-          seq_len(p),
-          \(pp) diag(vars[seq_len(m + pp)])
-        )
-      }
-    ),
-    pattern = map(res_arima, res_arima_pca),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_dfm,
-    get_W(res_dfm, res_arima_pca),
-    pattern = map(res_dfm, res_arima_pca),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_dfm_pcacentred_normal,
-    get_W(res_dfm, res_arima_pcacentred_normal),
-    pattern = map(res_dfm, res_arima_pcacentred_normal),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_true,
-    {
-      res <- cbind(res_true, res_arima_pca[[1]])
-      lapply(
-        seq_len(p),
-        \(pp) corpcor::cov.shrink(res[, seq_len(m + pp)], verbose = FALSE)
-      )
-    },
-    pattern = map(res_true, res_arima_pca)
-  ),
-  tar_target(
-    W_true_pcacentred_normal,
-    {
-      res <- cbind(res_true, res_arima_pcacentred_normal[[1]])
-      lapply(
-        seq_len(p),
-        \(pp) corpcor::cov.shrink(res[, seq_len(m + pp)], verbose = FALSE)
-      )
-    },
-    pattern = map(res_true, res_arima_pcacentred_normal)
-  ),
-  tar_target(
-    W_arima_normal,
-    get_W(res_arima, res_arima_normal),
-    pattern = map(res_arima, res_arima_normal),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_arima_uniform,
-    get_W(res_arima, res_arima_uniform),
-    pattern = map(res_arima, res_arima_uniform),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_arima_pca_uniform,
-    get_W(res_arima, res_arima_pca_uniform),
-    pattern = map(res_arima, res_arima_pca_uniform),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_arima_pcacentred_uniform,
-    get_W(res_arima, res_arima_pcacentred_uniform),
-    pattern = map(res_arima, res_arima_pcacentred_uniform),
-    resources = future_ram(6)
-  ),
-  tar_target(
-    W_arima_ortho_normal,
-    get_W(res_arima, res_arima_ortho_normal),
-    pattern = map(res_arima, res_arima_ortho_normal),
-    resources = future_ram(6)
-  ),
-  tar_target(
     proj_iter_arima,
     project_iter(
       sim_in,
@@ -532,26 +430,27 @@ list(
     proj_arima,
     project(
       cbind(fc_arima, fc_arima_pca),
-      W = W_arima,
+      W = get_W(res_arima, res_arima_pca),
       Phi = pca$Phi
     ),
-    pattern = map(fc_arima, fc_arima_pca, W_arima, pca),
-    resources = future_ram(4)
+    pattern = map(fc_arima, fc_arima_pca, res_arima, res_arima_pca, pca),
+    resources = future_ram(6)
   ),
   tar_target(
     proj_arima_pcacentred_normal,
     project(
       cbind(fc_arima, fc_arima_pcacentred_normal),
-      W = W_arima_pcacentred_normal,
+      W = get_W(res_arima, res_arima_pcacentred_normal),
       Phi = pcacentred_normal$Phi
     ),
     pattern = map(
       fc_arima,
       fc_arima_pcacentred_normal,
-      W_arima_pcacentred_normal,
+      res_arima,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
 
   # using W (in turn res) for h=1 only for fc for all h
@@ -559,114 +458,143 @@ list(
     proj_arima_pcacentred_normal_h1,
     project_1(
       cbind(fc_arima, fc_arima_pcacentred_normal),
-      W = W_arima_pcacentred_normal[[1]],
+      W = get_W(res_arima[1], res_arima_pcacentred_normal[1])[[1]],
       Phi = pcacentred_normal$Phi
     ),
     pattern = map(
       fc_arima,
       fc_arima_pcacentred_normal,
-      W_arima_pcacentred_normal,
+      res_arima,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
   tar_target(
     proj_var,
     project(
       cbind(fc_var, fc_arima_pca),
-      W = W_var,
+      W = get_W(res_var, res_arima_pca),
       Phi = pca$Phi
     ),
-    pattern = map(fc_var, fc_arima_pca, W_var, pca),
-    resources = future_ram(4)
+    pattern = map(fc_var, fc_arima_pca, res_var, res_arima_pca, pca),
+    resources = future_ram(6)
   ),
   tar_target(
     proj_var_pcacentred_normal,
     project(
       cbind(fc_var, fc_arima_pcacentred_normal),
-      W = W_var_pcacentred_normal,
+      W = get_W(res_var, res_arima_pcacentred_normal),
       Phi = pcacentred_normal$Phi
     ),
     pattern = map(
       fc_var,
       fc_arima_pcacentred_normal,
-      W_var_pcacentred_normal,
+      res_var,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
   tar_target(
     proj_arima_wls,
     project(
       cbind(fc_arima, fc_arima_pca),
-      W = W_arima_wls,
+      W = map2(
+        res_arima,
+        res_arima_pca,
+        \(a, b) {
+          vars <- apply(cbind(a, b), 2, var, na.rm = TRUE)
+          lapply(
+            seq_len(p),
+            \(pp) diag(vars[seq_len(m + pp)])
+          )
+        }
+      ),
       Phi = pca$Phi
     ),
-    pattern = map(fc_arima, fc_arima_pca, W_arima_wls, pca),
-    resources = future_ram(4)
+    pattern = map(fc_arima, fc_arima_pca, res_arima, res_arima_pca, pca),
+    resources = future_ram(6)
   ),
   tar_target(
     proj_dfm,
     project(
       cbind(fc_dfm, fc_arima_pca),
-      W = W_dfm,
+      W = get_W(res_dfm, res_arima_pca),
       Phi = pca$Phi
     ),
-    pattern = map(fc_dfm, fc_arima_pca, W_dfm, pca),
-    resources = future_ram(4)
+    pattern = map(fc_dfm, fc_arima_pca, res_dfm, res_arima_pca, pca),
+    resources = future_ram(6)
   ),
   tar_target(
     proj_dfm_pcacentred_normal,
     project(
       cbind(fc_dfm, fc_arima_pcacentred_normal),
-      W = W_dfm_pcacentred_normal,
+      W = get_W(res_dfm, res_arima_pcacentred_normal),
       Phi = pcacentred_normal$Phi
     ),
     pattern = map(
       fc_dfm,
       fc_arima_pcacentred_normal,
-      W_dfm_pcacentred_normal,
+      res_dfm,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
   # using W (in turn res) for h=1 only for fc for all h
   tar_target(
     proj_dfm_pcacentred_normal_h1,
     project_1(
       cbind(fc_dfm, fc_arima_pcacentred_normal),
-      W = W_dfm_pcacentred_normal[[1]],
+      W = get_W(res_dfm[1], res_arima_pcacentred_normal[1])[[1]],
       Phi = pcacentred_normal$Phi
     ),
     pattern = map(
       fc_dfm,
       fc_arima_pcacentred_normal,
-      W_dfm_pcacentred_normal,
+      res_dfm,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
   tar_target(
     proj_true,
-    project_1(
-      cbind(fc_true, fc_arima_pca),
-      W = W_true,
-      Phi = pca$Phi
-    ),
-    pattern = map(fc_true, fc_arima_pca, W_true, pca),
-    resources = future_ram(1)
+    {
+      res <- cbind(res_true, res_arima_pca[[1]])
+      W_true <- lapply(
+        seq_len(p),
+        \(pp) corpcor::cov.shrink(res[, seq_len(m + pp)], verbose = FALSE)
+      )
+      project_1(
+        cbind(fc_true, fc_arima_pca),
+        W = W_true,
+        Phi = pca$Phi
+      )
+    },
+    pattern = map(fc_true, fc_arima_pca, res_true, res_arima_pca, pca),
+    resources = future_ram(2)
   ),
   tar_target(
     proj_true_pcacentred_normal,
-    project_1(
-      cbind(fc_true, fc_arima_pcacentred_normal),
-      W = W_true_pcacentred_normal,
-      Phi = pcacentred_normal$Phi
-    ),
+    {
+      res <- cbind(res_true, res_arima_pcacentred_normal[[1]])
+      W_true_pcacentred_normal <- lapply(
+        seq_len(p),
+        \(pp) corpcor::cov.shrink(res[, seq_len(m + pp)], verbose = FALSE)
+      )
+      project_1(
+        cbind(fc_true, fc_arima_pcacentred_normal),
+        W = W_true_pcacentred_normal,
+        Phi = pcacentred_normal$Phi
+      )
+    },
     pattern = map(
       fc_true,
       fc_arima_pcacentred_normal,
-      W_true_pcacentred_normal,
+      res_true,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
     resources = future_ram(1)
@@ -675,77 +603,98 @@ list(
     proj_arima_normal,
     project(
       cbind(fc_arima, fc_arima_normal),
-      W = W_arima_normal,
+      W = get_W(res_arima, res_arima_normal),
       Phi = normal$Phi
     ),
-    pattern = map(fc_arima, fc_arima_normal, W_arima_normal, normal),
-    resources = future_ram(4)
+    pattern = map(
+      fc_arima,
+      fc_arima_normal,
+      res_arima,
+      res_arima_normal,
+      normal
+    ),
+    resources = future_ram(6)
   ),
   # using W (in turn res) for h=1 only for fc for all h
   tar_target(
     proj_arima_normal_h1,
     project_1(
       cbind(fc_arima, fc_arima_normal),
-      W = W_arima_normal[[1]],
+      W = get_W(res_arima[1], res_arima_normal[1])[[1]],
       Phi = normal$Phi
     ),
-    pattern = map(fc_arima, fc_arima_normal, W_arima_normal, normal),
-    resources = future_ram(4)
+    pattern = map(
+      fc_arima,
+      fc_arima_normal,
+      res_arima,
+      res_arima_normal,
+      normal
+    ),
+    resources = future_ram(6)
   ),
   tar_target(
     proj_arima_uniform,
     project(
       cbind(fc_arima, fc_arima_uniform),
-      W = W_arima_uniform,
+      W = get_W(res_arima, res_arima_uniform),
       Phi = uniform$Phi
     ),
-    pattern = map(fc_arima, fc_arima_uniform, W_arima_uniform, uniform),
-    resources = future_ram(4)
+    pattern = map(
+      fc_arima,
+      fc_arima_uniform,
+      res_arima,
+      res_arima_uniform,
+      uniform
+    ),
+    resources = future_ram(6)
   ),
   tar_target(
     proj_arima_pca_uniform,
     project(
       cbind(fc_arima, fc_arima_pca_uniform),
-      W = W_arima_pca_uniform,
+      W = get_W(res_arima, res_arima_pca_uniform),
       Phi = pca_uniform$Phi
     ),
     pattern = map(
       fc_arima,
       fc_arima_pca_uniform,
-      W_arima_pca_uniform,
+      res_arima,
+      res_arima_pca_uniform,
       pca_uniform
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
   tar_target(
     proj_arima_pcacentred_uniform,
     project(
       cbind(fc_arima, fc_arima_pcacentred_uniform),
-      W = W_arima_pcacentred_uniform,
+      W = get_W(res_arima, res_arima_pcacentred_uniform),
       Phi = pcacentred_uniform$Phi
     ),
     pattern = map(
       fc_arima,
       fc_arima_pcacentred_uniform,
-      W_arima_pcacentred_uniform,
+      res_arima,
+      res_arima_pcacentred_uniform,
       pcacentred_uniform
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
   tar_target(
     proj_arima_ortho_normal,
     project(
       cbind(fc_arima, fc_arima_ortho_normal),
-      W = W_arima_ortho_normal,
+      W = get_W(res_arima, res_arima_ortho_normal),
       Phi = ortho_normal$Phi
     ),
     pattern = map(
       fc_arima,
       fc_arima_ortho_normal,
-      W_arima_ortho_normal,
+      res_arima,
+      res_arima_ortho_normal,
       ortho_normal
     ),
-    resources = future_ram(4)
+    resources = future_ram(6)
   ),
   tar_target(
     pca_normal_switch_from_sd,
