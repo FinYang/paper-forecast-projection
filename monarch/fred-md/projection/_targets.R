@@ -447,87 +447,18 @@ list(
     deployment = "main"
   ),
   tar_target(
-    W_arima_pca_normal,
-    get_W(res_arima, res_arima_pca_normal),
-    iteration = "list",
-    pattern = map(res_arima, res_arima_pca_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    W_arima_pcacentred_normal,
-    get_W(res_arima, res_arima_pcacentred_normal),
-    iteration = "list",
-    pattern = map(res_arima, res_arima_pcacentred_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    W_arima_pcacentred_normal_h,
-    get_W_h(res_arima_h, res_arima_pcacentred_normal_h),
-    iteration = "list",
-    pattern = map(res_arima_h, res_arima_pcacentred_normal_h),
-    resources = future_ram(8)
-  ),
-  tar_target(
-    W_ets_pca_normal,
-    get_W(res_ets, res_ets_pca_normal),
-    iteration = "list",
-    pattern = map(res_ets, res_ets_pca_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    W_dfm_pca_normal,
-    get_W(res_dfm[[1]], res_arima_pca_normal),
-    iteration = "list",
-    pattern = map(res_dfm, res_arima_pca_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    W_dfm_pcacentred_normal,
-    get_W(res_dfm[[1]], res_arima_pcacentred_normal),
-    iteration = "list",
-    pattern = map(res_dfm, res_arima_pcacentred_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    W_dfm_pcacentred_normal_h,
-    get_W_h(res_dfm, res_arima_pcacentred_normal_h),
-    iteration = "list",
-    pattern = map(res_dfm, res_arima_pcacentred_normal_h),
-    resources = future_ram(8)
-  ),
-  tar_target(
-    W_dfm_ets_pca_normal,
-    get_W(res_dfm[[1]], res_ets_pca_normal),
-    iteration = "list",
-    pattern = map(res_dfm, res_ets_pca_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    W_arima_normal,
-    get_W(res_arima, res_arima_normal),
-    iteration = "list",
-    pattern = map(res_arima, res_arima_normal),
-    resources = future_ram(4)
-  ),
-  tar_target(
-    W_arima_normal_h,
-    get_W_h(res_arima_h, res_arima_normal_h),
-    iteration = "list",
-    pattern = map(res_arima_h, res_arima_normal_h),
-    resources = future_ram(8)
-  ),
-  tar_target(
     proj_arima_pca_normal,
     project(
       cbind(fc_arima, fc_arima_pca_normal),
-      W = W_arima_pca_normal,
+      W = get_W(res_arima, res_arima_pca_normal),
       Phi = pca_normal$Phi
     ),
     iteration = "list",
     pattern = map(
       fc_arima,
       fc_arima_pca_normal,
-      W_arima_pca_normal,
+      res_arima,
+      res_arima_pca_normal,
       pca_normal
     ),
     resources = future_ram(4)
@@ -536,14 +467,15 @@ list(
     proj_arima_pcacentred_normal,
     project(
       cbind(fc_arima, fc_arima_pcacentred_normal),
-      W = W_arima_pcacentred_normal,
+      W = get_W(res_arima, res_arima_pcacentred_normal),
       Phi = pcacentred_normal$Phi
     ),
     iteration = "list",
     pattern = map(
       fc_arima,
       fc_arima_pcacentred_normal,
-      W_arima_pcacentred_normal,
+      res_arima,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
     resources = future_ram(4)
@@ -552,14 +484,15 @@ list(
     proj_arima_pcacentred_normal_h,
     project_h(
       cbind(fc_arima, fc_arima_pcacentred_normal),
-      W = W_arima_pcacentred_normal_h,
+      W = get_W_h(res_arima_h, res_arima_pcacentred_normal_h),
       Phi = pcacentred_normal$Phi
     ),
     iteration = "list",
     pattern = map(
       fc_arima,
       fc_arima_pcacentred_normal,
-      W_arima_pcacentred_normal_h,
+      res_arima_h,
+      res_arima_pcacentred_normal_h,
       pcacentred_normal
     ),
     resources = future_ram(8)
@@ -568,36 +501,49 @@ list(
     proj_ets_pca_normal,
     project(
       cbind(fc_ets, fc_ets_pca_normal),
-      W = W_ets_pca_normal,
+      W = get_W(res_ets, res_ets_pca_normal),
       Phi = pca_normal$Phi
     ),
     iteration = "list",
-    pattern = map(fc_ets, fc_ets_pca_normal, W_ets_pca_normal, pca_normal),
+    pattern = map(
+      fc_ets,
+      fc_ets_pca_normal,
+      res_ets,
+      res_ets_pca_normal,
+      pca_normal
+    ),
     resources = future_ram(4)
   ),
   tar_target(
     proj_dfm_pca_normal,
     project(
       cbind(fc_dfm, fc_arima_pca_normal),
-      W = W_dfm_pca_normal,
+      W = get_W(res_dfm[[1]], res_arima_pca_normal),
       Phi = pca_normal$Phi
     ),
     iteration = "list",
-    pattern = map(fc_dfm, fc_arima_pca_normal, W_dfm_pca_normal, pca_normal),
+    pattern = map(
+      fc_dfm,
+      fc_arima_pca_normal,
+      res_dfm,
+      res_arima_pca_normal,
+      pca_normal
+    ),
     resources = future_ram(4)
   ),
   tar_target(
     proj_dfm_pcacentred_normal,
     project(
       cbind(fc_dfm, fc_arima_pcacentred_normal),
-      W = W_dfm_pcacentred_normal,
+      W = get_W(res_dfm[[1]], res_arima_pcacentred_normal),
       Phi = pcacentred_normal$Phi
     ),
     iteration = "list",
     pattern = map(
       fc_dfm,
       fc_arima_pcacentred_normal,
-      W_dfm_pcacentred_normal,
+      res_dfm,
+      res_arima_pcacentred_normal,
       pcacentred_normal
     ),
     resources = future_ram(4)
@@ -606,14 +552,15 @@ list(
     proj_dfm_pcacentred_normal_h,
     project_h(
       cbind(fc_dfm, fc_arima_pcacentred_normal),
-      W = W_dfm_pcacentred_normal_h,
+      W = get_W_h(res_dfm, res_arima_pcacentred_normal_h),
       Phi = pcacentred_normal$Phi
     ),
     iteration = "list",
     pattern = map(
       fc_dfm,
       fc_arima_pcacentred_normal,
-      W_dfm_pcacentred_normal_h,
+      res_dfm,
+      res_arima_pcacentred_normal_h,
       pcacentred_normal
     ),
     resources = future_ram(8)
@@ -622,33 +569,51 @@ list(
     proj_dfm_ets_pca_normal,
     project(
       cbind(fc_dfm, fc_ets_pca_normal),
-      W = W_dfm_ets_pca_normal,
+      W = get_W(res_dfm[[1]], res_ets_pca_normal),
       Phi = pca_normal$Phi
     ),
     iteration = "list",
-    pattern = map(fc_dfm, fc_ets_pca_normal, W_dfm_ets_pca_normal, pca_normal),
+    pattern = map(
+      fc_dfm,
+      fc_ets_pca_normal,
+      res_dfm,
+      res_ets_pca_normal,
+      pca_normal
+    ),
     resources = future_ram(4)
   ),
   tar_target(
     proj_arima_normal,
     project(
       cbind(fc_arima, fc_arima_normal),
-      W = W_arima_normal,
+      W = get_W(res_arima, res_arima_normal),
       Phi = normal$Phi
     ),
     iteration = "list",
-    pattern = map(fc_arima, fc_arima_normal, W_arima_normal, normal),
+    pattern = map(
+      fc_arima,
+      fc_arima_normal,
+      res_arima,
+      res_arima_normal,
+      normal
+    ),
     resources = future_ram(4)
   ),
   tar_target(
     proj_arima_normal_h,
     project_h(
       cbind(fc_arima, fc_arima_normal),
-      W = W_arima_normal_h,
+      W = get_W_h(res_arima_h, res_arima_normal_h),
       Phi = normal$Phi
     ),
     iteration = "list",
-    pattern = map(fc_arima, fc_arima_normal, W_arima_normal_h, normal),
+    pattern = map(
+      fc_arima,
+      fc_arima_normal,
+      res_arima_h,
+      res_arima_normal_h,
+      normal
+    ),
     resources = future_ram(8)
   ),
   tar_target(
