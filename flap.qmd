@@ -325,6 +325,36 @@ If we keep increasing the number of components beyond $m$, the result in @thm-ps
 
 :::
 
+@fig-geom provides a geometrical intuition regarding FLAP. The black dots $\bm{y}$ and $(\bm{y}, \bm{c})$ denote the (unknown) targets of the forecast for the original series and for the original series combined with the components, respectively. Blue points indicate potential base forecasts. This can also be considered for the original series $\bm{y}$ only, which is on the  horizontal axis corresponding to $\bm{y} \in \mathbb{R}^m$, or considered together with the components, which are represented by points off the horizontal axis. By including the forecasts of the components, the dimension of the base forecasts is "extended". The forecast error variance contains information about the most likely direction of large deviations from the coherent subspace $\mathfrak{s}$. This direction is denoted by  $\mathfrak{R}$. Panel (b) shows FLAP projecting all potential base forecasts onto the coherent subspace along the most likely direction of deviations. This projection brings the forecasts closer to the target of $(\bm{y}, \bm{c})$. The orange points indicate the projected forecasts. Panel (c) considers the FLAP forecasts of the original series only, and in the dimension corresponding to $\bm{y} \in \mathbb{R}^m$, the FLAP forecasts also yield a smaller spread around the target. In this sense, the FLAP method reduces the forecast error variance.
+
+```{r geometry}
+#| include: false
+#| cache: false
+if (
+  !all(file.exists(file.path(
+    "geometry",
+    c("obliq-1.pdf", "obliq-2.pdf", "obliq-3.pdf")
+  )))
+) {
+  source("flap-geometry.R")
+}
+```
+
+::: {#fig-geom layout-ncol=1}
+
+![](geometry/obliq-1.pdf){#fig-obliq-1}
+
+![](geometry/obliq-2.pdf){#fig-obliq-2}
+
+![](geometry/obliq-3.pdf){#fig-obliq-3}
+
+A schematic representation of FLAP. The black dots denote the (unknown) targets of the forecast. Blue points indicate potential base forecasts. In (a), blue points on the axis corresponding to $\bm{y} \in \mathbb{R}^m$ represent vectors of base forecasts for the original series. Blue points off the horizontal axis represent vectors of base forecasts for the original series combined with the components, where the dimension is "extended" by the components. $\mathfrak{R}$ indicates the most likely direction of deviations from the coherent subspace $\mathfrak{s}$. (b) shows FLAP projecting all potential base forecasts onto the coherent subspace along the most likely direction of deviations. The orange points indicate the projected forecasts. (c) shows the relevant projected forecasts $\tilde{\bm{y}}$, which have a smaller spread in the dimension corresponding to $\bm{y} \in \mathbb{R}^m$. (For interpretation of the references to colour in this figure legend, the reader is referred to the web version of this article.)
+
+
+:::
+
+
+
 ## Monotonicity
 
 In the results that follow, we break the base forecast error covariance matrix into smaller blocks.

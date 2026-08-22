@@ -15,8 +15,26 @@ library(kableExtra)
 library(rlang)
 library(glue)
 
-cb_palette_grey <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cb_palette_black <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cb_palette_grey <- c(
+  "#999999",
+  "#E69F00",
+  "#56B4E9",
+  "#009E73",
+  "#F0E442",
+  "#0072B2",
+  "#D55E00",
+  "#CC79A7"
+)
+cb_palette_black <- c(
+  "#000000",
+  "#E69F00",
+  "#56B4E9",
+  "#009E73",
+  "#F0E442",
+  "#0072B2",
+  "#D55E00",
+  "#CC79A7"
+)
 
 # Singular component or PCA
 SC <- FALSE
@@ -39,7 +57,7 @@ pa_fredmd <- function(...) pa("fred-md", "projection", "output", ...)
 m <- 122
 
 ## ---- fig-fred-md-line ----
-mse <- qs::qread(pa_fredmd("mse.qs"))
+mse <- qs2::qs_read(pa_fredmd("mse.qs2"))
 plot_mse <- mse %>%
   filter(
     model %in% c("dfm", "arima"),
@@ -47,7 +65,8 @@ plot_mse <- mse %>%
     h %in% c(1, 6, 12)
   ) %>%
   ggplot(aes(
-    x = p, y = value,
+    x = p,
+    y = value,
     colour = model,
     linetype = paste(proj, Phi, sep = ".")
   )) +
@@ -93,11 +112,17 @@ plot_mse <- mse %>%
 plot_mse
 ## ---- fig-fred-md-mcb-series ----
 
-mse_arima_series <- qs::qread(pa_fredmd("mse_arima_series.qs"))
-mse_dfm_series <- qs::qread(pa_fredmd("mse_dfm_series.qs"))
-mse_proj_arima_normal_series <- qs::qread(pa_fredmd("mse_proj_arima_normal_series.qs"))
-mse_proj_arima_pca_normal_series <- qs::qread(pa_fredmd(glue("mse_proj_arima_{tolower(pca_name)}_series.qs")))
-mse_proj_dfm_pca_normal_series <- qs::qread(pa_fredmd(glue("mse_proj_dfm_{tolower(pca_name)}_series.qs")))
+mse_arima_series <- qs2::qs_read(pa_fredmd("mse_arima_series.qs2"))
+mse_dfm_series <- qs2::qs_read(pa_fredmd("mse_dfm_series.qs2"))
+mse_proj_arima_normal_series <- qs2::qs_read(pa_fredmd(
+  "mse_proj_arima_normal_series.qs2"
+))
+mse_proj_arima_pca_normal_series <- qs2::qs_read(pa_fredmd(glue(
+  "mse_proj_arima_{tolower(pca_name)}_series.qs2"
+)))
+mse_proj_dfm_pca_normal_series <- qs2::qs_read(pa_fredmd(glue(
+  "mse_proj_dfm_{tolower(pca_name)}_series.qs2"
+)))
 
 mse_proj_arima_pca_normal_series_1 <- mse_proj_arima_pca_normal_series[[1]]
 mse_proj_arima_normal_series_1 <- mse_proj_arima_normal_series[[1]]
@@ -130,19 +155,21 @@ mse_series_mat_ls <- lst(!!!syms(names(name_vec))) %>%
   array2list()
 # tsutils::nemenyi(mse_series_mat_ls[[1]], plottype = "vmcb")
 
-
 mcb_df_ls <- mse_series_mat_ls %>%
   lapply(tsutils::nemenyi, plottype = "none") %>%
-  lapply(\(x) as.data.frame(x) %>%
-    mutate(name = name_vec[name]) %>%
-    mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
-    mutate(
-      col =
-        (u[[which.min(value)]] <= u &
+  lapply(\(x) {
+    as.data.frame(x) %>%
+      mutate(name = name_vec[name]) %>%
+      mutate(
+        name = paste(name, format(round(value, 2), width = 5, nsmall = 2))
+      ) %>%
+      mutate(
+        col = (u[[which.min(value)]] <= u &
           u[[which.min(value)]] >= l) |
           (u[[which.min(value)]] >= u &
             l[[which.min(value)]] <= u)
-    ))
+      )
+  })
 
 plot_mcb_series <- mcb_df_ls %>%
   bind_rows(.id = "h") %>%
@@ -151,8 +178,11 @@ plot_mcb_series <- mcb_df_ls %>%
   mutate(name = factor(name, unique(name), ordered = TRUE)) %>%
   group_by(h) %>%
   plot_mcb("Benchmark") +
-  facet_wrap("h",
-    scales = "free", labeller = label_both, ncol = 1,
+  facet_wrap(
+    "h",
+    scales = "free",
+    labeller = label_both,
+    ncol = 1,
     strip.position = "right"
   )
 plot_mcb_series
@@ -163,14 +193,15 @@ m <- 77
 p <- 200
 
 ## ---- fig-visnights-line ----
-mse <- qs::qread(pa_visnights("mse.qs"))
+mse <- qs2::qs_read(pa_visnights("mse.qs2"))
 plot_mse <- mse %>%
   filter(
     h %in% c(1, 6, 12),
     model == "ets"
   ) %>%
   ggplot(aes(
-    x = p, y = value,
+    x = p,
+    y = value,
     linetype = paste(proj, Phi, sep = ".")
   )) +
   geom_vline(xintercept = m) +
@@ -207,9 +238,13 @@ plot_mse
 ## ---- fig-visnights-mcb-series ----
 # ?tsutils::nemenyi
 # dir(pa_visnights())
-mse_ets_series <- qs::qread(pa_visnights("mse_ets_series.qs"))
-mse_proj_ets_normal_series <- qs::qread(pa_visnights("mse_proj_ets_normal_series.qs"))
-mse_proj_ets_pca_normal_series <- qs::qread(pa_visnights(glue("mse_proj_ets_{tolower(pca_name)}_series.qs")))
+mse_ets_series <- qs2::qs_read(pa_visnights("mse_ets_series.qs2"))
+mse_proj_ets_normal_series <- qs2::qs_read(pa_visnights(
+  "mse_proj_ets_normal_series.qs2"
+))
+mse_proj_ets_pca_normal_series <- qs2::qs_read(pa_visnights(glue(
+  "mse_proj_ets_{tolower(pca_name)}_series.qs2"
+)))
 
 mse_proj_ets_pca_normal_series_1 <- mse_proj_ets_pca_normal_series[[1]]
 mse_proj_ets_normal_series_1 <- mse_proj_ets_normal_series[[1]]
@@ -239,19 +274,21 @@ mse_series_mat_ls <- lst(!!!syms(names(name_vec))) %>%
   array2list()
 # tsutils::nemenyi(mse_series_mat_ls[[1]], plottype = "vmcb")
 
-
 mcb_df_ls <- mse_series_mat_ls %>%
   lapply(tsutils::nemenyi, plottype = "none") %>%
-  lapply(\(x) as.data.frame(x) %>%
-    mutate(name = name_vec[name]) %>%
-    mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
-    mutate(
-      col =
-        (u[[which.min(value)]] <= u &
+  lapply(\(x) {
+    as.data.frame(x) %>%
+      mutate(name = name_vec[name]) %>%
+      mutate(
+        name = paste(name, format(round(value, 2), width = 5, nsmall = 2))
+      ) %>%
+      mutate(
+        col = (u[[which.min(value)]] <= u &
           u[[which.min(value)]] >= l) |
           (u[[which.min(value)]] >= u &
             l[[which.min(value)]] <= u)
-    ))
+      )
+  })
 
 plot_mcb_series <- mcb_df_ls %>%
   imap(\(df, i) mutate(df, name_unique = paste(name, i))) %>%
@@ -261,8 +298,11 @@ plot_mcb_series <- mcb_df_ls %>%
   mutate(name = factor(name_unique, unique(name_unique), ordered = TRUE)) %>%
   group_by(h) %>%
   plot_mcb("Benchmark") +
-  facet_wrap("h",
-    scales = "free", labeller = label_both, ncol = 1,
+  facet_wrap(
+    "h",
+    scales = "free",
+    labeller = label_both,
+    ncol = 1,
     strip.position = "right"
   ) +
   scale_y_discrete(labels = \(x) gsub("[[:space:]][[:digit:]]{1,2}$", "", x))
@@ -274,7 +314,7 @@ m <- 70
 p <- 300
 
 ## ---- fig-simulation-line ----
-mse <- qs::qread(pa_simulation("mse.qs"))
+mse <- qs2::qs_read(pa_simulation("mse.qs2"))
 plot_mse <- mse %>%
   filter(
     model %in% c("arima", "dfm", "var", "true"),
@@ -282,7 +322,8 @@ plot_mse <- mse %>%
   ) %>%
   # {print(distinct(., model, Phi))}
   ggplot(aes(
-    x = p, y = value,
+    x = p,
+    y = value,
     colour = model,
     linetype = paste(proj, Phi, sep = ".")
   )) +
@@ -332,20 +373,36 @@ plot_mse
 # ?tsutils::nemenyi
 # dir(pa_simulation())
 
-mse_arima_series <- qs::qread(pa_simulation("mse_arima_series.qs"))
-mse_dfm_series <- qs::qread(pa_simulation("mse_dfm_series.qs"))
-mse_var_series <- qs::qread(pa_simulation("mse_var_series.qs"))
-mse_proj_arima_normal_series <- qs::qread(pa_simulation("mse_proj_arima_normal_series.qs"))
-mse_proj_arima_ortho_normal_series <- qs::qread(pa_simulation("mse_proj_arima_ortho_normal_series.qs"))
-mse_proj_arima_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_uniform_series.qs"))
+mse_arima_series <- qs2::qs_read(pa_simulation("mse_arima_series.qs2"))
+mse_dfm_series <- qs2::qs_read(pa_simulation("mse_dfm_series.qs2"))
+mse_var_series <- qs2::qs_read(pa_simulation("mse_var_series.qs2"))
+mse_proj_arima_normal_series <- qs2::qs_read(pa_simulation(
+  "mse_proj_arima_normal_series.qs2"
+))
+mse_proj_arima_ortho_normal_series <- qs2::qs_read(pa_simulation(
+  "mse_proj_arima_ortho_normal_series.qs2"
+))
+mse_proj_arima_uniform_series <- qs2::qs_read(pa_simulation(
+  "mse_proj_arima_uniform_series.qs2"
+))
 if (SC) {
-  mse_proj_arima_series <- qs::qread(pa_simulation("mse_proj_arima_series.qs"))
-  mse_proj_dfm_series <- qs::qread(pa_simulation("mse_proj_dfm_series.qs"))
-  mse_proj_arima_pca_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_pca_uniform_series.qs"))
+  mse_proj_arima_series <- qs2::qs_read(pa_simulation(
+    "mse_proj_arima_series.qs2"
+  ))
+  mse_proj_dfm_series <- qs2::qs_read(pa_simulation("mse_proj_dfm_series.qs2"))
+  mse_proj_arima_pca_uniform_series <- qs2::qs_read(pa_simulation(
+    "mse_proj_arima_pca_uniform_series.qs2"
+  ))
 } else {
-  mse_proj_arima_series <- qs::qread(pa_simulation("mse_proj_arima_pcacentred_normal_series.qs"))
-  mse_proj_dfm_series <- qs::qread(pa_simulation("mse_proj_dfm_pcacentred_normal_series.qs"))
-  mse_proj_arima_pca_uniform_series <- qs::qread(pa_simulation("mse_proj_arima_pcacentred_uniform_series.qs"))
+  mse_proj_arima_series <- qs2::qs_read(pa_simulation(
+    "mse_proj_arima_pcacentred_normal_series.qs2"
+  ))
+  mse_proj_dfm_series <- qs2::qs_read(pa_simulation(
+    "mse_proj_dfm_pcacentred_normal_series.qs2"
+  ))
+  mse_proj_arima_pca_uniform_series <- qs2::qs_read(pa_simulation(
+    "mse_proj_arima_pcacentred_uniform_series.qs2"
+  ))
 }
 mse_proj_arima_normal_series_m <- mse_proj_arima_normal_series[[m]]
 mse_proj_arima_ortho_normal_series_m <- mse_proj_arima_ortho_normal_series[[m]]
@@ -385,19 +442,21 @@ mse_series_mat_ls <- lst(!!!syms(names(name_vec))) %>%
   array2list()
 # tsutils::nemenyi(mse_series_mat_ls[[1]], plottype = "vmcb")
 
-
 mcb_df_ls <- mse_series_mat_ls %>%
   lapply(tsutils::nemenyi, plottype = "none") %>%
-  lapply(\(x) as.data.frame(x) %>%
-    mutate(name = name_vec[name]) %>%
-    mutate(name = paste(name, format(round(value, 2), width = 5, nsmall = 2))) %>%
-    mutate(
-      col =
-        (u[[which.min(value)]] <= u &
+  lapply(\(x) {
+    as.data.frame(x) %>%
+      mutate(name = name_vec[name]) %>%
+      mutate(
+        name = paste(name, format(round(value, 2), width = 5, nsmall = 2))
+      ) %>%
+      mutate(
+        col = (u[[which.min(value)]] <= u &
           u[[which.min(value)]] >= l) |
           (u[[which.min(value)]] >= u &
             l[[which.min(value)]] <= u)
-    ))
+      )
+  })
 
 plot_mcb_series <- mcb_df_ls %>%
   bind_rows(.id = "h") %>%
@@ -407,12 +466,14 @@ plot_mcb_series <- mcb_df_ls %>%
   mutate(name = factor(name, unique(name), ordered = TRUE)) %>%
   group_by(h) %>%
   plot_mcb("Benchmark") +
-  facet_wrap("h",
-    scales = "free", labeller = label_both, ncol = 1,
+  facet_wrap(
+    "h",
+    scales = "free",
+    labeller = label_both,
+    ncol = 1,
     strip.position = "right"
   ) +
   scale_y_discrete(labels = \(x) substr(x, 3, 1e4))
 plot_mcb_series
-
 
 ## ---- end ----
