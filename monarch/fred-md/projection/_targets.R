@@ -821,13 +821,15 @@ list(
     se_proj_arima_pca_normal,
     lapply(proj_arima_pca_normal, \(pa) (sam_out - pa)^2),
     iteration = "list",
-    pattern = map(sam_out, proj_arima_pca_normal)
+    pattern = map(sam_out, proj_arima_pca_normal),
+    deployment = "main"
   ),
   tar_target(
     se_proj_arima_pcacentred_normal,
     lapply(proj_arima_pcacentred_normal, \(pa) (sam_out - pa)^2),
     iteration = "list",
-    pattern = map(sam_out, proj_arima_pcacentred_normal)
+    pattern = map(sam_out, proj_arima_pcacentred_normal),
+    deployment = "main"
   ),
   # tar_target(
   #   se_proj_arima_pcacentred_normal_h,
@@ -839,19 +841,22 @@ list(
     se_proj_ets_pca_normal,
     lapply(proj_ets_pca_normal, \(pa) (sam_out - pa)^2),
     iteration = "list",
-    pattern = map(sam_out, proj_ets_pca_normal)
+    pattern = map(sam_out, proj_ets_pca_normal),
+    deployment = "main"
   ),
   tar_target(
     se_proj_dfm_pca_normal,
     lapply(proj_dfm_pca_normal, \(pa) (sam_out - pa)^2),
     iteration = "list",
-    pattern = map(sam_out, proj_dfm_pca_normal)
+    pattern = map(sam_out, proj_dfm_pca_normal),
+    deployment = "main"
   ),
   tar_target(
     se_proj_dfm_pcacentred_normal,
     lapply(proj_dfm_pcacentred_normal, \(pa) (sam_out - pa)^2),
     iteration = "list",
-    pattern = map(sam_out, proj_dfm_pcacentred_normal)
+    pattern = map(sam_out, proj_dfm_pcacentred_normal),
+    deployment = "main"
   ),
   # tar_target(
   #   se_proj_dfm_pcacentred_normal_h,
@@ -863,13 +868,15 @@ list(
     se_proj_dfm_ets_pca_normal,
     lapply(proj_dfm_ets_pca_normal, \(pa) (sam_out - pa)^2),
     iteration = "list",
-    pattern = map(sam_out, proj_dfm_ets_pca_normal)
+    pattern = map(sam_out, proj_dfm_ets_pca_normal),
+    deployment = "main"
   ),
   tar_target(
     se_proj_arima_normal,
     lapply(proj_arima_normal, \(pa) (sam_out - pa)^2),
     iteration = "list",
-    pattern = map(sam_out, proj_arima_normal)
+    pattern = map(sam_out, proj_arima_normal),
+    deployment = "main"
   ),
   # tar_target(
   #   se_proj_arima_normal_h,
@@ -1198,7 +1205,8 @@ list(
           "TRUE.normal" = "Norm."
         )
       ) +
-      geom_vline(xintercept = m)
+      geom_vline(xintercept = m),
+    deployment = "main"
   ),
   tar_target(
     mse_scale,
@@ -1268,6 +1276,7 @@ list(
           "TRUE.normal" = "Norm."
         )
       ) +
-      geom_vline(xintercept = m)
+      geom_vline(xintercept = m),
+    deployment = "main"
   )
 )

@@ -167,8 +167,8 @@ hist_tsb %>%
 
 ```{r}
 
-proj_ets_pca_normal <- qs::qread("../monarch/tourism/projection/output/proj_ets_pca_normal.qs")[[1]]
-fc_ets <- qs::qread("../monarch/tourism/projection/output/fc_ets.qs")[[1]]
+proj_ets_pca_normal <- qs2::qs_read("../monarch/tourism/projection/output/proj_ets_pca_normal.qs")[[1]]
+fc_ets <- qs2::qs_read("../monarch/tourism/projection/output/fc_ets.qs")[[1]]
 
 n_comp <- length(proj_ets_pca_normal)
 
@@ -254,7 +254,7 @@ Theoretically, the forecast error variance of each series
 ```{r}
 
 m <- 77
-qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
+qs2::qs_read("../monarch/tourism/projection/output/mse.qs") %>%
   filter(
     h %in% c(1, 12),
     model != "ets_h",
@@ -305,7 +305,7 @@ qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
 ```
 ``` {r}
 m <- 122
-qs::qread("../monarch/fred-md/projection/output/mse.qs") %>%
+qs2::qs_read("../monarch/fred-md/projection/output/mse.qs") %>%
   filter(
     !model %in% c("ets", "arima"),
     !grepl("ets", Phi),

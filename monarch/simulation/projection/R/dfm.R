@@ -8,7 +8,8 @@ BIC_lmfit <- function(object) {
   # }
   # lls <- 0.5 * (sum(log(w)) - nos * (log(2 * pi) + 1 - log(nos) +
   #                                    log(sum(w * object$residuals^2))))
-  lls <- 0.5 * (-nos * (log(2 * pi) + 1 - log(nos) + log(sum(object$residuals^2))))
+  lls <- 0.5 *
+    (-nos * (log(2 * pi) + 1 - log(nos) + log(sum(object$residuals^2))))
   -2 * as.numeric(lls) + log(nos) * (object$rank + 1)
 }
 
@@ -24,7 +25,9 @@ predict_dfm <- function(sim_in, factor, f_lag = 1, y_lag = 3, h = 1) {
   f <- lapply(seq(h, f_lagh), \(l) dplyr::lag(factor, n = l)) %>%
     do.call(cbind, .)
 
-  fc <- map2(asplit(sim_in, 2), X_list,
+  fc <- map2(
+    asplit(sim_in, 2),
+    X_list,
     \(y, X, f) {
       XX <- cbind(1, f, X)
       # browser()
@@ -43,7 +46,10 @@ predict_dfm <- function(sim_in, factor, f_lag = 1, y_lag = 3, h = 1) {
 
       XX[is.na(XX)] <- 0
       fitted <- c(XX %*% fit$coefficients)
-      fc <- c(crossprod(fit$coefficients, c(1, factor[n, ], rev(tail(y, ncol(X))))))
+      fc <- c(crossprod(
+        fit$coefficients,
+        c(1, factor[n, ], rev(tail(y, ncol(X))))
+      ))
       # tail(c(rbind(c(1, rep(0, NCOL(XX)-1)), XX) %*% fit$coefficients))
       c(fitted, fc)
     },
@@ -62,9 +68,16 @@ dfm <- function(y, factor, n_factor, f_lag, y_lag, h = 1) {
   if (y_lag == 0) {
     X <- NULL
   } else {
-    X <- vapply(seq(h, y_lagh, by = 1), \(l) dplyr::lag(y, n = l), numeric(length(y)))
+    X <- vapply(
+      seq(h, y_lagh, by = 1),
+      \(l) dplyr::lag(y, n = l),
+      numeric(length(y))
+    )
   }
-  f <- do.call(cbind, lapply(seq(h, f_lagh), \(l) dplyr::lag(factor[, seq_len(n_factor)], n = l)))
+  f <- do.call(
+    cbind,
+    lapply(seq(h, f_lagh), \(l) dplyr::lag(factor[, seq_len(n_factor)], n = l))
+  )
   XX <- cbind(1, f, X)
   out <- lm.fit(
     x = XX[-seq_len(max(y_lagh, f_lagh)), ],
@@ -91,12 +104,14 @@ auto_dfm <- function(mat, n_factor, f_lag, y_lag, h = 1) {
     expand.grid() %>%
     `colnames<-`(c("n_factor", "f_lag", "y_lag")) %>%
     split(seq_len(nrow(.)))
-  factor <- stats::prcomp(mat, center = TRUE, scale. = TRUE)$x[, seq_len(n_factor)]
+  factor <- stats::prcomp(mat, center = TRUE, scale. = TRUE)$x[, seq_len(
+    n_factor
+  )]
 
   # dfm(mat[,1], factor, 6, 3, 3, h= 2)
-  out_ls <- lapply(seq_len(NCOL(mat)), \(i){
+  out_ls <- lapply(seq_len(NCOL(mat)), \(i) {
     y <- mat[, i]
-    fit_ls <- lapply(meta, \(mm){
+    fit_ls <- lapply(meta, \(mm) {
       dfm(y, factor, mm[["n_factor"]], mm[["f_lag"]], mm[["y_lag"]], h = h)
     })
     j_min <- which.min(vapply(fit_ls, BIC_lmfit, numeric(1)))
@@ -105,7 +120,10 @@ auto_dfm <- function(mat, n_factor, f_lag, y_lag, h = 1) {
     XX <- attr(fit, "X")
     XX[is.na(XX)] <- 0
     fitted <- c(XX %*% fit$coefficients)
-    sam_f <- factor[seq(length(y), by = -1, length.out = mm[["f_lag"]]), seq_len(mm[["n_factor"]])]
+    sam_f <- factor[
+      seq(length(y), by = -1, length.out = mm[["f_lag"]]),
+      seq_len(mm[["n_factor"]])
+    ]
     sam_y <- y[seq(length(y), by = -1, length.out = mm[["y_lag"]])]
     fc <- c(crossprod(fit$coefficients, c(1, t(sam_f), sam_y)))
     # temp <- predict_dfm(matrix(y), factor[,seq_len(mm[["n_factor"]])],

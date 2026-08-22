@@ -17,3 +17,7 @@ _ul
 .quarto/*
 paper-forecast-projection.Rproj
 .DS_Store
+
+/.luarc.json
+.positai
+

@@ -5,16 +5,19 @@
 
 arima_mat <- function(mat, .h, start, frequency) {
   fit_ls <- apply(
-    mat, 2,
+    mat,
+    2,
     \(x) forecast::auto.arima(ts(x, start = start, frequency = frequency)),
     simplify = FALSE
   )
   out <- lapply(
     fit_ls,
-    \(fit) list(
-      fc = forecast(fit, h = .h)$mean,
-      res = residuals_fast(fit, h = 1)
-    )
+    \(fit) {
+      list(
+        fc = forecast(fit, h = .h)$mean,
+        res = residuals_fast(fit, h = 1)
+      )
+    }
   )
   out
 }
@@ -22,17 +25,22 @@ arima_mat <- function(mat, .h, start, frequency) {
 # produce different res for each h
 arima <- function(mat, .h, start, frequency) {
   fit_ls <- mat %>%
-    apply(2, \(x) forecast::auto.arima(ts(x, start = start, frequency = frequency)), simplify = FALSE)
+    apply(
+      2,
+      \(x) forecast::auto.arima(ts(x, start = start, frequency = frequency)),
+      simplify = FALSE
+    )
   out <- fit_ls %>%
-    lapply(\(fit) list(
-      fc = forecast(fit, h = .h)$mean,
-      res = lapply(seq_len(.h), \(.h) residuals_fast(fit, type = "response", h = .h))
-    ))
+    lapply(\(fit) {
+      list(
+        fc = forecast(fit, h = .h)$mean,
+        res = lapply(seq_len(.h), \(.h) {
+          residuals_fast(fit, type = "response", h = .h)
+        })
+      )
+    })
   out
 }
-
-
-
 
 
 residuals_fast <- function(object, h = 1, ...) {

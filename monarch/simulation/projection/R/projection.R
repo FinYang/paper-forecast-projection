@@ -3,11 +3,13 @@ project_1 <- function(fc, W, Phi) {
   p_max <- nrow(Phi)
   m <- ncol(fc) - nrow(Phi)
   mapply(
-    \(p, W){
+    \(p, W) {
       C <- block(C_all, p, m + p)
       WtC <- tcrossprod(W, C)
       tbf <- fc[, seq_len(m + p)]
-      t((t(tbf) - tcrossprod(tcrossprod(WtC, t(solve(C %*% WtC, C))), tbf))[seq_len(m), ])
+      t((t(tbf) - tcrossprod(tcrossprod(WtC, t(solve(C %*% WtC, C))), tbf))[
+        seq_len(m),
+      ])
     },
     p = seq_len(p_max),
     W = W,
@@ -24,9 +26,9 @@ project <- function(fc, W, Phi) {
   p_max <- nrow(Phi)
   m <- ncol(fc) - nrow(Phi)
   pbapply::pbmapply(
-    \(fc, W){
+    \(fc, W) {
       mapply(
-        \(p, W){
+        \(p, W) {
           C <- block(C_all, p, m + p)
           WtC <- tcrossprod(W, C)
           bf <- c(fc[seq_len(m + p)])
@@ -63,11 +65,17 @@ get_W <- function(res_ori, res_com) {
       res <- res[!apply(res, 1, anyNA), ]
       lapply(
         seq_len(p),
-        \(pp){
-          out <- try(corpcor::cov.shrink(res[, seq_len(m + pp)], verbose = FALSE))
+        \(pp) {
+          out <- try(corpcor::cov.shrink(
+            res[, seq_len(m + pp)],
+            verbose = FALSE
+          ))
           # # trying to avoid singularity issue with svd
           while (class(out) == "try-error") {
-            out <- try(corpcor::cov.shrink((res <- res[-1, seq_len(m + pp)]), verbose = FALSE))
+            out <- try(corpcor::cov.shrink(
+              (res <- res[-1, seq_len(m + pp)]),
+              verbose = FALSE
+            ))
           }
           out
         }
@@ -79,6 +87,7 @@ get_W <- function(res_ori, res_com) {
   )
 }
 
+
 # sim_in <- tar_read(sim_in, branches = 1)[[1]]
 # fitted_ori <- tar_read(fitted_arima, branches = 1)[[1]]
 # fitted_com <- tar_read(fitted_arima_pca, branches = 1)[[1]]
@@ -87,8 +96,15 @@ get_W <- function(res_ori, res_com) {
 # fc_c <- tar_read(fc_arima_pca, branches = 1)[[1]]
 # Phi <- tar_read(pca, branches = 1)[[1]]$Phi
 
-project_iter <- function(sim_in, fitted_ori, fitted_com, res_com,
-                         fc, fc_c, Phi) {
+project_iter <- function(
+  sim_in,
+  fitted_ori,
+  fitted_com,
+  res_com,
+  fc,
+  fc_c,
+  Phi
+) {
   m <- NCOL(fitted_ori[[1]])
   p <- NCOL(fitted_com[[1]])
   out <- mapply(
@@ -111,7 +127,10 @@ project_iter <- function(sim_in, fitted_ori, fitted_com, res_com,
         C <- cbind(-Phi[i, , drop = FALSE], 1)
         WtC <- tcrossprod(W_ls[[i]], C)
         rec_fc[[i]] <- proj_inner(bf = c(fc, fc_c[[i]]), WtC)
-        rec_fit[[i + 1]] <- t(proj_inner(bf = t(cbind(rec_fit[[i]], fit_com[, i])), WtC))
+        rec_fit[[i + 1]] <- t(proj_inner(
+          bf = t(cbind(rec_fit[[i]], fit_com[, i])),
+          WtC
+        ))
       }
       rec_fc
     },
@@ -134,24 +153,31 @@ project_iter <- function(sim_in, fitted_ori, fitted_com, res_com,
     array2list()
 }
 
-project_switch <- function(fc, fc_comp1, fc_comp2,
-                           Phi1, Phi2,
-                           res, res_comp1, res_comp2,
-                           switch_from) {
+project_switch <- function(
+  fc,
+  fc_comp1,
+  fc_comp2,
+  Phi1,
+  Phi2,
+  res,
+  res_comp1,
+  res_comp2,
+  switch_from
+) {
   fc <- unname(fc)
   max_p <- ncol(fc_comp1)
   m <- ncol(fc)
   stopifnot(all.equal(ncol(fc_comp1), ncol(fc_comp2)))
   stopifnot(length(switch_from) == 1)
 
-  out <- lapply(seq_along(res), \(hh){
+  out <- lapply(seq_along(res), \(hh) {
     res <- res[[hh]]
     res_comp1 <- res_comp1[[hh]]
     res_comp2 <- res_comp2[[hh]]
     fc <- fc[hh, , drop = FALSE]
     fc_comp1 <- fc_comp1[hh, , drop = FALSE]
     fc_comp2 <- fc_comp2[hh, , drop = FALSE]
-    lapply(seq_len(max_p), \(p){
+    lapply(seq_len(max_p), \(p) {
       if (p < switch_from) {
         fc_comp <- fc_comp1[, seq_len(p), drop = FALSE]
         Phi <- Phi1[seq_len(p), , drop = FALSE]
@@ -172,7 +198,10 @@ project_switch <- function(fc, fc_comp1, fc_comp2,
       }
       x <- try(flap::flap(fc, fc_comp, Phi, res, res_comp, p = p))
       while (any(class(x) == "try-error")) {
-        x <- try(flap::flap(fc, fc_comp, Phi,
+        x <- try(flap::flap(
+          fc,
+          fc_comp,
+          Phi,
           res <- res[-1, , drop = FALSE],
           res_comp <- res_comp[-1, , drop = FALSE],
           p = p

@@ -1,8 +1,26 @@
 ## ---- library ----
 library(tidyverse)
 library(tsibble)
-cb_palette_grey <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cb_palette_black <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cb_palette_grey <- c(
+  "#999999",
+  "#E69F00",
+  "#56B4E9",
+  "#009E73",
+  "#F0E442",
+  "#0072B2",
+  "#D55E00",
+  "#CC79A7"
+)
+cb_palette_black <- c(
+  "#000000",
+  "#E69F00",
+  "#56B4E9",
+  "#009E73",
+  "#F0E442",
+  "#0072B2",
+  "#D55E00",
+  "#CC79A7"
+)
 theme_set(theme(
   plot.background = element_blank(),
   legend.background = element_blank(),
@@ -63,10 +81,7 @@ visnights_wide %>%
   component() %>%
   getElement("x") %>%
   bind_cols(col_month, .) %>%
-  pivot_longer(-Month,
-    names_to = "Component",
-    values_to = "Value"
-  ) %>%
+  pivot_longer(-Month, names_to = "Component", values_to = "Value") %>%
   filter(Component %in% unique(Component)[seq_len(4)]) %>%
   ggplot() +
   geom_line(aes(x = Month, y = Value)) +
@@ -74,8 +89,10 @@ visnights_wide %>%
 
 ## ---- series-fc ----
 
-proj_ets_pca_normal <- qs::qread("../monarch/tourism/projection/output/proj_ets_pca_normal.qs")[[1]]
-fc_ets <- qs::qread("../monarch/tourism/projection/output/fc_ets.qs")[[1]]
+proj_ets_pca_normal <- qs2::qs_read(
+  "../monarch/tourism/projection/output/proj_ets_pca_normal.qs"
+)[[1]]
+fc_ets <- qs2::qs_read("../monarch/tourism/projection/output/fc_ets.qs")[[1]]
 
 n_comp <- length(proj_ets_pca_normal)
 
@@ -115,8 +132,10 @@ visnights %>%
   bind_rows(fcs) %>%
   ggplot() +
   geom_line(aes(
-    x = Month, y = Nights,
-    colour = p, group = p
+    x = Month,
+    y = Nights,
+    colour = p,
+    group = p
   )) +
   facet_grid("Region", scales = "free") +
   scale_colour_gradient(
@@ -126,13 +145,14 @@ visnights %>%
 
 ## ---- visnights ----
 m <- 77
-qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
+qs2::qs_read("../monarch/tourism/projection/output/mse.qs") %>%
   filter(
     h %in% c(1, 6, 12),
     model != "ets_h"
   ) %>%
   ggplot(aes(
-    x = p, y = value,
+    x = p,
+    y = value,
     linetype = paste(proj, Phi, sep = ".")
   )) +
   geom_vline(xintercept = m) +
@@ -163,14 +183,15 @@ qs::qread("../monarch/tourism/projection/output/mse.qs") %>%
 
 ## ---- fred-md ----
 m <- 122
-qs::qread("../monarch/fred-md/projection/output/mse.qs") %>%
+qs2::qs_read("../monarch/fred-md/projection/output/mse.qs") %>%
   filter(
     !model %in% c("ets", "arima"),
     !grepl("ets", Phi),
     h %in% c(1, 6, 12)
   ) %>%
   ggplot(aes(
-    x = p, y = value,
+    x = p,
+    y = value,
     linetype = paste(proj, Phi, sep = ".")
   )) +
   geom_vline(xintercept = m) +
@@ -206,7 +227,7 @@ m <- 70
 pa_simulation <- function(...) {
   file.path("../monarch/simulation/projection/output/", ...)
 }
-mse <- qs::qread(pa_simulation("mse.qs"))
+mse <- qs2::qs_read(pa_simulation("mse.qs"))
 
 mse %>%
   filter(
@@ -216,7 +237,8 @@ mse %>%
   ) %>%
   # {print(distinct(., model, Phi))}
   ggplot(aes(
-    x = p, y = value,
+    x = p,
+    y = value,
     colour = model,
     linetype = paste(proj, Phi, sep = ".")
   )) +

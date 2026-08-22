@@ -2,10 +2,14 @@ arima <- function(mat, .h) {
   fit_ls <- mat %>%
     apply(2, \(x) forecast::auto.arima(x), simplify = FALSE)
   out <- fit_ls %>%
-    lapply(\(fit) list(
-      fc = forecast(fit, h = .h)$mean,
-      res = lapply(seq_len(.h), \(.h) residuals_fast(fit, type = "response", h = .h))
-    ))
+    lapply(\(fit) {
+      list(
+        fc = forecast(fit, h = .h)$mean,
+        res = lapply(seq_len(.h), \(.h) {
+          residuals_fast(fit, type = "response", h = .h)
+        })
+      )
+    })
   out
 }
 
@@ -13,14 +17,15 @@ arima2 <- function(mat, .h) {
   fit_ls <- mat %>%
     apply(2, \(x) forecast::auto.arima(x), simplify = FALSE)
   out <- fit_ls %>%
-    lapply(\(fit) list(
-      fc = forecast(fit, h = .h)$mean,
-      fitted = lapply(seq_len(.h), \(.h) fitted_fast(fit, h = .h))
-    ) %>%
-      c(list(res = lapply(.$fitted, \(fits)getResponse(fit) - fits))))
+    lapply(\(fit) {
+      list(
+        fc = forecast(fit, h = .h)$mean,
+        fitted = lapply(seq_len(.h), \(.h) fitted_fast(fit, h = .h))
+      ) %>%
+        c(list(res = lapply(.$fitted, \(fits) getResponse(fit) - fits)))
+    })
   out
 }
-
 
 
 get_fc <- function(obj) {
@@ -97,7 +102,6 @@ fitted_fast <- function(object, h = 1, ...) {
   tsp(fits) <- tsp(object$x)
   fits
 }
-
 
 # fit <- forecast::auto.arima(tar_read(sim_in, branches = 1)[[1]][,1])
 # # identical(fitted(fit), fit$fitted)

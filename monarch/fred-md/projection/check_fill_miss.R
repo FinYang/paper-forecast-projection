@@ -23,6 +23,7 @@ fred_raw %>%
   autoplot() +
   geom_point(
     data = \(x) filter(as_tibble(x), missing),
-    color = "pink", alpha = 0.7
+    color = "pink",
+    alpha = 0.7
   ) +
   guides(colour = "none")

@@ -9,11 +9,13 @@ project <- function(fc, W, Phi) {
   m <- ncol(fc) - nrow(Phi)
 
   mapply(
-    \(p, W){
+    \(p, W) {
       C <- block(C_all, p, m + p)
       WtC <- tcrossprod(W, C)
       tbf <- fc[, seq_len(m + p)]
-      t((t(tbf) - tcrossprod(WtC, t(solve(C %*% WtC, tcrossprod(C, tbf)))))[seq_len(m), ])
+      t((t(tbf) - tcrossprod(WtC, t(solve(C %*% WtC, tcrossprod(C, tbf)))))[
+        seq_len(m),
+      ])
     },
     p = seq_len(p_max),
     W = W[seq_len(p_max)],
@@ -27,9 +29,9 @@ project_h <- function(fc, W, Phi) {
   p_max <- nrow(Phi)
   m <- ncol(fc) - nrow(Phi)
   pbapply::pbmapply(
-    \(fc, W){
+    \(fc, W) {
       mapply(
-        \(p, W){
+        \(p, W) {
           C <- block(C_all, p, m + p)
           WtC <- tcrossprod(W, C)
           bf <- c(fc[seq_len(m + p)])
@@ -78,11 +80,17 @@ get_W_h <- function(res_ori, res_com) {
       res <- res[!apply(res, 1, anyNA), ]
       lapply(
         seq_len(p),
-        \(pp){
-          out <- try(corpcor::cov.shrink(res[, seq_len(m + pp)], verbose = FALSE))
+        \(pp) {
+          out <- try(corpcor::cov.shrink(
+            res[, seq_len(m + pp)],
+            verbose = FALSE
+          ))
           # # trying to avoid singularity issue with svd
           while (class(out) == "try-error") {
-            out <- try(corpcor::cov.shrink((res <- res[-1, seq_len(m + pp)]), verbose = FALSE))
+            out <- try(corpcor::cov.shrink(
+              (res <- res[-1, seq_len(m + pp)]),
+              verbose = FALSE
+            ))
           }
           out
         }
@@ -95,10 +103,17 @@ get_W_h <- function(res_ori, res_com) {
 }
 
 
-project_switch <- function(fc, fc_comp1, fc_comp2,
-                           Phi1, Phi2,
-                           res, res_comp1, res_comp2,
-                           switch_from) {
+project_switch <- function(
+  fc,
+  fc_comp1,
+  fc_comp2,
+  Phi1,
+  Phi2,
+  res,
+  res_comp1,
+  res_comp2,
+  switch_from
+) {
   fc <- unname(fc)
   max_p <- ncol(fc_comp1)
   m <- ncol(fc)
@@ -106,10 +121,10 @@ project_switch <- function(fc, fc_comp1, fc_comp2,
   stopifnot(all.equal(ncol(fc_comp1), ncol(fc_comp2)))
   class(res_comp2) <- class(res_comp1) <-
     class(fc_comp2) <- class(fc_comp1) <-
-    class(matrix())
+      class(matrix())
 
   stopifnot(length(switch_from) == 1)
-  out <- lapply(seq_len(max_p), \(p){
+  out <- lapply(seq_len(max_p), \(p) {
     if (p < switch_from) {
       fc_comp <- fc_comp1[, seq_len(p), drop = FALSE]
       Phi <- Phi1[seq_len(p), , drop = FALSE]
